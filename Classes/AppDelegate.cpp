@@ -122,10 +122,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // run
     director->runWithScene(LoginScenescene);
     
-    //TODO加入场景
-    
-    
-
     return true;
 }
 

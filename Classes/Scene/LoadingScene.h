@@ -10,7 +10,7 @@ private:
     void endLoading(float dt);
     void loadSound();
     void loadImage();
-    void loadSpriteFrame();
+    //void loadSpriteFrame();
 
     cocos2d::ui::LoadingBar* createLoadingBar();
 public:

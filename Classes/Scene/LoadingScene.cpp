@@ -1,6 +1,6 @@
 #include "LoadingScene.h"
-//#include "LoginScene.h"
-//#include "Settings.h"
+#include "LoginScene.h"
+#include "Settings.h"
 #include "SimpleAudioEngine.h"
 //#include "PreloadList.h"
 
@@ -21,17 +21,20 @@ Scene* LoadingScene::createScene()
     return scene;
 }
 
-/*
+//变换场景
 void LoadingScene::endLoading(float dt) {
     const auto transition = TransitionFade::create(1, LoginScene::createScene());
     Director::getInstance()->replaceScene(transition);
 }
-*/
+
+
 void LoadingScene::loadSound()
 {
+    //undefined
 }
 
-void LoadingScene::loadImage() {
+void LoadingScene::loadImage()
+{
     //undefined
 }
 
@@ -60,7 +63,7 @@ bool LoadingScene::init()
 
     addChild(createLoadingBar());
     
-    //   scheduleOnce(CC_SCHEDULE_SELECTOR(LoadingScene::endLoading), 0.5);//TODO
+    scheduleOnce(CC_SCHEDULE_SELECTOR(LoadingScene::endLoading), 0.5);
     return true;
 }
 
@@ -75,12 +78,12 @@ cocos2d::ui::LoadingBar* LoadingScene::createLoadingBar(){
     loadingBar->setPercent(10);
 
     //loadSpriteFrame();
-    loadingBar->setPercent(40);
+    //loadingBar->setPercent(40);
     
-    loadImage();
-    loadingBar->setPercent(70);
+    //loadImage();
+    //loadingBar->setPercent(70);
 
-    loadSound();
+    //loadSound();
     loadingBar->setPercent(100);
    
     return loadingBar;
