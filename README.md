@@ -1,5 +1,10 @@
 # game
 
+Things to noticed！！！！！
+setting.h 内包含了所有的规范格式，l
+字体格式为：Settings::Font::Type::base
+字体大小为：Settings::Font::Size::normal
+
 Phase1: basic scene development:
     1.loging 
     2.main scene (for starting game buttom)
