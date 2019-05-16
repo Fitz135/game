@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 #include "AppDelegate.h"
-#include "HelloWorldScene.h"
+#include "Scene/LoadingScene.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -42,10 +42,10 @@ using namespace CocosDenshion;
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
-static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
+static cocos2d::Size designResolutionSize = cocos2d::Size(1024, 576);
+static cocos2d::Size smallResolutionSize = cocos2d::Size(1024, 576);
+static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 576);
+static cocos2d::Size largeResolutionSize = cocos2d::Size(1024, 576);
 
 AppDelegate::AppDelegate()
 {
@@ -117,11 +117,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     register_all_packages();
 
-    // create a scene. it's an autorelease object
-    auto scene = HelloWorld::createScene();
-
+    // create a scene. it's an autorelease object 创建一个场景并运行
+    auto LoginScenescene = LoadingScene::createScene();
     // run
-    director->runWithScene(scene);
+    director->runWithScene(LoginScenescene);
+    
+    //TODO加入场景
+    
+    
 
     return true;
 }
