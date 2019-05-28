@@ -1,6 +1,7 @@
 #include"Player.h"
 USING_NS_CC;
 Player::Player() {
+
 	attr->hp= 100;
 	attr->speed= 1;
     attr->attack= 30;
@@ -19,15 +20,18 @@ Player* Player::create(const std::string& id, int role)
 	if (player&&player->init())
     {
         player->_id=id;
+
 		player->autorelease();
 		return player;
 	}
 	CC_SAFE_DELETE(player);
+
 	return nullptr;
 }
 
 void Player::addPlayer()
 {
+
 	this->removeChild(sprite, true);
 	Vector<SpriteFrame*> animFrames;
 	animFrames.reserve(4);
@@ -40,6 +44,7 @@ void Player::addPlayer()
 	sprite->runAction(RepeatForever::create(ame));
 	this->addChild(sprite);
 }
+
 
  bool Player::init()
 {
@@ -92,20 +97,24 @@ void attack()
 
 void Player::moveLeft(float f)
 {
+
 	auto player = Director::getInstance()->getRunningScene()->getChildByTag(1);
 	auto point = player->getPosition();
 	int leftBound = player->getContentSize().width / 2;
 	if (point.x >= leftBound)
 		player->setPosition(point.x - 1, point.y);
 }
+
 void Player::moveRight(float f)
 {
+
 	auto player = Director::getInstance()->getRunningScene()->getChildByTag(1);
 	auto point = player->getPosition();
 	int rightBound = Director::getInstance()->getVisibleSize().width - player->getContentSize().width / 2;
 	if (point.x <= rightBound)
 		player->setPosition(point.x + 1, point.y);
 }
+
 void Player::moveUp(float f)
 {
 	auto player = Director::getInstance()->getRunningScene()->getChildByTag(1);
@@ -114,6 +123,7 @@ void Player::moveUp(float f)
 	if (point.y <= upBound)
 		player->setPosition(point.x, point.y + 1);
 }
+
 void Player::moveDown(float f)
 {
 	auto player = Director::getInstance()->getRunningScene()->getChildByTag(1);
@@ -122,3 +132,4 @@ void Player::moveDown(float f)
 	if (point.y >= downBound)
 		player->setPosition(point.x, point.y - 1);
 }
+

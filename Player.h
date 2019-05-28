@@ -5,6 +5,7 @@
 class Player :public cocos2d::Node {
 public:
 	Player();
+
     
 	virtual ~Player();
     
@@ -47,9 +48,11 @@ public:
     
     void attack();//攻击
 
+
 	void moveLeft(float f);
 	void moveRight(float f);
 	void moveUp(float f);
+
 	void moveDown(float f);//移动
     
 private:
@@ -62,6 +65,7 @@ private:
     bool init();
     bool initWithRole(int Role);
     bool initAnimation();
+
 };
 #endif // !_PLAYER_H_
 
