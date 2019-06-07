@@ -2,14 +2,14 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 #include"cocos2d.h"
+#include<cstdint>
 class Player :public cocos2d::Node {
 public:
 	Player();
 
-    
 	virtual ~Player();
     
-	static Player* create(const std::string& id, int role);//创建角色
+	static Player* create(const std::string& id);//创建角色
     
     void addPlayer();//加入玩家
     
@@ -23,19 +23,19 @@ public:
     
     struct Attr
     {
-        unit8_t speed;//速度
+        uint8_t speed;//速度
         uint8_t attack;//攻击力
         uint8_t hp;//生命值
         uint8_t weapon;//武器
         uint8_t superPower;//加成效果
         uint8_t level;//等级
         uint8_t exp;//经验
-    }//角色属性
+	};//角色属性
     
     
     
 	uint8_t getSpeed();
-    float getRealSpeed();
+    //float getRealSpeed();
 	void setSpeed(uint8_t speed);//速度
 
     uint8_t getDamage();
@@ -56,9 +56,10 @@ public:
 	void moveDown(float f);//移动
     
 private:
+	std::string id;
 	cocos2d::Sprite* sprite;
     Attr attr;
-    time_t direction[4];
+    //time_t direction[4];
     Direction direction;
     std::string rolename;
     

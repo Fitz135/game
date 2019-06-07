@@ -8,7 +8,7 @@ cocos2d::Scene* Normal::createScene() {
 
 bool Normal::init() {
 
-	Player* player = Player::create();
+	Player* player = Player::create("local");
 	player->addPlayer();
 
 	player->setTag(1);

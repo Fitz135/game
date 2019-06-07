@@ -2,25 +2,25 @@
 USING_NS_CC;
 Player::Player() {
 
-	attr->hp= 100;
-	attr->speed= 1;
-    attr->attack= 30;
-	attr->level = 1;
-	attr->exp = 0;
-    attr->weapon=1;
-    attr->superPower=0;
+	attr.hp= 100;
+	attr.speed= 1;
+    attr.attack= 30;
+	attr.level = 1;
+	attr.exp = 0;
+    attr.weapon=1;
+    attr.superPower=0;
 	sprite = Sprite::create("Player/KnightStand1.png");
 }
 Player::~Player()
 {
+
 }
-Player* Player::create(const std::string& id, int role)
+Player* Player::create(const std::string& id)
 {
 	auto player = new (std::nothrow) Player();
 	if (player&&player->init())
     {
-        player->_id=id;
-
+        player->id=id;
 		player->autorelease();
 		return player;
 	}
@@ -33,6 +33,11 @@ void Player::addPlayer()
 {
 
 	this->removeChild(sprite, true);
+	initAnimation();
+	this->addChild(sprite);
+}
+
+bool Player::initAnimation() {
 	Vector<SpriteFrame*> animFrames;
 	animFrames.reserve(4);
 	animFrames.pushBack(SpriteFrame::create("Player/KnightStand1.png", Rect(0, 0, 340, 425)));
@@ -40,57 +45,56 @@ void Player::addPlayer()
 	animFrames.pushBack(SpriteFrame::create("Player/KnightStand3.png", Rect(0, 0, 340, 425)));
 	animFrames.pushBack(SpriteFrame::create("Player/KnightStand4.png", Rect(0, 0, 340, 425)));
 	auto am = Animation::createWithSpriteFrames(animFrames, 0.161f);
-	auto ame = Animate::create(am);
-	sprite->runAction(RepeatForever::create(ame));
-	this->addChild(sprite);
+	if (am!=nullptr) {
+		auto ame = Animate::create(am);
+		sprite->runAction(RepeatForever::create(ame));
+		return true;
+	}
+	else return false;
 }
-
 
  bool Player::init()
 {
-    direction=Direction::NONE;
+    direction=Direction::UP;
                                 //map
 	return true;
 }
 
-void Player::setSpeed(int Speed)
+void Player::setSpeed(uint8_t Speed)
 {
-    this->attr.speed=speed;
+    attr.speed=Speed;
 }
 uint8_t Player::getSpeed()
 {
 	return attr.speed;
 }
-float Player::getRealSpeed()
-{
-    //
-}
 
 
-uint8_t getDamage()
+
+uint8_t Player::getDamage()
 {
-    this->attr.
+	return attr.attack;
 }
-void setDamage(uint8_t damage)
+void Player::setDamage(uint8_t damage)
 {
     
 }
 
-bool isAlive()
+bool Player::isAlive()
 {
-    return hp>=0;
+    return attr.hp>=0;
 }
 
-uint8_t getWeapon()
+uint8_t Player::getWeapon()
 {
     return attr.weapon;
 }
-void setWeapon(uint8_t newWeapon)
+void Player::setWeapon(uint8_t newWeapon)
 {
     attr.weapon=newWeapon;
 }
 
-void attack()
+void Player::attack()
 {
     
 }
