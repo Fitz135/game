@@ -1,6 +1,7 @@
 #include"GameModeScene.h"
 #include"NormalScene.h"
-#include"CreateRoom.h"
+//#include"CreateRoom.h"
+#include"RoomScene.h"
 USING_NS_CC;
 
 Scene* GameMode::createScene() {
@@ -29,13 +30,15 @@ bool GameMode::init() {
 	return true;
 }
 void GameMode::gamestartCallback(Ref* ref) {
-	auto bg = this->getChildByTag(1);
+
+	/*auto bg = this->getChildByTag(1);
 	bg->setColor(Color3B(100, 100, 100));
 	auto createroom = CreateRoom::create();
-	this->addChild(createroom);
-	/*auto scene = Normal::createScene();
-	Director::getInstance()->setClearColor(Color4F::WHITE);
-	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));*/
+	this->addChild(createroom);*/
+
+	auto scene = RoomScene::createScene();
+	//Director::getInstance()->setClearColor(Color4F::WHITE);
+	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
 };
 void GameMode::menubackCallback(Ref* ref) {
 	Director::getInstance()->popScene();
