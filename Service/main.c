@@ -197,13 +197,9 @@ int main(int argc, char *argv[]){
     	nSize = sizeof(SOCKADDR);
     	SOCKET pClient = accept(servSock, (SOCKADDR*)&playerAddr, &nSize);
     	
-    	
-    	printf("Client Connected\n");
-    	
-    	
     	playerList[players]=pClient;
     	players++;
-		
+		printf("Player%d Connected\n",players);
     	sprintf(num,"%d",players);
 		sendTo(&pClient,num);
 		

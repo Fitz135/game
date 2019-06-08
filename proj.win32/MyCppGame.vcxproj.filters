@@ -48,6 +48,9 @@
     <ClCompile Include="..\Classes\RoomScene.cpp">
       <Filter>src\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\LoginScene.cpp">
+      <Filter>src\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -75,6 +78,9 @@
       <Filter>src\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\RoomScene.h">
+      <Filter>src\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\LoginScene.h">
       <Filter>src\Scene</Filter>
     </ClInclude>
   </ItemGroup>

@@ -153,6 +153,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\CreateRoom.cpp" />
     <ClCompile Include="..\Classes\GameModeScene.cpp" />
     <ClCompile Include="..\Classes\IndexScene.cpp" />
+    <ClCompile Include="..\Classes\LoginScene.cpp" />
     <ClCompile Include="..\Classes\NormalScene.cpp" />
     <ClCompile Include="..\Classes\ODSocket.cpp" />
     <ClCompile Include="..\Classes\Player.cpp" />
@@ -164,6 +165,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\CreateRoom.h" />
     <ClInclude Include="..\Classes\GameModeScene.h" />
     <ClInclude Include="..\Classes\IndexScene.h" />
+    <ClInclude Include="..\Classes\LoginScene.h" />
     <ClInclude Include="..\Classes\NormalScene.h" />
     <ClInclude Include="..\Classes\ODSocket.h" />
     <ClInclude Include="..\Classes\Player.h" />

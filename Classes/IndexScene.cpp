@@ -1,5 +1,5 @@
 #include"IndexScene.h"
-#include"GameModeScene.h"
+#include"LoginScene.h"
 USING_NS_CC;//using namespace cocos2d;
 
 Scene* Index::createScene() {
@@ -20,8 +20,8 @@ bool Index::init() {
 	return true;
 }
 void Index::startCallback(Ref* ref) {
-	auto scene = GameMode::createScene();
-	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));//replaceScene( scene);
+	auto layer = LoginScene::create();
+	this->addChild(layer);
 }
 void Index::exitCallback(Ref* ref) {
 	Director::getInstance()->end();

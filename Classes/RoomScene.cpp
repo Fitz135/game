@@ -42,10 +42,7 @@ bool RoomScene::connectService() {
 		char buffer[30];
 		client->Recv(buffer, 1);
 		players = static_cast<int>(buffer[0])-48;
-		sprintf(buffer, "%d", players);
-		client->Send(buffer, 1);
-		client->Send("q", 1);
-		client->Close();
+		
 	}
 	return true;
 }
