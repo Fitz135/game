@@ -9,7 +9,7 @@ public:
 	static cocos2d::Scene* createScene();
 
 	virtual bool init();
-
+	void createBG();
 	void gamestartCallback(Ref* ref);
 	void menubackCallback(Ref* ref);
 

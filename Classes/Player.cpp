@@ -24,8 +24,8 @@ Player* Player::create(const std::string& id)
 		player->autorelease();
 		return player;
 	}
-	CC_SAFE_DELETE(player);
-
+	CC_SAFE_DELETE(player);//可能要放在dtor
+	
 	return nullptr;
 }
 

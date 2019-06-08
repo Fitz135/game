@@ -16,6 +16,9 @@
     <Filter Include="src\Model">
       <UniqueIdentifier>{dd0ceebf-c5ff-45f3-a48c-2fcbab41205e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Network">
+      <UniqueIdentifier>{7ce66b9d-9109-479a-9279-edf51a3bcecc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -36,6 +39,12 @@
     <ClCompile Include="..\Classes\Player.cpp">
       <Filter>src\Model</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\ODSocket.cpp">
+      <Filter>src\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\CreateRoom.cpp">
+      <Filter>src\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -55,6 +64,12 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Player.h">
       <Filter>src\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ODSocket.h">
+      <Filter>src\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\CreateRoom.h">
+      <Filter>src\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
