@@ -1,6 +1,6 @@
 #include"GameModeScene.h"
 //#include"NormalScene.h"
-
+#include"GameScene.h"
 #include"RoomScene.h"
 #include"Settings.h"
 
@@ -42,8 +42,9 @@ void GameMode::gamestartCallback(Ref* ref) {
 	auto createroom = CreateRoom::create();
 	this->addChild(createroom);*/
 
-	auto scene = RoomScene::createScene();
 	//Director::getInstance()->setClearColor(Color4F::WHITE);
+
+	auto scene = GameScene::createScene();
 	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
 };
 void GameMode::menubackCallback(Ref* ref) {

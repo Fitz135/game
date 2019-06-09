@@ -3,20 +3,13 @@
 #define _GAME_SCENE_H_
 
 #include"cocos2d.h"
-#include"Player.h"
-#include"Robot.h"
-#include<vector>
 
-class GameScene :public cocos2d::Scene {
+class GameScene :public cocos2d::Layer {
 public:
-	
-	GameScene();
 	static cocos2d::Scene* createScene();
 	virtual bool init();
 	CREATE_FUNC(GameScene);
-private:
-	Player* player;
-	std::vector<Robot> roboyVec;
+	static  cocos2d::Scene* getCurrentMap();
 
 };
 #endif // !_GAME_SCENE_H_

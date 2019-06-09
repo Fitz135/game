@@ -1,139 +1,206 @@
 #include"Player.h"
-USING_NS_CC;
-Player::Player() {
+#include"GameScene.h"
+//#include"HelloWorldScene.h"
+#define HEADMOVE 0
+#define BODYMOVE 1
+#define LEGSMOVE 2
 
-	attr.hp= 100;
-	attr.speed= 1;
-    attr.attack= 30;
+Player::Player(std::string Name, int Id) {
+	attr.hp = 100;
+	attr.speed = 1;
+	attr.attack = 30;
 	attr.level = 1;
 	attr.exp = 0;
-    attr.weapon=1;
-    attr.superPower=0;
-	sprite = Sprite::create("Player/KnightStand1.png");
-}
-Player::~Player()
-{
+	attr.weapon = 1;
+	attr.superPower = 0;
 
+	m_id = Id;
+	m_name = Name;
 }
-Player* Player::create(const std::string& id)
+Player* Player::getMychara(char* str) {
+	return dynamic_cast<Player*>(GameScene::getCurrentMap()->getChildByName(str));
+}
+Player* Player::create(std::string name,int id)
 {
-	auto player = new (std::nothrow) Player();
-	if (player&&player->init())
-    {
-        player->id=id;
+	Player* player = new Player(name, id);
+	if (player && player->initWithPlayerType())
+	{	
+		player->addChild(player->Legs);
+		player->addChild(player->Body);
+		player->addChild(player->Head);
 		player->autorelease();
 		return player;
 	}
-	CC_SAFE_DELETE(player);//可能要放在dtor
-	
-	return nullptr;
-}
-
-void Player::addPlayer()
-{
-
-	this->removeChild(sprite, true);
-	initAnimation();
-	this->addChild(sprite);
-}
-
-bool Player::initAnimation() {
-	Vector<SpriteFrame*> animFrames;
-	animFrames.reserve(4);
-	animFrames.pushBack(SpriteFrame::create("Player/KnightStand1.png", Rect(0, 0, 340, 425)));
-	animFrames.pushBack(SpriteFrame::create("Player/KnightStand2.png", Rect(0, 0, 340, 425)));
-	animFrames.pushBack(SpriteFrame::create("Player/KnightStand3.png", Rect(0, 0, 340, 425)));
-	animFrames.pushBack(SpriteFrame::create("Player/KnightStand4.png", Rect(0, 0, 340, 425)));
-	auto am = Animation::createWithSpriteFrames(animFrames, 0.161f);
-	if (am!=nullptr) {
-		auto ame = Animate::create(am);
-		sprite->runAction(RepeatForever::create(ame));
-		return true;
+	else
+	{
+		delete player;
+		player = NULL;
+		return NULL;
 	}
-	else return false;
 }
-
- bool Player::init()
+bool Player::initWithPlayerType()
 {
-    direction=Direction::UP;
-                                //map
+	Legs = Sprite::createWithSpriteFrameName("Legs-0.png");
+	Body = Sprite::createWithSpriteFrameName("Body-0.png");
+	Head = Sprite::createWithSpriteFrameName("Head-0.png");
+   
+	MoveFrames[HEADMOVE]=AnimationFrames("Head-%d.png", 6, 19);
+	MoveFrames[BODYMOVE]=AnimationFrames("Body-%d.png", 6, 19);
+	MoveFrames[LEGSMOVE]=AnimationFrames("Legs-%d.png", 6, 19);
+
+	AttackAbleFlag = 1;
+	AttackEndFlag = 1;
+
 	return true;
 }
-
-void Player::setSpeed(uint8_t Speed)
+Vector<SpriteFrame*> Player::AnimationFrames(const char* FrameName, int begin, int end)
 {
-    attr.speed=Speed;
+	auto spritecache = SpriteFrameCache::getInstance();
+	char str[100];
+	Vector<SpriteFrame*> animFrames;
+	for (int i = begin; i <= end; i++)
+	{
+		sprintf(str, FrameName, i);
+		animFrames.pushBack(spritecache->getSpriteFrameByName(str));
+	}
+	return animFrames;
 }
-uint8_t Player::getSpeed()
+Animate* Player::createMoveAni(int i)
 {
-	return attr.speed;
+	auto MoveAnimation=Animation::createWithSpriteFrames(MoveFrames[i], 1.0f / 8);
+	return Animate::create(MoveAnimation);
 }
-
-
-
-uint8_t Player::getDamage()
+/*Animate* Character::createAttackAni()
 {
-	return attr.attack;
-}
-void Player::setDamage(uint8_t damage)
+	AttackFrames = AnimationFrames("Body-%d", 1, 3);
+	auto AttackAnimation = Animation::createWithSpriteFrames(AttackFrames, 1.0f / 8);
+	return Animate::create(AttackAnimation);
+}*/
+void Player::MoveBegin()
 {
-    
-}
+	auto LegsAni = RepeatForever::create(createMoveAni(LEGSMOVE));
+	LegsAni->setTag(LEGSMOVE);
+	Legs->runAction(LegsAni);
 
-bool Player::isAlive()
+	if (AttackEndFlag)
+	{
+		auto HeadAni = RepeatForever::create(createMoveAni(HEADMOVE));
+		HeadAni->setTag(HEADMOVE);
+		Head->runAction(HeadAni);
+
+		auto BodyAni = RepeatForever::create(createMoveAni(BODYMOVE));
+		BodyAni->setTag(BODYMOVE);
+		Body->runAction(BodyAni);
+	}
+}
+void Player::MoveEnd()
 {
-    return attr.hp>=0;
-}
+	Legs->stopActionByTag(LEGSMOVE);
+	Legs->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Legs-0.png"));
 
-uint8_t Player::getWeapon()
+	if (AttackEndFlag)
+	{
+		Head->stopActionByTag(HEADMOVE);
+		Head->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Head-0.png"));
+
+		Body->stopActionByTag(BODYMOVE);
+		Body->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Body-0.png"));
+	}
+}
+void Player::AttackAbleflag(float dt)
 {
-    return attr.weapon;
+	AttackAbleFlag = 1;
 }
-void Player::setWeapon(uint8_t newWeapon)
+void Player::AttackEndflag(float dt)
 {
-    attr.weapon=newWeapon;
+	AttackEndFlag = 1;
 }
-
-void Player::attack()
+void Player::AttackEnd(int pressnum)
 {
-    
-}
+	if (pressnum)
+	{
+		auto HeadAni = RepeatForever::create(createMoveAni(HEADMOVE));
+		HeadAni->setTag(HEADMOVE);
+		Head->runAction(HeadAni);
 
-void Player::moveLeft(float f)
+		auto BodyAni = RepeatForever::create(createMoveAni(BODYMOVE));
+		BodyAni->setTag(BODYMOVE);
+		Body->runAction(BodyAni);
+	}
+	else
+	{
+		Head->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Head-0.png"));
+		Body->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Body-0.png"));
+	}
+}
+void Player::Attack_Shoot(Point TouchPosition)
 {
+	if (AttackAbleFlag)
+	{
+		AttackAbleFlag = 0;
+		AttackEndFlag = 0;
 
-	auto player = Director::getInstance()->getRunningScene()->getChildByTag(1);
-	auto point = player->getPosition();
-	int leftBound = player->getContentSize().width / 2;
-	if (point.x >= leftBound)
-		player->setPosition(point.x - 1, point.y);
+		this->unschedule(schedule_selector(Player::AttackAbleflag));
+		this->schedule(schedule_selector(Player::AttackAbleflag), 1);
+		this->scheduleOnce(schedule_selector(Player::AttackEndflag), 1);
+
+		auto visibleSize = Director::getInstance()->getVisibleSize();
+		auto PlayerPosition = Body->getPosition();
+
+		if (TouchPosition.x < PlayerPosition.x)
+		{
+			Legs->setFlipX(true);
+			Body->setFlipX(true);
+			Head->setFlipX(true);
+		}
+		else
+		{
+			Legs->setFlipX(false);
+			Body->setFlipX(false);
+			Head->setFlipX(false);
+		}
+
+		auto bullet = Sprite::create("Bullet.png");
+		bullet->setPosition(PlayerPosition.x, PlayerPosition.y);
+		auto scene= GameScene::getCurrentMap();
+		scene->addChild(bullet);
+
+		//projects->addObject(bullet);
+
+		//bullet->setTag(2);
+
+		double range = 300;
+		double l = sqrt((TouchPosition.x - PlayerPosition.x)*(TouchPosition.x - PlayerPosition.x) + (TouchPosition.y - PlayerPosition.y)*(TouchPosition.y - PlayerPosition.y));
+		double x = range * (TouchPosition.x - PlayerPosition.x) / l + PlayerPosition.x;
+		double y = range * (TouchPosition.y - PlayerPosition.y) / l + PlayerPosition.y;
+
+		auto move = MoveTo::create(3, Vec2(x, y));
+		//auto disappear = CallFuncN::create(this, callfuncN_selector(MainScene::disappear));
+		//auto attackmove = Sequence::create(move, disappear, NULL);
+
+		bullet->runAction(move);
+
+		float dir1 = TouchPosition.x - PlayerPosition.x - TouchPosition.y + PlayerPosition.y;
+		float dir2 = TouchPosition.x - PlayerPosition.x + TouchPosition.y - PlayerPosition.y;
+
+		Head->stopActionByTag(HEADMOVE);
+		Body->stopActionByTag(BODYMOVE);
+		if (dir1*dir2 >= 0)
+		{
+			Head->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Head-3.png"));
+			Body->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Body-3.png"));
+		}
+		else if (dir1 < 0 && dir2>0)
+		{
+			Head->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Head-2.png"));
+			Body->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Body-2.png"));
+		}
+		else if (dir1 > 0 && dir2 < 0)
+		{
+			Head->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Head-4.png"));
+			Body->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Body-4.png"));
+		}
+
+	}
+	return;
 }
-
-void Player::moveRight(float f)
-{
-
-	auto player = Director::getInstance()->getRunningScene()->getChildByTag(1);
-	auto point = player->getPosition();
-	int rightBound = Director::getInstance()->getVisibleSize().width - player->getContentSize().width / 2;
-	if (point.x <= rightBound)
-		player->setPosition(point.x + 1, point.y);
-}
-
-void Player::moveUp(float f)
-{
-	auto player = Director::getInstance()->getRunningScene()->getChildByTag(1);
-	auto point = player->getPosition();
-	int upBound = Director::getInstance()->getVisibleSize().height - player->getContentSize().height / 2;
-	if (point.y <= upBound)
-		player->setPosition(point.x, point.y + 1);
-}
-
-void Player::moveDown(float f)
-{
-	auto player = Director::getInstance()->getRunningScene()->getChildByTag(1);
-	auto point = player->getPosition();
-	int downBound = player->getContentSize().height / 2;
-	if (point.y >= downBound)
-		player->setPosition(point.x, point.y - 1);
-}
-

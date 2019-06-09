@@ -1,72 +1,53 @@
 #pragma once
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
 #include"cocos2d.h"
-#include<cstdint>
-class Player :public cocos2d::Node {
+using namespace cocos2d;
+class Player :public cocos2d::Sprite
+{
 public:
-	Player();
+	Player(std::string name, int id);
+	//CREATE_FUNC(Player);
+	static Player* create(std::string name, int id);
+	bool initWithPlayerType();
+	Player * getMychara(char* str);
 
-	virtual ~Player();
-    
-	static Player* create(const std::string& id);//åˆ›å»ºè§’è‰²
-    
-    void addPlayer();//åŠ å…¥ç©å®¶
-    
-    enum class Direction: std::int8_t
-    {
-       LEFT,
-       RIGHT,
-       UP,
-       DOWN
-    };//ç§»åŠ¨æ–¹å‘
-    
-    struct Attr
-    {
-        uint8_t speed;//é€Ÿåº¦
-        uint8_t attack;//æ”»å‡»åŠ›
-        uint8_t hp;//ç”Ÿå‘½å€¼
-        uint8_t weapon;//æ­¦å™¨
-        uint8_t superPower;//åŠ æˆæ•ˆæœ
-        uint8_t level;//ç­‰çº§
-        uint8_t exp;//ç»éªŒ
-	};//è§’è‰²å±æ€§
-    
-    
-    
-	uint8_t getSpeed();
-    //float getRealSpeed();
-	void setSpeed(uint8_t speed);//é€Ÿåº¦
+	Sprite *Body;
+	Sprite *Head;
+	Sprite *Legs;
 
-    uint8_t getDamage();
-    void setDamage(uint8_t damage);//ä¼¤å®³
-    
-    bool isAlive();
-    
-    uint8_t getWeapon();
-    void setWeapon(uint8_t newWeapon);//æ­¦å™¨
-    
-    void attack();//æ”»å‡»
+	bool AttackAbleFlag;
+	bool AttackEndFlag;
 
+	Vector<SpriteFrame*> MoveFrames[3];
+	Vector<SpriteFrame*> AttackFrames;
 
-	void moveLeft(float f);
-	void moveRight(float f);
-	void moveUp(float f);
+	Vector<SpriteFrame*> AnimationFrames(const char * FrameName, int begin, int end);
+	Animate * createMoveAni(int i);
+	Animate * createAttackAni();
 
-	void moveDown(float f);//ç§»åŠ¨
-    
+	void MoveBegin();
+
+	void MoveEnd();
+
+	void AttackAbleflag(float dt);
+
+	void AttackEndflag(float dt);
+
+	void AttackEnd(int pressnum);
+
+	void Attack_Shoot(Point MousePosition);
+
+	struct Attr
+	{
+		uint8_t speed;//ËÙ¶È
+		uint8_t attack;//¹¥»÷Á¦
+		uint8_t hp;//ÉúÃüÖµ
+		uint8_t weapon;//ÎäÆ÷
+		uint8_t superPower;//¼Ó³ÉĞ§¹û
+		uint8_t level;//µÈ¼¶
+		uint8_t exp;//¾­Ñé
+	};//½ÇÉ«ÊôĞÔ
 private:
-	std::string id;
-	cocos2d::Sprite* sprite;
-    Attr attr;
-    //time_t direction[4];
-    Direction direction;
-    std::string rolename;
-    
-    bool init();
-    bool initWithRole(int Role);
-    bool initAnimation();
-
+	std::string m_name;
+	int m_id;
+	Attr attr;
 };
-#endif // !_PLAYER_H_
-

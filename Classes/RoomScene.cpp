@@ -1,6 +1,7 @@
 #include "RoomScene.h"
 #include"ui/CocosGUI.h"
 #include"ODSocket.h"
+//#include"Settings.h"
 USING_NS_CC;
 
 Scene* RoomScene::createScene() {
@@ -42,7 +43,7 @@ bool RoomScene::connectService() {
 		char buffer[30];
 		client->Recv(buffer, 1);
 		players = static_cast<int>(buffer[0])-48;
-		
+		//Id = players;
 	}
 	return true;
 }
