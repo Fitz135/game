@@ -9,7 +9,7 @@ public:
 	static cocos2d::Scene* createScene();
 	virtual bool init();
 	CREATE_FUNC(GameScene);
-	static  cocos2d::Scene* getCurrentMap();
+	static  GameScene* getCurrentMap();
 
 };
 #endif // !_GAME_SCENE_H_

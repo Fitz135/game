@@ -1,4 +1,6 @@
 #include "Settings.h"
-int id = 0;
-std::string username="";
-int Scale = 1;
+
+int local_Id=0;
+std::string local_username="";
+int Scale =1;
+std::vector<Player*> playerList;

@@ -1,8 +1,12 @@
 #pragma once
 #include "cocos2d.h"
-//#include "string"
+#include"Player.h"
 
-		extern int Id ;
-		extern std::string username ;
+		extern int local_Id ;
+		extern std::string local_username ;
 		extern int Scale ;//Í¼Æ¬±ÈÀý
 
+		extern std::vector<Player*> playerList;
+
+		const int MSGSIZE = 32;
+		extern int players;// num of players

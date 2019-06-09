@@ -5,7 +5,7 @@
 #define BODYMOVE 1
 #define LEGSMOVE 2
 
-Player::Player(std::string Name, int Id) {
+Player::Player(std::string name, int id) {
 	attr.hp = 100;
 	attr.speed = 1;
 	attr.attack = 30;
@@ -14,8 +14,8 @@ Player::Player(std::string Name, int Id) {
 	attr.weapon = 1;
 	attr.superPower = 0;
 
-	m_id = Id;
-	m_name = Name;
+	m_id = id;
+	m_name = name;
 }
 Player* Player::getMychara(char* str) {
 	return dynamic_cast<Player*>(GameScene::getCurrentMap()->getChildByName(str));
@@ -25,6 +25,10 @@ Player* Player::create(std::string name,int id)
 	Player* player = new Player(name, id);
 	if (player && player->initWithPlayerType())
 	{	
+		player->setName("Player");
+		player->Legs->setPosition(0, 0);
+		player->Body->setPosition(0,16);
+		player->Head->setPosition(0,15);
 		player->addChild(player->Legs);
 		player->addChild(player->Body);
 		player->addChild(player->Head);
@@ -203,4 +207,11 @@ void Player::Attack_Shoot(Point TouchPosition)
 
 	}
 	return;
+}
+
+int Player::getId() {
+	return m_id;
+}
+std::string Player::getName() {
+	return m_name;
 }

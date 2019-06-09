@@ -16,10 +16,9 @@ Scene* GameScene::createScene() {
 	return scene;
 }
 
-Scene* GameScene::getCurrentMap() {
-	/*auto currentScene = Director::getInstance()->getRunningScene();
-	return dynamic_cast<GameScene*>(currentScene->getChildByName("GameScene"));*/
-	return Director::getInstance()->getRunningScene();
+GameScene* GameScene::getCurrentMap() {
+	auto currentScene = Director::getInstance()->getRunningScene();
+	return dynamic_cast<GameScene*>(currentScene->getChildByName("GameScene"));
 }
 
 bool GameScene::init() {

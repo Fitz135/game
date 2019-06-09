@@ -1,7 +1,7 @@
 #include "RoomScene.h"
 #include"ui/CocosGUI.h"
 #include"ODSocket.h"
-//#include"Settings.h"
+#include"Settings.h"
 USING_NS_CC;
 
 Scene* RoomScene::createScene() {
@@ -22,12 +22,11 @@ bool RoomScene::init() {
 	imgBG->setPosition(center_x, center_y);
 	this->addChild(imgBG);
 
-	if (connectService()) {
-		
-	}
-	
+	return initPlayer(connectService());
 }
-bool RoomScene::connectService() {
+
+
+char* RoomScene::connectService() {
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
@@ -39,13 +38,16 @@ bool RoomScene::connectService() {
 	log("Create:");
 	res = client->Connect(ip, 2111);//
 	log("Connect:");
+	char buffer[MSGSIZE];
 	if (res) {
-		char buffer[30];
-		client->Recv(buffer, 1);
+		
+		client->Recv(buffer, MSGSIZE);
+		client->Send(local_username.c_str(), MSGSIZE);
+
 		players = static_cast<int>(buffer[0])-48;
-		//Id = players;
+		local_Id = players;
 	}
-	return true;
+	return buffer;
 }
 char * RoomScene::getIp()
 {
@@ -63,4 +65,34 @@ char * RoomScene::getIp()
 		}
 	}
 	return NULL;
+}
+bool RoomScene::initPlayer(char* buffer) {
+	auto player=Player::create(local_username, local_Id);
+	playerList.push_back(player);
+	int start_pos = 2;
+	char* name;
+	int id;
+	for (int i = 0; i < players-1; i++) {
+		for (int j = start_pos; j < MSGSIZE; j++) {
+			if (buffer[j] = '\t') {
+				start_pos = j +1;
+				break;
+			}
+			name[j-start_pos] = buffer[j];
+		}
+		id = static_cast<int>(buffer[start_pos])-48;
+		start_pos+=2;
+		std::string(name);
+		playerList.push_back(Player::create(std::string(name), id));
+	}
+	auto w = Director::getInstance()->getWinSize().width / (players+1);
+	auto h = Director::getInstance()->getWinSize().height/ (players + 1);
+	for (int i = 0; i < players; i++) {
+		auto label = Label::create(playerList[i]->getName(), "arial.ttf", 15);
+		playerList[i]->setPosition(w*(i + 1), h*(i + 1));
+		label->setPosition(0, 40);
+		playerList[i]->addChild(label);
+		this->addChild(playerList[i]);
+	}
+	return true;
 }

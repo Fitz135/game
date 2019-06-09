@@ -4,9 +4,9 @@ using namespace cocos2d;
 class Player :public cocos2d::Sprite
 {
 public:
-	Player(std::string name, int id);
+	Player(std::string , int);
 	//CREATE_FUNC(Player);
-	static Player* create(std::string name, int id);
+	static Player* create(std::string , int);
 	bool initWithPlayerType();
 	Player * getMychara(char* str);
 
@@ -46,6 +46,9 @@ public:
 		uint8_t level;//等级
 		uint8_t exp;//经验
 	};//角色属性
+
+	int getId();
+	std::string getName();
 private:
 	std::string m_name;
 	int m_id;

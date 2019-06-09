@@ -15,15 +15,20 @@ struct globalArgs_t {
 
 static const char *optString = "p:h";
 
+typedef struct PlayerInfo{
+	char username[12];
+	char id[1];
+}playerInfo;
 
 SOCKET servSock;
-
 //char buffer[MAXBYTE] = {0};
 SOCKET playerList[4];
+playerInfo infoList[4];
+
 char* msgList[1024]; 
 int msgs=0;
 int players=0; 
-int MSGSIZE=4;
+int MSGSIZE=32;
 
 /*
  * Ip Utils
@@ -141,7 +146,7 @@ void initArgs(int argc, char *argv[])
 
 void * getMsg(void *ptr){
 	SOCKET* client=(SOCKET*)ptr;
-	char msg[MAXBYTE];
+	char msg[MSGSIZE];
 	while(1){
 		memset(msg, 0, sizeof(msg));
 		recv(*client,msg,MSGSIZE,0);
@@ -171,6 +176,10 @@ void * sendMsg(void *ptr){
 	}
 }
 
+void handleDate(char* buffer){
+	int pname=0;
+
+}
 int main(int argc, char *argv[]){
 	
 	
@@ -189,8 +198,9 @@ int main(int argc, char *argv[]){
 //    	printf("thread send error\n");
 //    	exit(1);
 //	}
-    char num[1];
-    sprintf(num,"%d",0);
+    char buffer[MSGSIZE];
+    sprintf(buffer,"%d",0);
+    //strncpy(infoList[players].id,buffer,1);
     while(1){
     	int nSize;
     	SOCKADDR playerAddr;
@@ -198,17 +208,38 @@ int main(int argc, char *argv[]){
     	SOCKET pClient = accept(servSock, (SOCKADDR*)&playerAddr, &nSize);
     	
     	playerList[players]=pClient;
-    	players++;
-		printf("Player%d Connected\n",players);
-    	sprintf(num,"%d",players);
-		sendTo(&pClient,num);
+    	
+    	
+		sprintf(buffer,"%d\t",players+1);
+		strncpy(infoList[players].id,buffer,1);
+		//printf("%s",infoList[players].id);
+//		if(players>0){
+//			for(int i=0;i<players;i++){
+//				strcat(buffer,infoList[i].username);
+//				strcat(buffer,"\t");
+//				strcat(buffer,infoList[i].id);
+//				strcat(buffer,"\t");
+//			}
+//		}
+		sendTo(&pClient,buffer);
+		
+    	recv(pClient,buffer,MSGSIZE,0);
+    	printf("recv!\n");
+		for(int i=0;i<MSGSIZE;i++){
+			if(buffer[i]!='\0')continue;
+			strncpy(infoList[players].username,buffer,i);
+			break;
+		}
+		
+		printf("Player:%s,Connected\n",infoList[players].username);
+		players++;
 		
     	pthread_create(&ids,NULL,getMsg,&pClient);
     	
 	}
     
     
-    printf("%s\n",num);	
+    //printf("%s",infoList[players].id);	
     closeSock();
     
     return 0;

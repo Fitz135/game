@@ -30,7 +30,7 @@ bool GameMode::init() {
 	
 	createBG();
 	
-	auto labelId= Label::create(username, "arial.ttf", 30);//"123"
+	auto labelId= Label::create(local_username, "arial.ttf", 30);//"123"
 	labelId->setPosition(visibleSize.width - labelId->getContentSize().width / 2, visibleSize.height - labelId->getContentSize().height / 2);
 	this->addChild(labelId);
 	return true;
@@ -44,7 +44,7 @@ void GameMode::gamestartCallback(Ref* ref) {
 
 	//Director::getInstance()->setClearColor(Color4F::WHITE);
 
-	auto scene = GameScene::createScene();
+	auto scene = RoomScene::createScene();
 	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
 };
 void GameMode::menubackCallback(Ref* ref) {

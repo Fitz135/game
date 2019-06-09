@@ -39,8 +39,8 @@ void LoginScene::startCallback(Ref* ref) {
 	MenuItemLabel* item = (MenuItemLabel*)ref;
 	std::string name = item->getString();
 	if (name == "Finish") {
-		username = id->getString();
-		if (username == "") {
+		local_username = id->getString();
+		if (local_username == "") {
 			return;
 		}
 		auto scene = GameMode::createScene();

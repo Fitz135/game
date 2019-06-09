@@ -17,6 +17,7 @@ bool Index::init() {
 	menu->alignItemsVerticallyWithPadding(20);
 	this->addChild(menu);
 
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Test.plist");
 	return true;
 }
 void Index::startCallback(Ref* ref) {

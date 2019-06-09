@@ -12,13 +12,10 @@ public:
 	void addPlayer();
 
 	char * getIp();
-	bool connectService();
+	char* connectService();
+	bool initPlayer(char *);
 private:
-	cocos2d::Sprite* player1;
-	cocos2d::Sprite* player2;
-	cocos2d::Sprite* player3;
-	cocos2d::Sprite* player4;
-	bool isReady;
+	bool isReady[4];
 	int players;// num of players
 	
 };
