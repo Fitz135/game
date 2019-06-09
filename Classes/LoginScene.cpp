@@ -1,7 +1,6 @@
 #include"LoginScene.h"
 #include"GameModeScene.h"
-#include<ui/CocosGUI.h>
-#include<string>
+#include"Settings.h"
 USING_NS_CC;	
 
 bool LoginScene::init() {
@@ -15,9 +14,10 @@ bool LoginScene::init() {
 	bg = Sprite::create("UI/PlayerBox.png");
 	bg->setPosition(center_x, center_y);
 
-	auto id = ui::TextField::create("input your ID ", "arial.ttf", 15);
+	id = ui::TextField::create("input your ID ", "arial.ttf", 15);
 	auto idBG = Sprite::create("UI/TextFieldBG.png");
 	id->setPosition(Vec2(center_x, center_y));
+	id->setTag(1);
 	idBG->setPosition(center_x, center_y);
 
 	auto finish = MenuItemLabel::create(Label::create("Finish", "arial.ttf", 20), CC_CALLBACK_1(LoginScene::startCallback, this));
@@ -39,6 +39,10 @@ void LoginScene::startCallback(Ref* ref) {
 	MenuItemLabel* item = (MenuItemLabel*)ref;
 	std::string name = item->getString();
 	if (name == "Finish") {
+		username = id->getString();
+		if (username == "") {
+			return;
+		}
 		auto scene = GameMode::createScene();
 		Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
 	}

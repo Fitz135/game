@@ -1,7 +1,9 @@
 #include"GameModeScene.h"
-#include"NormalScene.h"
-//#include"CreateRoom.h"
+//#include"NormalScene.h"
+
 #include"RoomScene.h"
+#include"Settings.h"
+
 USING_NS_CC;
 
 Scene* GameMode::createScene() {
@@ -27,6 +29,10 @@ bool GameMode::init() {
 	this->addChild(menu);
 	
 	createBG();
+	
+	auto labelId= Label::create(username, "arial.ttf", 30);//"123"
+	labelId->setPosition(visibleSize.width - labelId->getContentSize().width / 2, visibleSize.height - labelId->getContentSize().height / 2);
+	this->addChild(labelId);
 	return true;
 }
 void GameMode::gamestartCallback(Ref* ref) {

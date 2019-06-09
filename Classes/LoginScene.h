@@ -3,6 +3,7 @@
 #define _LOGIN_SCENE_H_
 
 #include <cocos2d.h>
+#include<ui/CocosGUI.h>
 
 class LoginScene :public cocos2d::Layer {
 public:
@@ -13,5 +14,6 @@ public:
 	//bool onTouchBegan(Touch *touch, Event *unused_event);
 private:
 	cocos2d::Sprite* bg;
+	cocos2d::ui::TextField * id;
 };
 #endif // !_LOGIN_SCENE_H_

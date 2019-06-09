@@ -4,6 +4,7 @@
 
 #include<cocos2d.h>
 
+
 class GameMode :public cocos2d::Scene {
 public:
 	static cocos2d::Scene* createScene();
