@@ -63,6 +63,9 @@
     <ClCompile Include="..\Classes\OPOperator.cpp">
       <Filter>src\Control</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Weapon.cpp">
+      <Filter>src\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -103,6 +106,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\OPOperator.h">
       <Filter>src\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Weapon.h">
+      <Filter>src\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

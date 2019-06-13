@@ -5,7 +5,8 @@
 #define HEADMOVE 0
 #define BODYMOVE 1
 #define LEGSMOVE 2
-#define ATTACK   3
+#define BODYATTACK   3
+#define HANDATTACK   4
 
 Player::Player(std::string name, int id) {
 	attr.hp = 100;
@@ -45,7 +46,6 @@ bool Player::initWithPlayerType(int i)
 	Body = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Body/Body-0.png");
 	Head = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Head/Head-0.png");
 	Hand = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Arm/Arm-0.png");
-	MyWeapon = Sprite::create("Boomerang.png");
 	weapon = Weapon::create();
 
 	Legs->setPosition(0, -14);
@@ -54,23 +54,39 @@ bool Player::initWithPlayerType(int i)
 	addChild(Head);
 	addChild(Body);
 	addChild(Legs);
-	addChild(MyWeapon);
 	addChild(Hand);
 
-	MyWeapon->setOpacity(0);
 	Hand->setOpacity(0);
 	Hand->setZOrder(2);
-	MyWeapon->setZOrder(1);
 
 	MoveFrames[HEADMOVE] = AnimationFrames("Player" + std::to_string(CharaType) + "/Head/Head-", 6, 19);
 	MoveFrames[BODYMOVE] = AnimationFrames("Player" + std::to_string(CharaType) + "/Body/Body-", 6, 19);
 	MoveFrames[LEGSMOVE] = AnimationFrames("Player" + std::to_string(CharaType) + "/Legs/Legs-", 6, 19);
-	MoveFrames[ATTACK] = AnimationFrames("Player" + std::to_string(CharaType) + "/Body/Body-", 1, 4);
+	MoveFrames[BODYATTACK] = AnimationFrames("Player" + std::to_string(CharaType) + "/Body/Body-", 1, 4);
+	MoveFrames[HANDATTACK] = AnimationFrames("Player" + std::to_string(CharaType) + "/Arm/Arm-", 1, 4);
 
 	AttackAbleFlag = 1;
 	AttackEndFlag = 1;
 	IsHaveWeapon = 1;
 	return true;
+}
+Weapon* Player::ChangeWeapon(int WeaponType)
+{
+	if (WeaponType == 1)
+		this->AttackMode = &Player::AttackMode2;
+	else
+		this->AttackMode = &Player::AttackMode1;
+
+	if (weapon)
+	{
+		weapon->MyWeapon->removeFromParentAndCleanup(TRUE);
+		delete weapon;
+	}
+	weapon = Weapon::create(WeaponType);
+	weapon->retain();
+	AttackSpeed = weapon->WeaponSpeed[WeaponType];
+	addChild(weapon->MyWeapon);
+	return weapon;
 }
 Vector<SpriteFrame*> Player::AnimationFrames(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end)
 {
@@ -80,25 +96,25 @@ Vector<SpriteFrame*> Player::AnimationFrames(std::basic_string<char, std::char_t
 		animFrames.pushBack(spritecache->getSpriteFrameByName(FrameName + std::to_string(i) + ".png"));
 	return animFrames;
 }
-Animate* Player::createAnimate(int i)
+Animate* Player::createAnimate(int FramesIndex, float delay)
 {
-	auto MoveAnimation=Animation::createWithSpriteFrames(MoveFrames[i], 1.0f / 8);
+	auto MoveAnimation = Animation::createWithSpriteFrames(MoveFrames[FramesIndex], delay);
 	return Animate::create(MoveAnimation);
 }
 
 void Player::MoveBegin()
 {
-	auto LegsAni = RepeatForever::create(createAnimate(LEGSMOVE));
+	auto LegsAni = RepeatForever::create(createAnimate(LEGSMOVE, 1.0f / 16));
 	LegsAni->setTag(LEGSMOVE);
 	Legs->runAction(LegsAni);
 
 	if (AttackEndFlag)
 	{
-		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE));
+		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE, 1.0f / 16));
 		HeadAni->setTag(HEADMOVE);
 		Head->runAction(HeadAni);
 
-		auto BodyAni = RepeatForever::create(createAnimate(BODYMOVE));
+		auto BodyAni = RepeatForever::create(createAnimate(BODYMOVE, 1.0f / 16));
 		BodyAni->setTag(BODYMOVE);
 		Body->runAction(BodyAni);
 	}
@@ -128,14 +144,16 @@ void Player::AttackEndflag(float dt)
 void Player::AttackEnd(int pressnum)
 {
 	Hand->setOpacity(0);
-	Body->stopActionByTag(ATTACK);
+	weapon->MyWeapon->setOpacity(0);
+	Body->stopActionByTag(BODYATTACK);
+	Hand->stopActionByTag(HANDATTACK);
 	if (pressnum)
 	{
-		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE));
+		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE, 1.0f / 16));
 		HeadAni->setTag(HEADMOVE);
 		Head->runAction(HeadAni);
 
-		auto BodyAni = RepeatForever::create(createAnimate(BODYMOVE));
+		auto BodyAni = RepeatForever::create(createAnimate(BODYMOVE, 1.0f / 16));
 		BodyAni->setTag(BODYMOVE);
 		Body->runAction(BodyAni);
 	}
@@ -144,18 +162,16 @@ void Player::AttackEnd(int pressnum)
 		Head->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Head/Head-0.png"));
 		Body->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Body/Body-0.png"));
 	}
-	weapon->RemoveWeapon();
 }
 void Player::AttackBegan(Point TouchPosition)
 {
 	AttackAbleFlag = 0;
 	AttackEndFlag = 0;
 	this->unschedule(schedule_selector(Player::AttackAbleflag));
-	this->schedule(schedule_selector(Player::AttackAbleflag), 1.0f);
-	this->scheduleOnce(schedule_selector(Player::AttackEndflag), 1.0f);
-
-	weapon->Boomerang(TouchPosition);
-	AttackMode1(TouchPosition);
+	this->schedule(schedule_selector(Player::AttackAbleflag), AttackSpeed);
+	this->scheduleOnce(schedule_selector(Player::AttackEndflag), AttackSpeed);
+	(weapon->*(weapon->WeaponMode))(TouchPosition);
+	(this->*(this->AttackMode))(TouchPosition);
 	return;
 }
 void Player::AttackMode1(Point TouchPosition)
@@ -190,15 +206,18 @@ void Player::AttackMode1(Point TouchPosition)
 
 void Player::AttackMode2(Point TouchPosition)
 {
-	auto PlayerPosition = Body->getPosition();
-
+	Hand->setOpacity(255);
 	Head->stopActionByTag(HEADMOVE);
 	Head->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Head/Head-0.png"));
 
-	auto animate = createAnimate(ATTACK);
-	animate->setTag(ATTACK);
+	auto BodyAni = createAnimate(BODYATTACK, 1.0f / 8);
+	BodyAni->setTag(BODYATTACK);
 	Body->stopActionByTag(BODYMOVE);
-	Body->runAction(animate);
+	Body->runAction(BodyAni);
+
+	auto HandAni = createAnimate(HANDATTACK, 1.0f / 8);
+	HandAni->setTag(HANDATTACK);
+	Hand->runAction(HandAni);
 }
 int Player::getId() {
 	return m_id;
