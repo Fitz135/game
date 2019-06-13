@@ -41,10 +41,16 @@ void Operator::MouseStart()
 }
 void Operator::PassOperatorInfo(float dt)
 {
-	auto Player=getMyplayer("Player");
-	if(MouseDown)
-	Player->Attack_Shoot(MousePosition);
-    if(!MouseDown&&Player->AttackEndFlag)
+	auto Player = getMyplayer("Player");
+	if (MouseDown&&Player->AttackAbleFlag&&Player->IsHaveWeapon)
+	{
+		Player->AttackBegan(MousePosition);
+		if (MousePosition.x < Player->getPositionX())
+			Player->setScaleX(-1);
+		else
+			Player->setScaleX(1);
+	}
+	if (!MouseDown&&Player->AttackEndFlag)
 	{
 		Player->AttackEnd(PressNum);
 		this->unschedule(schedule_selector(Operator::PassOperatorInfo));
@@ -77,8 +83,7 @@ void Operator::OnKeyPressed(EventKeyboard::KeyCode keyCode, Event * event)
 			Player->MoveBegin();
 		}
 		PressNum++;
-		auto scene = GameScene::getCurrentMap();
-		scene->schedule(move[keycode], 1.0f / 60);
+		this->schedule(move[keycode], 1.0f / 60);
 	}
 }
 
@@ -88,8 +93,7 @@ void Operator::OnKeyReleased(EventKeyboard::KeyCode keyCode, Event * event)
 	if (0 <= keycode && 3 >= keycode)
 	{
 		PressNum--;
-		auto scene= GameScene::getCurrentMap();
-		scene->unschedule(move[keycode]);
+		this->unschedule(move[keycode]);
 		if (!PressNum)
 		{
 			auto Player = getMyplayer("Player");
@@ -103,9 +107,7 @@ void Operator::MoveUP(float dt)
 	MoveBy* move = MoveBy::create(1 / 60, Vec2(0, 1));
 	auto Player = getMyplayer("Player");
 
-	Player->Legs->runAction(move);
-	Player->Body->runAction(move->clone());
-	Player->Head->runAction(move->clone());
+	Player->runAction(move);
 }
 void Operator::MoveDOWN(float dt)
 {
@@ -113,36 +115,22 @@ void Operator::MoveDOWN(float dt)
 	MoveBy* move = MoveBy::create(1 / 60, Vec2(0, -1));
 	auto Player = getMyplayer("Player");
 
-	Player->Legs->runAction(move);
-	Player->Body->runAction(move->clone());
-	Player->Head->runAction(move->clone());
+	Player->runAction(move);
+
 }
 void Operator::MoveLEFT(float dt)
 {
 	auto Player = getMyplayer("Player");
-	if (Player->AttackEndFlag&&!MouseDown)
-	{
-		Player->Legs->setFlippedX(true);
-		Player->Body->setFlippedX(true);
-		Player->Head->setFlippedX(true);
-	}
+	if (Player->AttackEndFlag && !MouseDown)
+		Player->setScaleX(-1);
 	MoveBy* move = MoveBy::create(1 / 60, Vec2(-1, 0));
-	Player->Legs->runAction(move);
-	Player->Body->runAction(move->clone());
-	Player->Head->runAction(move->clone());
+	Player->runAction(move);
 }
 void Operator::MoveRIGHT(float dt)
 {
 	auto Player = getMyplayer("Player");
 	if (Player->AttackEndFlag && !MouseDown)
-	{
-		Player->Legs->setFlippedX(false);
-		Player->Body->setFlippedX(false);
-		Player->Head->setFlippedX(false);
-	}
+		Player->setScaleX(1);
 	MoveBy* move = MoveBy::create(1.0f / 60, Vec2(1, 0));
-
-	Player->Legs->runAction(move);
-	Player->Body->runAction(move->clone());
-	Player->Head->runAction(move->clone());
+	Player->runAction(move);
 }

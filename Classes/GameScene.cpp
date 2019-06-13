@@ -43,8 +43,10 @@ bool GameScene::init() {
 		return false;
 	}
 	
+
 	auto w = Director::getInstance()->getWinSize().width / (players + 1);
 	auto h = Director::getInstance()->getWinSize().height / (players + 1);
+
 
 	/*for (int i = 0; i < players; i++) {
 		auto label = Label::create(playerList[i]->getName(), "arial.ttf", 15);
