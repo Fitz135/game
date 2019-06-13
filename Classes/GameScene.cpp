@@ -33,8 +33,10 @@ static void getMsg(ODSocket* client) {
 			break;
 		}
 		client->Recv(buffer, MSGSIZE);
-		if (buffer[0] == KeyPress || buffer[0] == KeyRelease) {
-			dynamic_cast<OPOperator*>(player->getChildByName("op"))->KeyStart(buffer);//这里调用getmap也出错，所以用static player做个例子
+		switch (buffer[0]) {
+		case NewPlayer:
+			case KeyPress:
+			case KeyRelease:dynamic_cast<OPOperator*>(player->getChildByName("op"))->KeyStart(buffer); break;
 		}
 	}
 }
@@ -70,7 +72,7 @@ bool GameScene::init() {
 
 void GameScene::onEnter() {
 	Layer::onEnter();
-	client->Send("3", 1);//////
+	client->Send("4", 1);//////
 	endThread = 0;
 	std::thread t(getMsg, client);
 	t.detach();
@@ -79,3 +81,4 @@ void GameScene::onExit() {
 	Layer::onExit();
 	endThread = 1;
 }
+

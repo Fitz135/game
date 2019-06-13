@@ -22,8 +22,10 @@ static void getMsg(ODSocket* m_client) {
 			break;
 		}
 		m_client->Recv(buffer, MSGSIZE);
-		if (buffer[0]== KeyPress|| buffer[0] == KeyRelease) {// 
-			
+		switch (buffer[0]) {
+		case NewPlayer:RoomScene::addPlayer(buffer); break;
+		case KeyPress:;
+		case KeyRelease:;//dynamic_cast<OPOperator*>(player->getChildByName("op"))->KeyStart(buffer); break;
 		}
 	}
 }
@@ -44,7 +46,7 @@ bool RoomScene::init() {
 	auto readyItem = MenuItemLabel::create(Label::create("Ready", "arial.ttf", 30), CC_CALLBACK_1(RoomScene::gamestartCallback, this));
 	auto menu = Menu::create();
 	menu->addChild(readyItem);
-	readyItem->setPosition(-center_x+20, -center_y+20);
+	readyItem->setPosition(-center_x*4/5, -center_y*4/5);
 	this->addChild(menu,1);
 	
 	return true;
@@ -114,29 +116,82 @@ bool RoomScene::initPlayer(char* buffer) {
 		//std::string(name);
 		playerList.push_back(Player::create(std::string(name), id));
 	}
-	auto w = Director::getInstance()->getWinSize().width / (players+1);
-	auto h = Director::getInstance()->getWinSize().height/ (players + 1);
+	auto w = Director::getInstance()->getWinSize().width;
+	auto h = Director::getInstance()->getWinSize().height;
 	for (int i = 0; i < players; i++) {
 		auto label = Label::create(playerList[i]->getName(), "arial.ttf", 15);
-		playerList[i]->setPosition(w*(i + 1), h*(i + 1));
+		if (i == 0) {
+			playerList[i]->setPosition(w/4, h*4/7);
+			playerList[i]->setScale(1.5f);
+		}
+		else {
+			playerList[i]->setPosition(w*(3+i)/7, h*3/4);
+		}
 		label->setPosition(0, 40);
+		label->setColor(Color3B::BLACK);
 		playerList[i]->addChild(label);
 		this->addChild(playerList[i]);
 	}
+	
 	return true;
 }
 void RoomScene::gamestartCallback(Ref* ref) {
+	/*
+	
 	auto scene =GameScene::createScene();
 	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
+	
+	*/
+	MenuItemLabel* item = (MenuItemLabel*)ref;
+	char buffer[MSGSIZE];
+	if (item->getString() == "Ready") {
+		item->setString("Unready");
+		sprintf(buffer, "%c$%d$r", Ready,playerList[0]->getId());
+		client->Send(buffer, 3);
+	}
+	else {
+		item->setString("Ready");
+		sprintf(buffer, "%c$%d$u", Ready,playerList[0]->getId());
+		client->Send(buffer, 3);
+	}
 }
 
 void RoomScene::onEnter(){
 	Layer::onEnter();
 	endThread = 0;
-	/*std::thread t(getMsg,client);
-	t.detach();*/
+	std::thread t(getMsg,client);
+	t.detach();
+	
 }
 void RoomScene::onExit() {
 	Layer::onExit();
 	endThread = 1;
+}
+void RoomScene::addPlayer(char* buffer) {
+	int start_pos = 2;
+	char* name;
+	int id;
+
+	for (int j = start_pos; j < MSGSIZE; j++) {
+		if (buffer[j] = '$') {
+			start_pos = j + 1;
+			name[j] = '\0';
+			break;
+		}
+		name[j - start_pos] = buffer[j];
+	}
+	id = static_cast<int>(buffer[start_pos]) - 48;
+	start_pos += 2;
+	auto newPlayer = Player::create(std::string(name), id);
+	playerList.push_back(newPlayer);
+	players++;
+
+	auto w = Director::getInstance()->getWinSize().width;
+	auto h = Director::getInstance()->getWinSize().height;
+	auto label = Label::create(newPlayer->getName(), "arial.ttf", 15);
+	label->setPosition(0, 40);
+	label->setColor(Color3B::BLACK);
+	newPlayer->setPosition(w*(2+players) / 7, h * 3 / 4);
+	newPlayer->addChild(label);
+	Director::getInstance()->getRunningScene()->addChild(newPlayer);
 }

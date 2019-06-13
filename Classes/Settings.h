@@ -5,6 +5,7 @@
 #define NewPlayer '1' 
 #define KeyPress '2'
 #define KeyRelease '3'
+#define Ready '4'
 
 		extern int local_Id ;
 		extern std::string local_username ;

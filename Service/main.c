@@ -6,11 +6,11 @@
 
 #include "utils.h"
 
-#define GameStart 3
-#define NewPlayer 1 
-#define KeyPress 2
-
-
+#define GameStart '9'
+#define NewPlayer '1' 
+#define KeyPress '2'
+#define KeyRelease '3'
+#define Ready '4'
 
 struct globalArgs_t {
     int port;
@@ -32,7 +32,7 @@ char* msgList[1024];
 int msgs=0;
 int players=0; 
 int MSGSIZE=32;
-
+int isReady[4];
 /*
  * Ip Utils
  */
@@ -153,11 +153,27 @@ void * getMsg(void *ptr){
 	while(1){
 		memset(msg, 0, sizeof(msg));
 		recv(*client,msg,MSGSIZE,0);
-		if(msg[0]=='3'){
+		if(msg[0]==GameStart){
 			sprintf(msg,"%d$%d",KeyPress,2);
 			sendTo(client,msg);
-			printf("control!\n");
+			printf("Press!\n");
+			sleep(1);
+			sprintf(msg,"%d$%d",KeyRelease,2);
+			sendTo(client,msg);
+			printf("Release!\n");
 			continue;
+		}
+		else if(msg[0]==Ready){
+			int id=(int)msg[2]-49;
+			if(msg[4]=='r')isReady[id]=1;
+			else isReady[id]=0;
+			int res=1;
+			for(int i=0;i<players;i++){
+				res*=isReady[i];
+			}
+			if(res){
+				sprintf(msg,"%c",GameStart);
+			}
 		}
 		msgList[msgs]=msg;
 		msgs++;

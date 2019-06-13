@@ -10,7 +10,7 @@ public:
 	static cocos2d::Scene* createScene();
 	virtual bool init();
 	CREATE_FUNC(RoomScene);
-	void addPlayer();
+	static void addPlayer(char*);
 
 	char * getIp();
 	char* connectService();
@@ -21,10 +21,12 @@ public:
 	//void getMsg(ODSocket*);
 	virtual void  onEnter();
 	virtual void  onExit();
+
+	
 private:
 	bool isReady[4];
 
-	int players;// num of players
+	
 	
 	
 };

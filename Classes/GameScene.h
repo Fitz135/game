@@ -16,5 +16,6 @@ public:
 	virtual void onExit();
 	
 	
+	
 };
 #endif // !_GAME_SCENE_H_

@@ -35,17 +35,17 @@ void OPOperator::KeyStart(char* buffer) {
 				player->MoveBegin();
 			}
 			PressNum++;
-			auto scene = GameScene::getCurrentMap();
-			scene->schedule(move[keycode], 1.0f / 60);
+			//auto scene = GameScene::getCurrentMap();
+			this->schedule(move[keycode], 1.0f / 60);
 		}
 	}
 	else if (buffer[0] == KeyRelease) {
-		int keycode = static_cast<int>(buffer[3]) - 48;
+		int keycode = static_cast<int>(buffer[2]) - 48;
 		if (0 <= keycode && 3 >= keycode)
 		{
 			PressNum--;
-			auto scene = GameScene::getCurrentMap();
-			scene->unschedule(move[keycode]);
+			//auto scene = GameScene::getCurrentMap();
+			this->unschedule(move[keycode]);
 			if (!PressNum)
 			{
 				auto player = dynamic_cast<Player*>(getParent());
@@ -54,7 +54,7 @@ void OPOperator::KeyStart(char* buffer) {
 		}
 	}
 }
-void OPOperator::PassOperatorInfo(float dt)
+/*void OPOperator::PassOperatorInfo(float dt)
 {
 	auto player = dynamic_cast<Player*>(getParent());
 	if (MouseDown)
@@ -81,7 +81,7 @@ void OPOperator::onMouseEnded(Touch * ptouch, Event *pevent)
 {
 	MouseDown = 0;
 }
-
+*/
 
 
 
