@@ -6,6 +6,9 @@
 
 #include "utils.h"
 
+#define GameStart 3
+#define NewPlayer 1 
+#define KeyPress 2
 
 
 
@@ -150,7 +153,12 @@ void * getMsg(void *ptr){
 	while(1){
 		memset(msg, 0, sizeof(msg));
 		recv(*client,msg,MSGSIZE,0);
-		if(msg[0]=='q')break;
+		if(msg[0]=='3'){
+			sprintf(msg,"%d$%d",KeyPress,2);
+			sendTo(client,msg);
+			printf("control!\n");
+			continue;
+		}
 		msgList[msgs]=msg;
 		msgs++;
 		printf("%dst msg is %s\n",msgs,msg);
@@ -180,6 +188,8 @@ void handleDate(char* buffer){
 	int pname=0;
 
 }
+
+
 int main(int argc, char *argv[]){
 	
 	
@@ -210,17 +220,17 @@ int main(int argc, char *argv[]){
     	playerList[players]=pClient;
     	
     	
-		sprintf(buffer,"%d\t",players+1);
+		sprintf(buffer,"%d$",players+1);
 		strncpy(infoList[players].id,buffer,1);
 		//printf("%s",infoList[players].id);
-//		if(players>0){
-//			for(int i=0;i<players;i++){
-//				strcat(buffer,infoList[i].username);
-//				strcat(buffer,"\t");
-//				strcat(buffer,infoList[i].id);
-//				strcat(buffer,"\t");
-//			}
-//		}
+		if(players>0){
+			for(int i=0;i<players;i++){
+				strcat(buffer,infoList[i].username);
+				strcat(buffer,"$");
+				strcat(buffer,infoList[i].id);
+				strcat(buffer,"$");
+			}
+		}
 		sendTo(&pClient,buffer);
 		
     	recv(pClient,buffer,MSGSIZE,0);
@@ -231,8 +241,19 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		
+		
+		if(players>0){
+			for(int j=0;j<players;j++){
+				if(&playerList[j]==NULL)break;//Ã»ÂÑÓÃ? 
+					sprintf(buffer,"%d$%s$%s$",NewPlayer,infoList[players].username,infoList[players].id);
+					send(playerList[j],infoList[players].username,MSGSIZE,0);
+			}
+		}
+		
 		printf("Player:%s,Connected\n",infoList[players].username);
 		players++;
+		
+		
 		
     	pthread_create(&ids,NULL,getMsg,&pClient);
     	

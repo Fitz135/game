@@ -10,8 +10,9 @@ public:
 	virtual bool init();
 	CREATE_FUNC(LoginScene);
 	virtual void onEnter();
-	void startCallback(Ref* ref);
+	void startCallback(cocos2d::Ref* ref);
 	//bool onTouchBegan(Touch *touch, Event *unused_event);
+	
 private:
 	cocos2d::Sprite* bg;
 	cocos2d::ui::TextField * id;

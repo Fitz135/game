@@ -3,6 +3,7 @@
 #define _GAME_SCENE_H_
 
 #include"cocos2d.h"
+#include "Player.h"
 
 class GameScene :public cocos2d::Layer {
 public:
@@ -11,5 +12,9 @@ public:
 	CREATE_FUNC(GameScene);
 	static  GameScene* getCurrentMap();
 
+	virtual void onEnter();
+	virtual void onExit();
+	
+	
 };
 #endif // !_GAME_SCENE_H_

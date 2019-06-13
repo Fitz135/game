@@ -4,6 +4,7 @@
 
 #include "cocos2d.h"
 
+
 class RoomScene :public cocos2d::Layer {
 public:
 	static cocos2d::Scene* createScene();
@@ -14,9 +15,17 @@ public:
 	char * getIp();
 	char* connectService();
 	bool initPlayer(char *);
+
+	void gamestartCallback(Ref*);
+
+	//void getMsg(ODSocket*);
+	virtual void  onEnter();
+	virtual void  onExit();
 private:
 	bool isReady[4];
+
 	int players;// num of players
+	
 	
 };
 #endif // !_ROOM_SCENE_H_

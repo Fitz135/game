@@ -60,6 +60,9 @@
     <ClCompile Include="..\Classes\GameScene.cpp">
       <Filter>src\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\OPOperator.cpp">
+      <Filter>src\Control</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\GameScene.h">
       <Filter>src\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\OPOperator.h">
+      <Filter>src\Control</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

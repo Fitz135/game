@@ -3,7 +3,11 @@
 USING_NS_CC;//using namespace cocos2d;
 
 Scene* Index::createScene() {
-	return Index::create();
+	auto scene = Scene::create();
+	auto layer=Index::create();
+	layer->setTag(1);
+	scene->addChild(layer);
+	return scene;
 }
 
 bool Index::init() {
@@ -22,6 +26,7 @@ bool Index::init() {
 }
 void Index::startCallback(Ref* ref) {
 	auto layer = LoginScene::create();
+	layer->setTag(1);
 	this->addChild(layer);
 }
 void Index::exitCallback(Ref* ref) {

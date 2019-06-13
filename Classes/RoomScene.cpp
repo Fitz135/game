@@ -1,14 +1,31 @@
 #include "RoomScene.h"
+#include"GameScene.h"
 #include"ui/CocosGUI.h"
-#include"ODSocket.h"
 #include"Settings.h"
+#include"thread"
 USING_NS_CC;
+
+static bool endThread;
 
 Scene* RoomScene::createScene() {
 	auto scene = Scene::create();
 	auto layer = RoomScene::create();
 	scene->addChild(layer);
 	return scene;
+}
+
+static void getMsg(ODSocket* m_client) {
+	char buffer[MSGSIZE];
+	while (!endThread) {
+		if (client == NULL) {
+			log("null client");
+			break;
+		}
+		m_client->Recv(buffer, MSGSIZE);
+		if (buffer[0]== KeyPress|| buffer[0] == KeyRelease) {// 
+			
+		}
+	}
 }
 bool RoomScene::init() {
 	if (!Layer::init()) {
@@ -22,17 +39,26 @@ bool RoomScene::init() {
 	imgBG->setPosition(center_x, center_y);
 	this->addChild(imgBG);
 
-	return initPlayer(connectService());
+	initPlayer(connectService());
+
+	auto readyItem = MenuItemLabel::create(Label::create("Ready", "arial.ttf", 30), CC_CALLBACK_1(RoomScene::gamestartCallback, this));
+	auto menu = Menu::create();
+	menu->addChild(readyItem);
+	readyItem->setPosition(-center_x+20, -center_y+20);
+	this->addChild(menu,1);
+	
+	return true;
 }
 
 
-char* RoomScene::connectService() {
+char* RoomScene::connectService(){
+
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
 	char * ip = getIp();
 
-	auto client = new ODSocket();
+	client = new ODSocket();
 	client->Init();
 	bool res = client->Create(AF_INET, SOCK_STREAM, 0);
 	log("Create:");
@@ -46,6 +72,8 @@ char* RoomScene::connectService() {
 
 		players = static_cast<int>(buffer[0])-48;
 		local_Id = players;
+
+		
 	}
 	return buffer;
 }
@@ -74,7 +102,7 @@ bool RoomScene::initPlayer(char* buffer) {
 	int id;
 	for (int i = 0; i < players-1; i++) {
 		for (int j = start_pos; j < MSGSIZE; j++) {
-			if (buffer[j] = '\t') {
+			if (buffer[j] = '$') {
 				start_pos = j +1;
 				break;
 			}
@@ -82,7 +110,7 @@ bool RoomScene::initPlayer(char* buffer) {
 		}
 		id = static_cast<int>(buffer[start_pos])-48;
 		start_pos+=2;
-		std::string(name);
+		//std::string(name);
 		playerList.push_back(Player::create(std::string(name), id));
 	}
 	auto w = Director::getInstance()->getWinSize().width / (players+1);
@@ -95,4 +123,19 @@ bool RoomScene::initPlayer(char* buffer) {
 		this->addChild(playerList[i]);
 	}
 	return true;
+}
+void RoomScene::gamestartCallback(Ref* ref) {
+	auto scene =GameScene::createScene();
+	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
+}
+
+void RoomScene::onEnter(){
+	Layer::onEnter();
+	endThread = 0;
+	/*std::thread t(getMsg,client);
+	t.detach();*/
+}
+void RoomScene::onExit() {
+	Layer::onExit();
+	endThread = 1;
 }

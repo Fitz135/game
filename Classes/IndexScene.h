@@ -4,7 +4,7 @@
 
 #include<cocos2d.h>
 
-class Index :public cocos2d::Scene {
+class Index :public cocos2d::Layer {
 public:
 	static cocos2d::Scene* createScene();
 
