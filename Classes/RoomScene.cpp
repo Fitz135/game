@@ -67,6 +67,7 @@ char * RoomScene::getIp()
 	return NULL;
 }
 bool RoomScene::initPlayer(char* buffer) {
+
 	auto player=Player::create(local_username, local_Id);
 	playerList.push_back(player);
 	int start_pos = 2;

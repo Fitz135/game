@@ -1,28 +1,32 @@
 #pragma once
 #include"cocos2d.h"
 using namespace cocos2d;
+class Weapon;
 class Player :public cocos2d::Sprite
 {
 public:
 	Player(std::string , int);
 	//CREATE_FUNC(Player);
 	static Player* create(std::string , int);
-	bool initWithPlayerType();
+	bool initWithPlayerType(int id);
 	Player * getMychara(char* str);
+	int CharaType;
 
 	Sprite *Body;
 	Sprite *Head;
 	Sprite *Legs;
+	Sprite *Hand;
+	Sprite *MyWeapon;
+	Weapon* weapon;
 
+	bool IsHaveWeapon;
 	bool AttackAbleFlag;
 	bool AttackEndFlag;
 
-	Vector<SpriteFrame*> MoveFrames[3];
-	Vector<SpriteFrame*> AttackFrames;
+	Vector<SpriteFrame*> MoveFrames[4];
 
-	Vector<SpriteFrame*> AnimationFrames(const char * FrameName, int begin, int end);
-	Animate * createMoveAni(int i);
-	Animate * createAttackAni();
+	Vector<SpriteFrame*> AnimationFrames(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end);
+	Animate * createAnimate(int i);
 
 	void MoveBegin();
 
@@ -34,7 +38,9 @@ public:
 
 	void AttackEnd(int pressnum);
 
-	void Attack_Shoot(Point MousePosition);
+	void AttackBegan(Point MousePosition);
+
+	void AttackMode1(Point TouchPosition);
 
 	struct Attr
 	{
@@ -46,6 +52,8 @@ public:
 		uint8_t level;//等级
 		uint8_t exp;//经验
 	};//角色属性
+
+	void AttackMode2(Point TouchPosition);
 
 	int getId();
 	std::string getName();

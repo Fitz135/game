@@ -25,7 +25,7 @@ bool GameScene::init() {
 	if (!Layer::init()) {
 		return false;
 	}
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Test.plist");
+	
 	auto player=Player::create("123", 1);
 	this->addChild(player);
 

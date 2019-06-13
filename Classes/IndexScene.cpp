@@ -17,7 +17,8 @@ bool Index::init() {
 	menu->alignItemsVerticallyWithPadding(20);
 	this->addChild(menu);
 
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Test.plist");
+	for (int i = 1; i <= 7; i++)
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Player/" + std::to_string(i) + ".plist");
 	return true;
 }
 void Index::startCallback(Ref* ref) {
