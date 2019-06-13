@@ -1,18 +1,25 @@
 #include"Weapon.h"
 #include"GameScene.h"
+#include"Settings.h"
 #include"Player.h"
 
 #define PI 3.1415
+
+void(Weapon::*weaponmode[4])(Point MousePosition) = { &Weapon::Bow,&Weapon::Sword,&Weapon::BubbleGun,&Weapon::Boomerang };
 
 inline Player* getMyplayer(char* str) {
 	auto scene = GameScene::getCurrentMap();
 	return dynamic_cast<Player*>(scene->getChildByName(str));
 }
-
-void Weapon::RemoveWeapon()
+Weapon* Weapon::create(int WeaponType)
 {
-	auto Player = getMyplayer("Player");
-	Player->MyWeapon->setOpacity(0);
+	auto weapon = Weapon::create();
+	weapon->MyWeapon = Sprite::create(settings::weapon_paths[WeaponType]);
+	weapon->MyWeapon->setOpacity(0);
+	weapon->MyWeapon->setZOrder(1);
+	weapon->WeaponMode = weaponmode[WeaponType];
+
+	return weapon;
 }
 void Weapon::Bow(Point MousePosition)
 {
@@ -37,10 +44,10 @@ void Weapon::Bow(Point MousePosition)
 	else J = -1;
 
 	auto Theta = atanf((MousePosition.y - PlayerPosition.y - BowPosition.y) / (MousePosition.x - (PlayerPosition.x + K * BowPosition.x)));
-	Player->MyWeapon->setRotation((-PI / 2 - J * K*PI / 2 - K * Theta) / PI * 180);;
-	Player->MyWeapon->setAnchorPoint(Vec2(0.28125, 0.5));//once
-	Player->MyWeapon->setPosition(BowPosition);
-	Player->MyWeapon->setOpacity(255);
+	MyWeapon->setRotation((-PI / 2 - J * K*PI / 2 - K * Theta) / PI * 180);;
+	MyWeapon->setAnchorPoint(Vec2(0.28125, 0.5));//once
+	MyWeapon->setPosition(BowPosition);
+	MyWeapon->setOpacity(255);
 
 	auto Arrow = Sprite::create("arrow.png");
 	auto ArrowPosition=Vec2(PlayerPosition.x + K * BowPosition.x, PlayerPosition.y + BowPosition.y);
@@ -70,12 +77,12 @@ void Weapon::Sword(Point MousePosition)
 	auto move3 = MoveBy::create(1.0f / 16, Vec2(-2, -4));
 	auto seq = Sequence::create(delay, move, delay, move2, delay, move3, nullptr);
 
-	Player->MyWeapon->setOpacity(255);
-	Player->MyWeapon->setAnchorPoint(Vec2(0.09259, 0.09259));//once
-	Player->MyWeapon->setPosition(-9, 7);
-	Player->MyWeapon->setRotation(-90);//once
-	Player->MyWeapon->runAction(rotate);
-	Player->MyWeapon->runAction(seq);
+	MyWeapon->setOpacity(255);
+	MyWeapon->setAnchorPoint(Vec2(0.09259, 0.09259));//once
+	MyWeapon->setPosition(-9, 7);
+	MyWeapon->setRotation(-90);//once
+	MyWeapon->runAction(rotate);
+	MyWeapon->runAction(seq);
 }
 
 void Weapon::BubbleGun(Point MousePosition)
@@ -101,10 +108,10 @@ void Weapon::BubbleGun(Point MousePosition)
 	else J = -1;
 
 	auto Theta =atanf((MousePosition.y - PlayerPosition.y-BubbleGunPosition.y) / (MousePosition.x - (PlayerPosition.x+K*BubbleGunPosition.x)));
-	Player->MyWeapon->setRotation((-PI/2-J*K*PI/2-K*Theta)/ PI * 180);;
-	Player->MyWeapon->setOpacity(255);
-	Player->MyWeapon->setPosition(BubbleGunPosition);
-	Player->MyWeapon->setAnchorPoint(Vec2(0.50000, 0.30000));//once
+	MyWeapon->setRotation((-PI/2-J*K*PI/2-K*Theta)/ PI * 180);;
+	MyWeapon->setOpacity(255);
+	MyWeapon->setPosition(BubbleGunPosition);
+	MyWeapon->setAnchorPoint(Vec2(0.50000, 0.30000));//once
 
 	auto Bubble = Sprite::create("Bubble.png");
 	auto BubblePosition = Vec2(PlayerPosition.x + K * BubbleGunPosition.x, PlayerPosition.y + BubbleGunPosition.y) + Vec2(35.69* cos(PI/2+J*PI/2 +Theta +K*0.197), 35.69* sin(PI / 2 + J * PI / 2 +Theta + K*0.197));

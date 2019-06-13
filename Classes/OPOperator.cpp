@@ -58,7 +58,7 @@ void OPOperator::KeyStart(char* buffer) {
 {
 	auto player = dynamic_cast<Player*>(getParent());
 	if (MouseDown)
-		player->Attack_Shoot(MousePosition);
+		player->AttackBegan(MousePosition);
 	if (!MouseDown&&player->AttackEndFlag)
 	{
 		player->AttackEnd(PressNum);

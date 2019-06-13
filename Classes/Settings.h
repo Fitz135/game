@@ -16,3 +16,12 @@
 		const int MSGSIZE = 32;
 		extern int players;// num of players
 		extern ODSocket* client;
+		namespace settings
+		{
+			constexpr char *weapon_paths[] = {
+					"Bow.png",
+					"Sword.png",
+					"BubbleGun.png",
+					"Boomerang.png"
+			};
+		}

@@ -9,6 +9,7 @@ public:
 	//CREATE_FUNC(Player);
 	static Player* create(std::string , int);
 	bool initWithPlayerType(int id);
+	Weapon * ChangeWeapon(int WeaponType);
 	Player * getMychara(char* str);
 	int CharaType;
 
@@ -16,17 +17,16 @@ public:
 	Sprite *Head;
 	Sprite *Legs;
 	Sprite *Hand;
-	Sprite *MyWeapon;
 	Weapon* weapon;
 
 	bool IsHaveWeapon;
 	bool AttackAbleFlag;
 	bool AttackEndFlag;
 
-	Vector<SpriteFrame*> MoveFrames[4];
+	Vector<SpriteFrame*> MoveFrames[5];
 
 	Vector<SpriteFrame*> AnimationFrames(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end);
-	Animate * createAnimate(int i);
+	Animate * createAnimate(int FramesIndex, float delay);
 
 	void MoveBegin();
 
@@ -41,7 +41,9 @@ public:
 	void AttackBegan(Point MousePosition);
 
 	void AttackMode1(Point TouchPosition);
-
+	void AttackMode2(Point TouchPosition);
+	void(Player::*AttackMode)(Point MousePosition);
+	float AttackSpeed;
 	struct Attr
 	{
 		uint8_t speed;//速度
@@ -53,7 +55,7 @@ public:
 		uint8_t exp;//经验
 	};//角色属性
 
-	void AttackMode2(Point TouchPosition);
+
 
 	int getId();
 	std::string getName();
