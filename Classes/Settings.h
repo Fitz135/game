@@ -1,6 +1,7 @@
 #pragma once
 #include "cocos2d.h"
 #include"Player.h"
+#include"Entity.h"
 #include"ODSocket.h"
 #define NewPlayer '1' 
 #define KeyPress '2'
@@ -8,11 +9,12 @@
 #define Ready '4'
 #define GameStart '9'
 
+		
 		extern int local_Id ;
 		extern std::string local_username ;
 		extern int Scale ;//Í¼Æ¬±ÈÀý
 
-		extern std::vector<Player*> playerList;
+		extern std::vector<Entity*> playerList;
 
 		const int MSGSIZE = 32;
 		extern int players;// num of players

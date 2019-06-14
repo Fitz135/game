@@ -2,6 +2,7 @@
 #include"GameScene.h"
 #include"ui/CocosGUI.h"
 #include"Settings.h"
+#include"Entity.h"
 #include"thread"
 USING_NS_CC;
 
@@ -84,12 +85,15 @@ char * RoomScene::getIp()
 }
 bool RoomScene::initPlayer(char* buffer) {
 
-	auto player=Player::create(local_username, local_Id);
+	auto player=new Entity(local_username, local_Id);
 	playerList.push_back(player);
-	int start_pos = 2;
-	char* name;
-	int id;
+
+
+	////init other player////////
 	for (int i = 0; i < players-1; i++) {
+		int start_pos = 2;
+		char* name;
+		int id;
 		for (int j = start_pos; j < MSGSIZE; j++) {
 			if (buffer[j] = '$') {
 				start_pos = j +1;
@@ -100,8 +104,10 @@ bool RoomScene::initPlayer(char* buffer) {
 		id = static_cast<int>(buffer[start_pos])-48;
 		start_pos+=2;
 		//std::string(name);
-		playerList.push_back(Player::create(std::string(name), id));
+		playerList.push_back(Entity::create(std::string(name), id));
 	}
+
+	//////set position/////
 	auto w = Director::getInstance()->getWinSize().width;
 	auto h = Director::getInstance()->getWinSize().height;
 	for (int i = 0; i < players; i++) {
@@ -172,7 +178,8 @@ void RoomScene::addPlayer(char* buffer) {
 	id = static_cast<int>(buffer[start_pos]) - 48;
 	start_pos += 2;
 	auto newPlayer = Player::create(std::string(name), id);
-	playerList.push_back(newPlayer);
+	auto entity= Entity::create(std::string(name), id);
+	playerList.push_back(entity);
 	players++;
 
 	auto w = Director::getInstance()->getWinSize().width;

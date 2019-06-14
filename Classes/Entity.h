@@ -1,17 +1,23 @@
-#include "cocos2d.h"
+#ifndef _ENTITY_H_
+#define _ENTITY_H_
+
+
+
 #include <string>
 
-class Entity : public cocos2d::Sprite
+class Entity 
 {
 public:
-    Entity() = default;
+    Entity(std::string , int ) ;
     ~Entity() = default;
     
-    void setID(std::string);
-    std::string getID() const;
-    
+	static Entity* create(std::string, int);
+    int getId() const;
+	std::string getName();
+
     // virtual void setStatus();
     
-protected:
-    std::string _id;
+	std::string _name;
+    int _id;
 };
+#endif // !_ENTITY_H_

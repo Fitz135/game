@@ -1,5 +1,6 @@
 #pragma once
 #include"cocos2d.h"
+#include"Entity.h"
 using namespace cocos2d;
 class Weapon;
 class Player :public cocos2d::Sprite
@@ -8,6 +9,7 @@ public:
 	Player(std::string , int);
 	//CREATE_FUNC(Player);
 	static Player* create(std::string , int);
+	static Player* create(Entity*);
 	bool initWithPlayerType(int id);
 	Weapon * ChangeWeapon(int WeaponType);
 	Player * getMychara(char* str);
@@ -60,6 +62,7 @@ public:
 	int getId();
 	std::string getName();
 private:
+	Entity info;
 	std::string m_name;
 	int m_id;
 	Attr attr;

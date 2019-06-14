@@ -1,11 +1,17 @@
 #include "Entity.h"
 
-void Entity::setID(std::string id)
-{
-    this->_id = id;
-};
+Entity::Entity(std::string name, int id) :_name (name),_id(id) {
 
-std::string Entity::getID() const
+}
+
+Entity* Entity::create(std::string name, int id) {
+	Entity* entity = new Entity(name, id);
+	return entity;
+}
+int Entity::getId() const
 {
-    return this->_id;
+    return _id;
 };
+std::string Entity::getName() {
+	return _name;
+}

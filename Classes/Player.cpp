@@ -8,7 +8,7 @@
 #define BODYATTACK   3
 #define HANDATTACK   4
 
-Player::Player(std::string name, int id) {
+Player::Player(std::string name, int id) :info(Entity(name, id)){
 	attr.hp = 100;
 	attr.speed = 1;
 	attr.attack = 30;
@@ -17,8 +17,7 @@ Player::Player(std::string name, int id) {
 	attr.weapon = 1;
 	attr.superPower = 0;
 
-	m_id = id;
-	m_name = name;
+	
 }
 Player* Player::getMychara(char* str) {
 	return dynamic_cast<Player*>(GameScene::getCurrentMap()->getChildByName(str));
@@ -28,6 +27,22 @@ Player* Player::create(std::string name,int id)
 	Player* player = new Player(name, id);
 	if (player && player->initWithPlayerType(id+1))
 	{	
+		player->setName("Player");
+		player->autorelease();
+		return player;
+	}
+	else
+	{
+		delete player;
+		player = NULL;
+		return NULL;
+	}
+}
+Player* Player::create(Entity* e)
+{
+	Player* player = new Player(e->getName(), e->getId());
+	if (player && player->initWithPlayerType(e->getId() + 1))
+	{
 		player->setName("Player");
 		player->autorelease();
 		return player;
@@ -220,8 +235,8 @@ void Player::AttackMode2(Point TouchPosition)
 	Hand->runAction(HandAni);
 }
 int Player::getId() {
-	return m_id;
+	return info._id;
 }
 std::string Player::getName() {
-	return m_name;
+	return info._name;
 }

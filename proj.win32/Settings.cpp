@@ -4,7 +4,7 @@
 int local_Id=0;
 std::string local_username="";
 int Scale =1;
-std::vector<Player*> playerList;
+std::vector<Entity*> playerList;
 int players=0;
 
 ODSocket* client;

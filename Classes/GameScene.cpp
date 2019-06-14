@@ -38,11 +38,15 @@ bool GameScene::init() {
 
 
 	for (int i = 0; i < players; i++) {
-		auto label = Label::create(playerList[i]->getName(), "arial.ttf", 15);
-		playerList[i]->setPosition(w*(i + 1), h*(i + 1));
-		label->setPosition(0, 40);
-		playerList[i]->addChild(label);
-		this->addChild(playerList[i]);
+		std::string name = playerList[i]->getName();
+		int id = playerList[i]->getId();
+		//auto label = Label::create(name, "arial.ttf", 15);
+		auto player = Player::create(name, id);
+		player->setPosition(w*(i + 1), h*(i + 1));
+		//label->setPosition(0, 40);
+		//player->addChild(label);
+		player->setTag(player->getId());
+		this->addChild(player);
 	}
 	auto operate = Operator::create();
 	addChild(operate);
