@@ -174,23 +174,29 @@ void * getMsg(void *ptr){
 		}
 		else if(msg[0]==Ready){
 			int id=(int)msg[2]-49;
-			if(msg[4]=='r'){
-				isReady[id]=1;
-				printf("%dst is ready!\n",id+1);
+			if(id>=0&&id<=3){
+				if(msg[4]=='r'){
+					isReady[id]=1;
+					printf("%dst is ready!\n",id+1);
+				}
+				else {
+					isReady[id]=0;
+					printf("%dst is unready!\n",id+1);
+				}
+				int res=1;
+				for(int i=0;i<players;i++){
+					res*=isReady[i];
+				}
+				if(res){
+					printf("gamstart!\n");
+					sprintf(msg,"%c",GameStart);
+					sendMsg(msg);
+				}	
 			}
-			else {
-				isReady[id]=0;
-				printf("%dst is unready!\n",id+1);
+			else{
+				printf("%s$\n",msg);
 			}
-			int res=1;
-			for(int i=0;i<players;i++){
-				res*=isReady[i];
-			}
-			if(res){
-				printf("gamstart!\n");
-				sprintf(msg,"%c",GameStart);
-				sendMsg(msg);
-			}	
+				
 		}
 		//printf("%dst msg is %s\n",msgs,buffer);
 	}

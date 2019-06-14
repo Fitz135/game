@@ -27,8 +27,9 @@ bool RoomScene::init() {
 	auto imgBG = Sprite::create("UI/RoomBG.png");
 	imgBG->setPosition(center_x, center_y);
 	this->addChild(imgBG);
-
-	initPlayer(connectService());
+	char buffer[MSGSIZE];
+	connectService(buffer);
+	initPlayer(buffer);
 
 	auto readyItem = MenuItemLabel::create(Label::create("Ready", "arial.ttf", 30), CC_CALLBACK_1(RoomScene::readyCallback, this));
 	auto menu = Menu::create();
@@ -40,7 +41,7 @@ bool RoomScene::init() {
 }
 
 
-char* RoomScene::connectService(){
+void RoomScene::connectService(char* buffer){
 
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -53,7 +54,6 @@ char* RoomScene::connectService(){
 	log("Create:");
 	res = client->Connect(ip, 2111);//
 	log("Connect:");
-	char buffer[MSGSIZE];
 	if (res) {
 		
 		client->Recv(buffer, MSGSIZE);
@@ -61,10 +61,7 @@ char* RoomScene::connectService(){
 
 		players = static_cast<int>(buffer[0])-48;
 		local_Id = players;
-
-		
 	}
-	return buffer;
 }
 char * RoomScene::getIp()
 {

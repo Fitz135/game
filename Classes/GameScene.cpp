@@ -12,7 +12,7 @@ Scene* GameScene::createScene() {
 	auto scene = Scene::create();
 
 	auto layer = GameScene::create();
-
+	scene->retain();
 	layer->setName("GameScene");
 	layer->setTag(10);
 
@@ -57,7 +57,6 @@ bool GameScene::init() {
 	op->setName("op");
 	player->addChild(op);
 	this->addChild(player);*/
-	
 	
 	return true;
 }

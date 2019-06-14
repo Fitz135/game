@@ -13,7 +13,7 @@ public:
 	static void addPlayer(char*);
 
 	char * getIp();
-	char* connectService();
+	void connectService(char*);
 	bool initPlayer(char *);
 
 	void readyCallback(Ref*);
