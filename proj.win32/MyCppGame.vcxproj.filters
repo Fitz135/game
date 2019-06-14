@@ -45,9 +45,6 @@
     <ClCompile Include="..\Classes\LoginScene.cpp">
       <Filter>src\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Settings.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\Operator.cpp">
       <Filter>src\Control</Filter>
     </ClCompile>
@@ -65,6 +62,9 @@
     </ClCompile>
     <ClCompile Include="..\Classes\Entity.cpp">
       <Filter>src\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Settings.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

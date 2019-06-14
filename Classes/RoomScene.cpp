@@ -136,13 +136,13 @@ void RoomScene::readyCallback(Ref* ref) {
 	char buffer[MSGSIZE];
 	if (item->getString() == "Ready") {
 		item->setString("Unready");
-		sprintf(buffer, "%c$%d$r", Ready,playerList[0]->getId());
-		client->Send(buffer, 5);
+		sprintf(buffer, "%c$%d$r", Ready,playerList[0]->_id);
+		client->Send(buffer, MSGSIZE);
 	}
-	else {
+	else if(item->getString() == "Unready"){
 		item->setString("Ready");
-		sprintf(buffer, "%c$%d$u", Ready,playerList[0]->getId());
-		client->Send(buffer, 5);
+		sprintf(buffer, "%c$%d$u", Ready,playerList[0]->_id);
+		client->Send(buffer, MSGSIZE);
 	}
 }
 void RoomScene::gamestartCallback() {

@@ -16,6 +16,7 @@ void getMsg(ODSocket* m_client) {
 			log("null client");
 			break;
 		}
+		memset(buffer, 0, sizeof(buffer));
 		m_client->Recv(buffer, MSGSIZE);
 		log(buffer);
 		switch (buffer[0]) {
@@ -23,7 +24,7 @@ void getMsg(ODSocket* m_client) {
 		case GameStart: RoomScene::gamestartCallback();
 					   log("gamestart\n"); break;
 		case KeyPress:;
-		case KeyRelease:;//dynamic_cast<OPOperator*>(player->getChildByName("op"))->KeyStart(buffer); break;
+		case KeyRelease:GameScene::updatePlayer(buffer); break;
 		}
 	}
 }

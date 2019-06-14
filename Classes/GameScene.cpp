@@ -12,7 +12,7 @@ Scene* GameScene::createScene() {
 	auto scene = Scene::create();
 
 	auto layer = GameScene::create();
-	
+	scene->retain();
 	layer->setName("GameScene");
 	layer->setTag(10);
 
@@ -40,19 +40,28 @@ bool GameScene::init() {
 	for (int i = 0; i < players; i++) {
 		std::string name (playerList[i]->_name);
 		int id = playerList[i]->_id;
-		auto label = Label::create(name, "arial.ttf", 15);
-		auto player = Player::create(name, id);
+		//auto label = Label::create(name, "arial.ttf", 15);
+		
+		auto player = Player::create(name, id );
 		player->setPosition(w*(i + 1), h*(i + 1));
-		label->setPosition(0, 40);
-		player->addChild(label);
-		player->setTag(player->getId());
+		//label->setPosition(0, 40);
+		//player->addChild(label);
+		if (id != local_Id) {
+			player->setTag(player->getId());
+			auto op = OPOperator::create();
+			op->setName("op");
+			player->addChild(op);
+		}
+		
 		this->addChild(player);
+		
 	}
 
 
 
-	/*auto player = Player::create(playerList[0]->_name , playerList[0]->_id);
+	/*auto player = Player::create(playerList[0]->_name , playerList[0]->_id+2);
 	this->addChild(player);*/
+
 	auto operate = Operator::create();
 	addChild(operate);
 
@@ -78,3 +87,12 @@ void GameScene::onExit() {
 	endThread = 1;
 }
 
+void GameScene::updatePlayer(char* buffer) {
+	if (buffer[0] == KeyPress|| buffer[0] == KeyRelease) {
+		int id= static_cast<int>(buffer[2]) - 48;
+		if(id!=local_Id)
+		dynamic_cast<OPOperator*>(
+			dynamic_cast<Player*>(
+				GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->KeyStart(buffer);
+	}
+}

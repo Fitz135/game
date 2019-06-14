@@ -1,5 +1,6 @@
 #include"Operator.h"
 #include"GameScene.h"
+#include"Settings.h"
 
 #define HEADMOVE 0
 #define BODYMOVE 1
@@ -77,6 +78,9 @@ void Operator::OnKeyPressed(EventKeyboard::KeyCode keyCode, Event * event)
 	int keycode = (int)keyCode - 26;
 	if (0 <= keycode && 3 >= keycode)
 	{
+		char buffer[MSGSIZE];
+		sprintf(buffer, "%c$%d$%d", KeyPress, local_Id, keycode);
+		client->Send(buffer, MSGSIZE);
 		if (!PressNum)
 		{
 			auto Player = getMyplayer("Player");
@@ -92,6 +96,9 @@ void Operator::OnKeyReleased(EventKeyboard::KeyCode keyCode, Event * event)
 	int keycode = (int)keyCode - 26;
 	if (0 <= keycode && 3 >= keycode)
 	{
+		char buffer[MSGSIZE];
+		sprintf(buffer, "%c$%d$%d", KeyRelease, local_Id, keycode);
+		client->Send(buffer, MSGSIZE);
 		PressNum--;
 		this->unschedule(move[keycode]);
 		if (!PressNum)

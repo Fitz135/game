@@ -162,17 +162,8 @@ void * getMsg(void *ptr){
 	while(1){
 		memset(msg, 0, sizeof(msg));
 		recv(*client,msg,MSGSIZE,0);
-		if(0){//msg[0]==GameStart
-			sprintf(msg,"%d$%d",KeyPress,2);
-			sendTo(client,msg);
-			printf("Press!\n");
-			sleep(1);
-			sprintf(msg,"%d$%d",KeyRelease,2);
-			sendTo(client,msg);
-			printf("Release!\n");
-			continue;
-		}
-		else if(msg[0]==Ready){
+		
+		if(msg[0]==Ready){
 			int id=(int)msg[2]-49;
 			if(id>=0&&id<=3){
 				if(msg[4]=='r'){
@@ -198,6 +189,10 @@ void * getMsg(void *ptr){
 				printf("%s$\n",msg);
 			}
 				
+		}
+		else{
+			sendMsg(msg);
+			printf("%s\n",msg);
 		}
 		//printf("%dst msg is %s\n",msgs,buffer);
 	}
@@ -230,9 +225,7 @@ void * getMsg(void *ptr){
 
 
 
-void handleDate(char* buffer){
-	int pname=0;
-}
+
 
 
 int main(int argc, char *argv[]){

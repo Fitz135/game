@@ -26,7 +26,7 @@ bool OPOperator::init() {
 
 void OPOperator::KeyStart(char* buffer) {
 	if (buffer[0] == KeyPress) {
-		int keycode = static_cast<int>(buffer[2]) - 48;
+		int keycode = static_cast<int>(buffer[4]) - 48;
 		if (0 <= keycode && 3 >= keycode)
 		{
 			if (!PressNum)
@@ -40,7 +40,7 @@ void OPOperator::KeyStart(char* buffer) {
 		}
 	}
 	else if (buffer[0] == KeyRelease) {
-		int keycode = static_cast<int>(buffer[2]) - 48;
+		int keycode = static_cast<int>(buffer[4]) - 48;
 		if (0 <= keycode && 3 >= keycode)
 		{
 			PressNum--;

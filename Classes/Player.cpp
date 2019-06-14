@@ -1,7 +1,7 @@
 #include"Player.h"
 #include"GameScene.h"
 #include"Weapon.h"
-
+#include"Settings.h"
 #define HEADMOVE 0
 #define BODYMOVE 1
 #define LEGSMOVE 2
@@ -27,6 +27,7 @@ Player* Player::create(std::string name,int id)
 	Player* player = new Player(name, id);
 	if (player && player->initWithPlayerType(id+1))
 	{	
+		if(id==local_Id)
 		player->setName("Player");
 		player->autorelease();
 		return player;

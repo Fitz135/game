@@ -160,9 +160,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\OPOperator.cpp" />
     <ClCompile Include="..\Classes\Player.cpp" />
     <ClCompile Include="..\Classes\RoomScene.cpp" />
+    <ClCompile Include="..\Classes\Settings.cpp" />
     <ClCompile Include="..\Classes\Weapon.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Settings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
