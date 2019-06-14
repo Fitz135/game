@@ -6,6 +6,7 @@
 #define KeyPress '2'
 #define KeyRelease '3'
 #define Ready '4'
+#define GameStart '9'
 
 		extern int local_Id ;
 		extern std::string local_username ;
@@ -16,6 +17,9 @@
 		const int MSGSIZE = 32;
 		extern int players;// num of players
 		extern ODSocket* client;
+		extern bool endThread;
+		void getMsg(ODSocket* m_client);
+
 		namespace settings
 		{
 			constexpr char *weapon_paths[] = {

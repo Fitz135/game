@@ -16,8 +16,8 @@ public:
 	char* connectService();
 	bool initPlayer(char *);
 
-	void gamestartCallback(Ref*);
-
+	void readyCallback(Ref*);
+	static void gamestartCallback();
 	//void getMsg(ODSocket*);
 	virtual void  onEnter();
 	virtual void  onExit();

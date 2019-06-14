@@ -14,21 +14,7 @@ Scene* RoomScene::createScene() {
 	return scene;
 }
 
-static void getMsg(ODSocket* m_client) {
-	char buffer[MSGSIZE];
-	while (!endThread) {
-		if (client == NULL) {
-			log("null client");
-			break;
-		}
-		m_client->Recv(buffer, MSGSIZE);
-		switch (buffer[0]) {
-		case NewPlayer:RoomScene::addPlayer(buffer); break;
-		case KeyPress:;
-		case KeyRelease:;//dynamic_cast<OPOperator*>(player->getChildByName("op"))->KeyStart(buffer); break;
-		}
-	}
-}
+
 bool RoomScene::init() {
 	if (!Layer::init()) {
 		return false;
@@ -43,7 +29,7 @@ bool RoomScene::init() {
 
 	initPlayer(connectService());
 
-	auto readyItem = MenuItemLabel::create(Label::create("Ready", "arial.ttf", 30), CC_CALLBACK_1(RoomScene::gamestartCallback, this));
+	auto readyItem = MenuItemLabel::create(Label::create("Ready", "arial.ttf", 30), CC_CALLBACK_1(RoomScene::readyCallback, this));
 	auto menu = Menu::create();
 	menu->addChild(readyItem);
 	readyItem->setPosition(-center_x*4/5, -center_y*4/5);
@@ -120,22 +106,23 @@ bool RoomScene::initPlayer(char* buffer) {
 	auto h = Director::getInstance()->getWinSize().height;
 	for (int i = 0; i < players; i++) {
 		auto label = Label::create(playerList[i]->getName(), "arial.ttf", 15);
+		auto player = Player::create(playerList[i]->getName(), playerList[i]->getId());
 		if (i == 0) {
-			playerList[i]->setPosition(w/4, h*4/7);
-			playerList[i]->setScale(1.5f);
+			player->setPosition(w/4, h*4/7);
+			player->setScale(1.5f);
 		}
 		else {
-			playerList[i]->setPosition(w*(3+i)/7, h*3/4);
+			player->setPosition(w*(3+i)/7, h*3/4);
 		}
 		label->setPosition(0, 40);
 		label->setColor(Color3B::BLACK);
-		playerList[i]->addChild(label);
-		this->addChild(playerList[i]);
+		player->addChild(label);
+		this->addChild(player);
 	}
 	
 	return true;
 }
-void RoomScene::gamestartCallback(Ref* ref) {
+void RoomScene::readyCallback(Ref* ref) {
 	/*
 	
 	auto scene =GameScene::createScene();
@@ -147,21 +134,23 @@ void RoomScene::gamestartCallback(Ref* ref) {
 	if (item->getString() == "Ready") {
 		item->setString("Unready");
 		sprintf(buffer, "%c$%d$r", Ready,playerList[0]->getId());
-		client->Send(buffer, 3);
+		client->Send(buffer, 5);
 	}
 	else {
 		item->setString("Ready");
 		sprintf(buffer, "%c$%d$u", Ready,playerList[0]->getId());
-		client->Send(buffer, 3);
+		client->Send(buffer, 5);
 	}
 }
-
+void RoomScene::gamestartCallback() {
+	auto scene = GameScene::createScene();
+	Director::getInstance()->replaceScene(TransitionFade::create(0.5, scene));
+}
 void RoomScene::onEnter(){
 	Layer::onEnter();
 	endThread = 0;
 	std::thread t(getMsg,client);
 	t.detach();
-	
 }
 void RoomScene::onExit() {
 	Layer::onExit();

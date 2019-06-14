@@ -147,13 +147,22 @@ void initArgs(int argc, char *argv[])
     }
 }
 
+void sendMsg(char* buffer){
+	if(players>0){
+		for(int j=0;j<players;j++){
+			if(&playerList[j]==NULL)break;
+			send(playerList[j],buffer,MSGSIZE,0);
+			printf("send:%s\n",buffer);
+		}	
+	}
+}
 void * getMsg(void *ptr){
 	SOCKET* client=(SOCKET*)ptr;
 	char msg[MSGSIZE];
 	while(1){
 		memset(msg, 0, sizeof(msg));
 		recv(*client,msg,MSGSIZE,0);
-		if(msg[0]==GameStart){
+		if(0){//msg[0]==GameStart
 			sprintf(msg,"%d$%d",KeyPress,2);
 			sendTo(client,msg);
 			printf("Press!\n");
@@ -165,44 +174,57 @@ void * getMsg(void *ptr){
 		}
 		else if(msg[0]==Ready){
 			int id=(int)msg[2]-49;
-			if(msg[4]=='r')isReady[id]=1;
-			else isReady[id]=0;
+			if(msg[4]=='r'){
+				isReady[id]=1;
+				printf("%dst is ready!\n",id+1);
+			}
+			else {
+				isReady[id]=0;
+				printf("%dst is unready!\n",id+1);
+			}
 			int res=1;
 			for(int i=0;i<players;i++){
 				res*=isReady[i];
 			}
 			if(res){
+				printf("gamstart!\n");
 				sprintf(msg,"%c",GameStart);
-			}
+				sendMsg(msg);
+			}	
 		}
-		msgList[msgs]=msg;
-		msgs++;
-		printf("%dst msg is %s\n",msgs,msg);
+		//printf("%dst msg is %s\n",msgs,buffer);
 	}
 	printf("end\n");
 }
 
-void * sendMsg(void *ptr){
+/*void * sendMsg(void *ptr){
 	printf("start send msg\n");
 	while(1){
+		printf("msgs:%d players:%d\n",msgs,players);
+		if(msgs>0){
+			printf("msg:%c\n",msgList[0]);
+		}
 		if(players>0){
 			if(msgs>0){
 				for(int i=0;i<msgs;i++){
 					for(int j=0;j<players;j++){
 						if(&playerList[j]==NULL)break;
 						send(playerList[j],msgList[i],MSGSIZE,0);
+						//printf("send:%s\n",msgList[i]);
 					}
 				}
 			}
 			msgs=0;	
 		}
-		sleep(1);//send per 1s
+		
+		sleep(2);//send per 1s
 	}
-}
+}*/
+
+
 
 void handleDate(char* buffer){
 	int pname=0;
-
 }
 
 
@@ -219,7 +241,7 @@ int main(int argc, char *argv[]){
     pthread_t ids;
     pthread_t id;
     int res;
-    res=pthread_create(&id,NULL,sendMsg,NULL);
+    //res=pthread_create(&id,NULL,sendMsg,NULL);
 //    if(!res){
 //    	printf("thread send error\n");
 //    	exit(1);

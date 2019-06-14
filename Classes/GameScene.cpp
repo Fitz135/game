@@ -4,9 +4,10 @@
 #include "Settings.h"
 #include"OPOperator.h"
 #include"thread"
+#include"Settings.h"
 USING_NS_CC;
-static Player* player;
-static bool endThread;
+//static Player* player;
+
 Scene* GameScene::createScene() {
 	auto scene = Scene::create();
 
@@ -25,21 +26,7 @@ GameScene* GameScene::getCurrentMap() {
 	return dynamic_cast<GameScene*>(currentScene->getChildByName("GameScene"));
 }
 
-static void getMsg(ODSocket* client) {
-	char buffer[MSGSIZE];
-	while (!endThread) {
-		if (client == NULL) {
-			log("null client");
-			break;
-		}
-		client->Recv(buffer, MSGSIZE);
-		switch (buffer[0]) {
-		case NewPlayer:
-			case KeyPress:
-			case KeyRelease:dynamic_cast<OPOperator*>(player->getChildByName("op"))->KeyStart(buffer); break;
-		}
-	}
-}
+
 bool GameScene::init() {
 	if (!Layer::init()) {
 		return false;
@@ -50,23 +37,24 @@ bool GameScene::init() {
 	auto h = Director::getInstance()->getWinSize().height / (players + 1);
 
 
-	/*for (int i = 0; i < players; i++) {
+	for (int i = 0; i < players; i++) {
 		auto label = Label::create(playerList[i]->getName(), "arial.ttf", 15);
 		playerList[i]->setPosition(w*(i + 1), h*(i + 1));
 		label->setPosition(0, 40);
 		playerList[i]->addChild(label);
 		this->addChild(playerList[i]);
-	}*/
+	}
+	auto operate = Operator::create();
+	addChild(operate);
 
-	player = Player::create(local_username, local_Id);
+	/*player = Player::create(local_username, local_Id);
 	auto op = OPOperator::create();
 	player->setName("local");
 	op->setName("op");
 	player->addChild(op);
-	this->addChild(player);
+	this->addChild(player);*/
 	
-	/*auto operate = Operator::create();
-	addChild(operate);*/
+	
 	return true;
 }
 
