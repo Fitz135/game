@@ -189,6 +189,7 @@ void * getMsg(void *ptr){
 				}
 				if(res){
 					printf("gamstart!\n");
+					
 					sprintf(msg,"%c",GameStart);
 					sendMsg(msg);
 				}	

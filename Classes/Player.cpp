@@ -61,7 +61,7 @@ bool Player::initWithPlayerType(int i)
 	Body = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Body/Body-0.png");
 	Head = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Head/Head-0.png");
 	Hand = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Arm/Arm-0.png");
-	weapon = Weapon::create();
+	 Player::ChangeWeapon(0);
 
 	Legs->setPosition(0, -14);
 	Head->setPosition(0, -1);
@@ -91,12 +91,12 @@ Weapon* Player::ChangeWeapon(int WeaponType)
 		this->AttackMode = &Player::AttackMode2;
 	else
 		this->AttackMode = &Player::AttackMode1;
-
+	/*
 	if (weapon)
 	{
 		weapon->MyWeapon->removeFromParentAndCleanup(TRUE);
 		delete weapon;
-	}
+	}*/
 	weapon = Weapon::create(WeaponType);
 	weapon->retain();
 	AttackSpeed = weapon->WeaponSpeed[WeaponType];

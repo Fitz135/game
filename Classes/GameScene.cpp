@@ -12,7 +12,7 @@ Scene* GameScene::createScene() {
 	auto scene = Scene::create();
 
 	auto layer = GameScene::create();
-	scene->retain();
+	
 	layer->setName("GameScene");
 	layer->setTag(10);
 
@@ -36,18 +36,23 @@ bool GameScene::init() {
 	auto w = Director::getInstance()->getWinSize().width / (players + 1);
 	auto h = Director::getInstance()->getWinSize().height / (players + 1);
 
-
+	
 	for (int i = 0; i < players; i++) {
-		std::string name = playerList[i]->getName();
-		int id = playerList[i]->getId();
-		//auto label = Label::create(name, "arial.ttf", 15);
+		std::string name (playerList[i]->_name);
+		int id = playerList[i]->_id;
+		auto label = Label::create(name, "arial.ttf", 15);
 		auto player = Player::create(name, id);
 		player->setPosition(w*(i + 1), h*(i + 1));
-		//label->setPosition(0, 40);
-		//player->addChild(label);
+		label->setPosition(0, 40);
+		player->addChild(label);
 		player->setTag(player->getId());
 		this->addChild(player);
 	}
+
+
+
+	/*auto player = Player::create(playerList[0]->_name , playerList[0]->_id);
+	this->addChild(player);*/
 	auto operate = Operator::create();
 	addChild(operate);
 

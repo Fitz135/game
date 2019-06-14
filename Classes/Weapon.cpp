@@ -15,6 +15,7 @@ Weapon* Weapon::create(int WeaponType)
 {
 	auto weapon = Weapon::create();
 	weapon->MyWeapon = Sprite::create(settings::weapon_paths[WeaponType]);
+	weapon->MyWeapon->retain();
 	weapon->MyWeapon->setOpacity(0);
 	weapon->MyWeapon->setZOrder(1);
 	weapon->WeaponMode = weaponmode[WeaponType];
