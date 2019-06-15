@@ -261,8 +261,10 @@ int main(int argc, char *argv[]){
 		sprintf(buffer,"%d$",players+1);
 		strncpy(infoList[players].id,buffer,1);
 		//printf("%s",infoList[players].id);
+		//memset(buffer, 0, sizeof(buffer));
 		if(players>0){
 			for(int i=0;i<players;i++){
+			//	printf("imhere\n");
 				strcat(buffer,infoList[i].username);
 				strcat(buffer,"$");
 				strcat(buffer,infoList[i].id);
@@ -282,9 +284,12 @@ int main(int argc, char *argv[]){
 		
 		if(players>0){
 			for(int j=0;j<players;j++){
-				if(&playerList[j]==NULL)break;//没卵用? 
-					sprintf(buffer,"%d$%s$%s$",NewPlayer,infoList[players].username,infoList[players].id);
-					send(playerList[j],infoList[players].username,MSGSIZE,0);
+				//if(&playerList[j]==NULL)break;//没卵用? 
+					
+					sprintf(buffer,"%c$%s$%s$",NewPlayer,infoList[players].username,infoList[players].id);
+					printf("new player!%s\n",buffer);
+					send(playerList[j],buffer,MSGSIZE,0);
+					
 			}
 		}
 		
@@ -294,7 +299,7 @@ int main(int argc, char *argv[]){
 		
 		
     	pthread_create(&ids,NULL,getMsg,&pClient);
-    	
+    	printf("%d players now!\n",players); 
 	}
     
     

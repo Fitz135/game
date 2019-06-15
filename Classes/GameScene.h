@@ -15,7 +15,7 @@ public:
 	virtual void onEnter();
 	virtual void onExit();
 	
-	static void updatePlayer(char*);
+	//static void updatePlayer(char*);
 	
 };
 #endif // !_GAME_SCENE_H_

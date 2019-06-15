@@ -23,6 +23,7 @@ bool Index::init() {
 
 	for (int i = 1; i <= 7; i++)
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Player/" + std::to_string(i) + ".plist");
+	//schedule(schedule_selector(Index::test), 0.1);
 	return true;
 }
 void Index::startCallback(Ref* ref) {
@@ -32,4 +33,7 @@ void Index::startCallback(Ref* ref) {
 }
 void Index::exitCallback(Ref* ref) {
 	Director::getInstance()->end();
+}
+void Index::test(float dt){
+	log("66");
 }

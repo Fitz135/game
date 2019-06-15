@@ -10,7 +10,7 @@ public:
 	static cocos2d::Scene* createScene();
 	virtual bool init();
 	CREATE_FUNC(RoomScene);
-	static void addPlayer(char*);
+	//static void addPlayer(char*);
 
 	char * getIp();
 	void connectService(char*);
@@ -19,13 +19,13 @@ public:
 	void readyCallback(Ref*);
 	void sendCallback(Ref*);
 	static void gamestartCallback();
-	static void updateDialog(char*);
+	//static void updateDialog(char*);
 	//void getMsg(ODSocket*);
 	virtual void  onEnter();
 	virtual void  onExit();
 
 	void initChat();
-	
+	void addMsg(std::string);
 private:
 	bool isReady[4];
 	cocos2d::ui::ListView* dialog;

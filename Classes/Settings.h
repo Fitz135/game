@@ -22,6 +22,10 @@
 		extern bool endThread;
 		void getMsg(ODSocket* m_client);
 		void updateDialog(char* buffer);
+		void addPlayer(char* buffer);
+		void gamestartCallback();
+		void updatePlayer(char* buffer);
+
 		namespace settings
 		{
 			constexpr char *weapon_paths[] = {

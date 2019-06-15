@@ -9,13 +9,13 @@ USING_NS_CC;
 //static Player* player;
 
 Scene* GameScene::createScene() {
-	auto scene = Scene::create();
+	
 
 	auto layer = GameScene::create();
-	scene->retain();
+	//scene->retain();
 	layer->setName("GameScene");
 	layer->setTag(10);
-
+	auto scene = Scene::create();
 	scene->addChild(layer);
 
 	return scene;
@@ -84,12 +84,3 @@ void GameScene::onExit() {
 	endThread = 1;
 }
 
-void GameScene::updatePlayer(char* buffer) {
-	if (buffer[0] == KeyPress|| buffer[0] == KeyRelease) {
-		int id= static_cast<int>(buffer[2]) - 48;
-		if(id!=local_Id)
-		dynamic_cast<OPOperator*>(
-			dynamic_cast<Player*>(
-				GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->KeyStart(buffer);
-	}
-}

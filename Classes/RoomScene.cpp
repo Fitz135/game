@@ -53,7 +53,7 @@ void RoomScene::connectService(char* buffer){
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-	char * ip = "192.168.1.107";//getIp();
+	char * ip = "192.168.1.106";//getIp();
 
 	client = new ODSocket();
 	client->Init();
@@ -99,13 +99,15 @@ bool RoomScene::initPlayer(char* buffer) {
 		char name[12];
 		int id;
 		for (int j = start_pos; j < MSGSIZE; j++) {
-			if (buffer[j] = '$') {
-				start_pos = j +1;
+			if (buffer[j]== '$') {
+				start_pos = j ;
 				break;
 			}
-			name[j-start_pos] = buffer[j];
+			//name[j-start_pos] = buffer[j];
 		}
-		id = static_cast<int>(buffer[start_pos])-48;
+		strncpy(name, &buffer[2], start_pos - 2);
+		name[start_pos - 2] = '\0';
+		id = static_cast<int>(buffer[start_pos+1])-48;
 		start_pos+=2;
 		//std::string(name);
 		playerList.push_back(Entity::create(std::string(name), id));
@@ -152,10 +154,7 @@ void RoomScene::sendCallback(Ref* ref) {
 	sprintf(buffer, "%c$%d$%s", Dialog, local_Id, msg);
 	client->Send(buffer, MSGSIZE);
 }
-void RoomScene::gamestartCallback() {
-	auto scene = GameScene::createScene();
-	Director::getInstance()->replaceScene(TransitionFade::create(0.5, scene));
-}
+
 void RoomScene::onEnter(){
 	Layer::onEnter();
 	endThread = 0;
@@ -166,42 +165,14 @@ void RoomScene::onExit() {
 	Layer::onExit();
 	endThread = 1;
 }
-void RoomScene::addPlayer(char* buffer) {
-	int start_pos = 2;
-	char* name;
-	int id;
 
-	for (int j = start_pos; j < MSGSIZE; j++) {
-		if (buffer[j] = '$') {
-			start_pos = j + 1;
-			name[j] = '\0';
-			break;
-		}
-		name[j - start_pos] = buffer[j];
-	}
-	id = static_cast<int>(buffer[start_pos]) - 48;
-	start_pos += 2;
-	auto newPlayer = Player::create(std::string(name), id);
-	auto entity= Entity::create(std::string(name), id);
-	playerList.push_back(entity);
-	players++;
-
-	auto w = Director::getInstance()->getWinSize().width;
-	auto h = Director::getInstance()->getWinSize().height;
-	auto label = Label::create(newPlayer->getName(), "arial.ttf", 15);
-	label->setPosition(0, 40);
-	label->setColor(Color3B::BLACK);
-	newPlayer->setPosition(w*(2+players) / 7, h * 3 / 4);
-	newPlayer->addChild(label);
-	Director::getInstance()->getRunningScene()->addChild(newPlayer);
-}
 
 void RoomScene::initChat() {
 	auto center_x = Director::getInstance()->getWinSize().width / 2;
 	auto center_y = Director::getInstance()->getWinSize().height / 2;
 
 	text = ui::TextField::create("Enter the message here", "arial.ttf", 15);
-	text->setPosition(Vec2(center_x , center_y ));
+	text->setPosition(Vec2(center_x , center_y/5 ));
 	text->setName("TextField");
 	text->setCursorEnabled(true);
 	text->setCursorChar('|');
@@ -223,4 +194,15 @@ void RoomScene::initChat() {
 	//dialog->jumpToBottom();
 	
 	this->addChild(dialog,1);
+}
+void RoomScene::addMsg(std::string temp) {
+	auto hello = ui::Text::create("666", "fonts/arial.ttf", 15);
+	hello->ignoreContentAdaptWithSize(false);
+	hello->setColor(cocos2d::Color3B::BLUE);
+
+	auto dial = this->dialog;//dynamic_cast<ui::ListView*>(this->getChildByName("ListView"));
+	dial->addChild(hello, 1);
+	/*if (dial->getChildrenCount() > 6)dial->removeItem(0);
+	dial->forceDoLayout();
+	dial->jumpToBottom();*/
 }
