@@ -12,6 +12,7 @@ bool LoginScene::init() {
 	auto center_y = Director::getInstance()->getWinSize().height / 2;
 
 	bg = Sprite::create("UI/LoginBG.png");
+	bg->setScale(2);
 	bg->setPosition(center_x, center_y);
 
 	id = ui::TextField::create("input your ID ", "arial.ttf", 15);
@@ -19,6 +20,8 @@ bool LoginScene::init() {
 	id->setPosition(Vec2(center_x, center_y*23/20));
 	id->setColor(Color3B::BLACK);
 	id->setTag(1);
+	id->setCursorEnabled(true);
+	id->setCursorChar('|');
 	//idBG->setPosition(center_x, center_y);
 
 	auto finish = MenuItemLabel::create(Label::create("Finish", "arial.ttf", 20), CC_CALLBACK_1(LoginScene::startCallback, this));

@@ -3,7 +3,7 @@
 #define _ROOM_SCENE_H_
 
 #include "cocos2d.h"
-
+#include"ui/CocosGUI.h"
 
 class RoomScene :public cocos2d::Layer {
 public:
@@ -17,15 +17,19 @@ public:
 	bool initPlayer(char *);
 
 	void readyCallback(Ref*);
+	void sendCallback(Ref*);
 	static void gamestartCallback();
+	static void updateDialog(char*);
 	//void getMsg(ODSocket*);
 	virtual void  onEnter();
 	virtual void  onExit();
 
+	void initChat();
 	
 private:
 	bool isReady[4];
-
+	cocos2d::ui::ListView* dialog;
+	cocos2d::ui::TextField* text;
 	
 	
 	

@@ -1,6 +1,6 @@
 #include "RoomScene.h"
 #include"GameScene.h"
-#include"ui/CocosGUI.h"
+
 #include"Settings.h"
 #include"Entity.h"
 #include"thread"
@@ -11,6 +11,7 @@ static bool endThread;
 Scene* RoomScene::createScene() {
 	auto scene = Scene::create();
 	auto layer = RoomScene::create();
+	layer->setName("layer");
 	scene->addChild(layer);
 	return scene;
 }
@@ -26,17 +27,23 @@ bool RoomScene::init() {
 	
 	auto imgBG = Sprite::create("UI/RoomBG.png");
 	imgBG->setPosition(center_x, center_y);
-	this->addChild(imgBG);
+	imgBG->setScale(1.9);
+	imgBG->setScaleY(2.6);
+	this->addChild(imgBG,-1);
 	char buffer[MSGSIZE];
 	connectService(buffer);
 	initPlayer(buffer);
 
-	auto readyItem = MenuItemLabel::create(Label::create("Ready", "arial.ttf", 30), CC_CALLBACK_1(RoomScene::readyCallback, this));
 	auto menu = Menu::create();
+	auto readyItem = MenuItemLabel::create(Label::create("Ready", "arial.ttf", 30), CC_CALLBACK_1(RoomScene::readyCallback, this));
 	menu->addChild(readyItem);
 	readyItem->setPosition(-center_x*4/5, -center_y*4/5);
+	auto sendItem= MenuItemLabel::create(Label::create("Send", "arial.ttf", 30), CC_CALLBACK_1(RoomScene::sendCallback, this));
+	menu->addChild(sendItem);
+	sendItem->setPosition(center_x * 4 / 5, -center_y * 4 / 5);
 	this->addChild(menu,1);
-	
+
+	initChat();
 	return true;
 }
 
@@ -46,7 +53,7 @@ void RoomScene::connectService(char* buffer){
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-	char * ip = getIp();
+	char * ip = "192.168.1.107";//getIp();
 
 	client = new ODSocket();
 	client->Init();
@@ -89,7 +96,7 @@ bool RoomScene::initPlayer(char* buffer) {
 	////init other player////////
 	for (int i = 0; i < players-1; i++) {
 		int start_pos = 2;
-		char* name;
+		char name[12];
 		int id;
 		for (int j = start_pos; j < MSGSIZE; j++) {
 			if (buffer[j] = '$') {
@@ -126,12 +133,6 @@ bool RoomScene::initPlayer(char* buffer) {
 	return true;
 }
 void RoomScene::readyCallback(Ref* ref) {
-	/*
-	
-	auto scene =GameScene::createScene();
-	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
-	
-	*/
 	MenuItemLabel* item = (MenuItemLabel*)ref;
 	char buffer[MSGSIZE];
 	if (item->getString() == "Ready") {
@@ -144,6 +145,12 @@ void RoomScene::readyCallback(Ref* ref) {
 		sprintf(buffer, "%c$%d$u", Ready,playerList[0]->_id);
 		client->Send(buffer, MSGSIZE);
 	}
+}
+void RoomScene::sendCallback(Ref* ref) {
+	char buffer[MSGSIZE];
+	auto msg=dynamic_cast<ui::TextField*>(this->getChildByName("TextField"))->getString().c_str();
+	sprintf(buffer, "%c$%d$%s", Dialog, local_Id, msg);
+	client->Send(buffer, MSGSIZE);
 }
 void RoomScene::gamestartCallback() {
 	auto scene = GameScene::createScene();
@@ -187,4 +194,33 @@ void RoomScene::addPlayer(char* buffer) {
 	newPlayer->setPosition(w*(2+players) / 7, h * 3 / 4);
 	newPlayer->addChild(label);
 	Director::getInstance()->getRunningScene()->addChild(newPlayer);
+}
+
+void RoomScene::initChat() {
+	auto center_x = Director::getInstance()->getWinSize().width / 2;
+	auto center_y = Director::getInstance()->getWinSize().height / 2;
+
+	text = ui::TextField::create("Enter the message here", "arial.ttf", 15);
+	text->setPosition(Vec2(center_x , center_y ));
+	text->setName("TextField");
+	text->setCursorEnabled(true);
+	text->setCursorChar('|');
+	this->addChild(text);
+
+	dialog= ui::ListView::create();
+	dialog->setDirection(ui::ScrollView::Direction::VERTICAL);
+	dialog->setContentSize(Size(230, 110));//26个15大小的字符，6行
+	dialog->setName("ListView");
+	dialog->setPosition(Vec2(center_x*0.833, center_y*0.40));
+	/*
+	for (int i = 0; i < 10; i++) {
+		auto hello = ui::Text::create("123456678912345678912345678", "fonts/arial.ttf",15);
+		hello->ignoreContentAdaptWithSize(false);
+		hello->setColor(cocos2d::Color3B::BLUE);
+		//hello->setPosition(Vec2(center_x, -center_y / 2));
+		dialog->addChild(hello,1);
+	}*/
+	//dialog->jumpToBottom();
+	
+	this->addChild(dialog,1);
 }

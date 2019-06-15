@@ -8,7 +8,7 @@
 #define KeyRelease '3'
 #define Ready '4'
 #define GameStart '9'
-
+#define Dialog '5'
 		
 		extern int local_Id ;
 		extern std::string local_username ;
@@ -21,7 +21,7 @@
 		extern ODSocket* client;
 		extern bool endThread;
 		void getMsg(ODSocket* m_client);
-
+		void updateDialog(char* buffer);
 		namespace settings
 		{
 			constexpr char *weapon_paths[] = {

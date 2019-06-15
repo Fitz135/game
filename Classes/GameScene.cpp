@@ -40,12 +40,10 @@ bool GameScene::init() {
 	for (int i = 0; i < players; i++) {
 		std::string name (playerList[i]->_name);
 		int id = playerList[i]->_id;
-		//auto label = Label::create(name, "arial.ttf", 15);
 		
 		auto player = Player::create(name, id );
 		player->setPosition(w*(i + 1), h*(i + 1));
-		//label->setPosition(0, 40);
-		//player->addChild(label);
+	
 		if (id != local_Id) {
 			player->setTag(player->getId());
 			auto op = OPOperator::create();
@@ -54,7 +52,6 @@ bool GameScene::init() {
 		}
 		
 		this->addChild(player);
-		
 	}
 
 
