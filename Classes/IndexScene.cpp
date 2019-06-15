@@ -11,7 +11,7 @@ Scene* Index::createScene() {
 }
 
 bool Index::init() {
-	auto labelStart = Label::create("Start", "arial.ttf", 30);
+	auto labelStart = Label::create("Start", "fonts/arial.ttf", 30);
 	auto labelExit = Label::create("Exit", "arial", 30);
 	auto itemStart = MenuItemLabel::create(labelStart, CC_CALLBACK_1( Index::startCallback,this));
 	auto itemExit = MenuItemLabel::create(labelExit, CC_CALLBACK_1(Index::exitCallback,this));

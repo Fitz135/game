@@ -10,7 +10,7 @@ class OPOperator : public Layer
 {
 public:
 	void KeyStart(char*);
-	void MouseStart();
+	void MouseStart(char*);
 
 	void PassOperatorInfo(float dt);
 

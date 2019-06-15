@@ -54,15 +54,70 @@ void OPOperator::KeyStart(char* buffer) {
 		}
 	}
 }
+void OPOperator::MouseStart(char* buffer) {
+	auto player = dynamic_cast<Player*>(getParent());
+	if (buffer[0] == MousePress) {
+		int x=0, y=0;
+		char c_x[5];
+		char c_y[5];
+		int start_pos = 4;
+		int tps = 4;
+		for (int j = start_pos; j < MSGSIZE; j++) {
+			if (buffer[j] == '$') {
+				start_pos = j;
+				break;
+			}
+		}
+		strncpy(c_x, &buffer[tps], start_pos - tps);
+		c_x[start_pos - tps] = '\0';
+		for (int i = 0; i < start_pos - tps; i++) {
+			int q = 1;
+			for (int k = 1; k < start_pos - tps - i; k++) {
+				q *= 10;
+			}
+			x += (static_cast<int>(buffer[tps+i]) - 48)*q;
+		}
+		tps = start_pos + 1;
+		for (int j = start_pos+1; j < MSGSIZE; j++) {
+			if (buffer[j] == '$') {
+				start_pos = j;
+				break;
+			}
+		}
+		strncpy(c_y, &buffer[tps], start_pos - tps);
+		c_y[start_pos - tps] = '\0';
+		for (int i = 0; i < start_pos - tps; i++) {
+			int q = 1;
+			for (int k = 1; k < start_pos - tps - i; k++) {
+				q *= 10;
+			}
+			y += (static_cast<int>(buffer[tps+i]) - 48)*q;
+		}
+		
+	
+		player->AttackBegan(Vec2(x,y));
+	}
+	if (buffer[0] == MouseRelease) {
+		int pressnum = 0;
+		pressnum = static_cast<int>(buffer[4]) - 48;
+		player->AttackEnd(pressnum);
+	}
+}
 /*void OPOperator::PassOperatorInfo(float dt)
 {
 	auto player = dynamic_cast<Player*>(getParent());
-	if (MouseDown)
-		player->AttackBegan(MousePosition);
-	if (!MouseDown&&player->AttackEndFlag)
+	if (MouseDown&&Player->AttackAbleFlag&&Player->IsHaveWeapon)
 	{
-		player->AttackEnd(PressNum);
-		this->unschedule(schedule_selector(OPOperator::PassOperatorInfo));
+		Player->AttackBegan(MousePosition);
+		if (MousePosition.x < Player->getPositionX())
+			Player->setScaleX(-1);
+		else
+			Player->setScaleX(1);
+	}
+	if (!MouseDown&&Player->AttackEndFlag)
+	{
+		Player->AttackEnd(PressNum);
+		this->unschedule(schedule_selector(Operator::PassOperatorInfo));
 	}
 }
 bool OPOperator::onMouseBegan(Touch * ptouch, Event *pevent)

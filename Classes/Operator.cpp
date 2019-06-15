@@ -45,6 +45,9 @@ void Operator::PassOperatorInfo(float dt)
 	auto Player = getMyplayer("Player");
 	if (MouseDown&&Player->AttackAbleFlag&&Player->IsHaveWeapon)
 	{
+		char buffer[MSGSIZE];
+		sprintf(buffer, "%c$%d$%d$%d$", MousePress, local_Id, (int)MousePosition.x, (int)MousePosition.y);
+		client->Send(buffer, MSGSIZE);
 		Player->AttackBegan(MousePosition);
 		if (MousePosition.x < Player->getPositionX())
 			Player->setScaleX(-1);
@@ -53,6 +56,9 @@ void Operator::PassOperatorInfo(float dt)
 	}
 	if (!MouseDown&&Player->AttackEndFlag)
 	{
+		char buffer[MSGSIZE];
+		sprintf(buffer, "%c$%d$%d", MouseRelease, local_Id, PressNum);
+		client->Send(buffer, MSGSIZE);
 		Player->AttackEnd(PressNum);
 		this->unschedule(schedule_selector(Operator::PassOperatorInfo));
 	}

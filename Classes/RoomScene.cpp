@@ -35,10 +35,10 @@ bool RoomScene::init() {
 	initPlayer(buffer);
 
 	auto menu = Menu::create();
-	auto readyItem = MenuItemLabel::create(Label::create("Ready", "arial.ttf", 30), CC_CALLBACK_1(RoomScene::readyCallback, this));
+	auto readyItem = MenuItemLabel::create(Label::create("Ready", "fonts/arial.ttf", 30), CC_CALLBACK_1(RoomScene::readyCallback, this));
 	menu->addChild(readyItem);
 	readyItem->setPosition(-center_x*4/5, -center_y*4/5);
-	auto sendItem= MenuItemLabel::create(Label::create("Send", "arial.ttf", 30), CC_CALLBACK_1(RoomScene::sendCallback, this));
+	auto sendItem= MenuItemLabel::create(Label::create("Send", "fonts/arial.ttf", 30), CC_CALLBACK_1(RoomScene::sendCallback, this));
 	menu->addChild(sendItem);
 	sendItem->setPosition(center_x * 4 / 5, -center_y * 4 / 5);
 	this->addChild(menu,1);
@@ -117,7 +117,7 @@ bool RoomScene::initPlayer(char* buffer) {
 	auto w = Director::getInstance()->getWinSize().width;
 	auto h = Director::getInstance()->getWinSize().height;
 	for (int i = 0; i < players; i++) {
-		auto label = Label::create(playerList[i]->getName(), "arial.ttf", 15);
+		//auto label = Label::create(playerList[i]->getName(), "arial.ttf", 15);
 		auto player = Player::create(playerList[i]->getName(), playerList[i]->getId());
 		if (i == 0) {
 			player->setPosition(w/4, h*4/7);
@@ -126,9 +126,9 @@ bool RoomScene::initPlayer(char* buffer) {
 		else {
 			player->setPosition(w*(3+i)/7, h*3/4);
 		}
-		label->setPosition(0, 40);
-		label->setColor(Color3B::BLACK);
-		player->addChild(label);
+		//label->setPosition(0, 40);
+		//label->setColor(Color3B::BLACK);
+		//player->addChild(label);
 		this->addChild(player);
 	}
 	
@@ -171,7 +171,7 @@ void RoomScene::initChat() {
 	auto center_x = Director::getInstance()->getWinSize().width / 2;
 	auto center_y = Director::getInstance()->getWinSize().height / 2;
 
-	text = ui::TextField::create("Enter the message here", "arial.ttf", 15);
+	text = ui::TextField::create("Enter the message here", "fonts/arial.ttf", 15);
 	text->setPosition(Vec2(center_x , center_y/5 ));
 	text->setName("TextField");
 	text->setCursorEnabled(true);

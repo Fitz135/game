@@ -9,13 +9,14 @@
 #define Ready '4'
 #define GameStart '9'
 #define Dialog '5'
-		
+#define MousePress '6'
+#define MouseRelease '7'
 		extern int local_Id ;
 		extern std::string local_username ;
 		extern int Scale ;//Í¼Æ¬±ÈÀý
 
 		extern std::vector<Entity*> playerList;
-
+		extern std::vector<Vec2> posList;
 		const int MSGSIZE = 32;
 		extern int players;// num of players
 		extern ODSocket* client;
@@ -25,6 +26,7 @@
 		void addPlayer(char* buffer);
 		void gamestartCallback();
 		void updatePlayer(char* buffer);
+
 
 		namespace settings
 		{

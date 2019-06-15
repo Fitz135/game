@@ -6,6 +6,7 @@ int local_Id=0;
 std::string local_username="";
 int Scale =1;
 std::vector<Entity*> playerList;
+std::vector<Vec2> posList;
 int players=0;
 
 ODSocket* client;
@@ -25,7 +26,9 @@ void getMsg(ODSocket* m_client) {
 		case GameStart: gamestartCallback();
 					   log("gamestart\n"); break;
 		case KeyPress:;
-		case KeyRelease:updatePlayer(buffer); break;
+		case KeyRelease:;
+		case MousePress:;
+		case MouseRelease:updatePlayer(buffer); break;
 		case Dialog:updateDialog(buffer); break;
 		}
 	}
@@ -92,5 +95,12 @@ void updatePlayer(char* buffer) {
 			dynamic_cast<OPOperator*>(
 				dynamic_cast<Player*>(
 					GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->KeyStart(buffer);
+	}
+	else if (buffer[0] == MousePress || buffer[0] == MouseRelease) {
+		int id = static_cast<int>(buffer[2]) - 48;
+		if (id != local_Id)
+			dynamic_cast<OPOperator*>(
+				dynamic_cast<Player*>(
+					GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->MouseStart(buffer);
 	}
 }

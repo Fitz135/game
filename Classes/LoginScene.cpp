@@ -15,7 +15,7 @@ bool LoginScene::init() {
 	bg->setScale(2);
 	bg->setPosition(center_x, center_y);
 
-	id = ui::TextField::create("input your ID ", "arial.ttf", 15);
+	id = ui::TextField::create("input your ID ", "fonts/arial.ttf", 15);
 	//auto idBG = Sprite::create("UI/TextFieldBG.png");
 	id->setPosition(Vec2(center_x, center_y*23/20));
 	id->setColor(Color3B::BLACK);
@@ -24,8 +24,8 @@ bool LoginScene::init() {
 	id->setCursorChar('|');
 	//idBG->setPosition(center_x, center_y);
 
-	auto finish = MenuItemLabel::create(Label::create("Finish", "arial.ttf", 20), CC_CALLBACK_1(LoginScene::startCallback, this));
-	auto canel = MenuItemLabel::create(Label::create("Cancel", "arial.ttf", 20), CC_CALLBACK_1(LoginScene::startCallback, this));
+	auto finish = MenuItemLabel::create(Label::create("Finish", "fonts/arial.ttf", 20), CC_CALLBACK_1(LoginScene::startCallback, this));
+	auto canel = MenuItemLabel::create(Label::create("Cancel", "fonts/arial.ttf", 20), CC_CALLBACK_1(LoginScene::startCallback, this));
 	auto menu = Menu::create();
 	menu->setPosition(center_x, center_y * 2 / 3);
 	menu->addChild(finish);

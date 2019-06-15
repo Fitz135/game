@@ -13,9 +13,9 @@ Scene* GameMode::createScene() {
 bool GameMode::init() {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	//
-	auto labelNormal = Label::create("PvP", "arial.ttf", 30);
-	auto labelCrazy = Label::create("PvE", "arial.ttf", 30);	
-	auto labelBack = Label::create("Back", "arial.ttf", 30);
+	auto labelNormal = Label::create("PvP", "fonts/arial.ttf", 30);
+	auto labelCrazy = Label::create("PvE", "fonts/arial.ttf", 30);	
+	auto labelBack = Label::create("Back", "fonts/arial.ttf", 30);
 	auto itemBack = MenuItemLabel::create(labelBack, CC_CALLBACK_1( GameMode::menubackCallback,this));
 	auto itemNormal = MenuItemLabel::create(labelNormal, CC_CALLBACK_1(GameMode::gamestartCallback,this));
 	auto itemCrazy = MenuItemLabel::create(labelCrazy, CC_CALLBACK_1(GameMode::gamestartCallback,this) );
@@ -30,7 +30,7 @@ bool GameMode::init() {
 	
 	createBG();
 	
-	auto labelId= Label::create(local_username, "arial.ttf", 30);//"123"
+	auto labelId= Label::create(local_username, "fonts/arial.ttf", 30);//"123"
 	labelId->setPosition(visibleSize.width - labelId->getContentSize().width / 2, visibleSize.height - labelId->getContentSize().height / 2);
 	this->addChild(labelId);
 	return true;

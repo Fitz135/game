@@ -32,17 +32,20 @@ bool GameScene::init() {
 		return false;
 	}
 	
-
 	auto w = Director::getInstance()->getWinSize().width / (players + 1);
 	auto h = Director::getInstance()->getWinSize().height / (players + 1);
 
+	posList.push_back(Vec2(100, 100));
+	posList.push_back(Vec2(100, 300));
+	posList.push_back(Vec2(300, 100));
+	posList.push_back(Vec2(300, 300));
 	
 	for (int i = 0; i < players; i++) {
 		std::string name (playerList[i]->_name);
 		int id = playerList[i]->_id;
 		
 		auto player = Player::create(name, id );
-		player->setPosition(w*(i + 1), h*(i + 1));
+		player->setPosition(posList[id]);
 	
 		if (id != local_Id) {
 			player->setTag(player->getId());
