@@ -1,6 +1,9 @@
 #include"IndexScene.h"
 #include"LoginScene.h"
 #include"SimpleAudioEngine.h"
+
+#include"ResultScene.h"
+
 USING_NS_CC;//using namespace cocos2d;
 
 Scene* Index::createScene() {
@@ -32,7 +35,8 @@ bool Index::init() {
 
 
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
-	audio->playBackgroundMusic("audio/bgm.mp3", true);
+	audio->preloadBackgroundMusic("audio/bgm1.wav");
+	
 
 	return true;
 }
@@ -40,10 +44,15 @@ void Index::startCallback(Ref* ref) {
 	auto layer = LoginScene::create();
 	layer->setTag(1);
 	this->addChild(layer);
+	/*auto layer = ResultScene::create();
+	layer->setTag(1);
+	this->addChild(layer);*/
 }
 void Index::exitCallback(Ref* ref) {
 	Director::getInstance()->end();
 }
-void Index::test(float dt){
-	log("66");
+void Index::onEnter() {
+	Layer::onEnter();
+	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+	audio->playBackgroundMusic("audio/bgm1.wav", true);
 }

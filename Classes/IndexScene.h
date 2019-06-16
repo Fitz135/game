@@ -12,7 +12,7 @@ public:
 
 	void startCallback(Ref* ref);
 	void exitCallback(Ref* ref);
-	void test(float);
+	virtual void onEnter();
 	CREATE_FUNC(Index); //宏展开为 create()函数；
 
 };

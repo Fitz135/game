@@ -45,16 +45,22 @@ void Operator::PassOperatorInfo(float dt)
 	auto Player = getMyplayer("Player");
 	if (MouseDown&&Player->AttackAbleFlag&&Player->IsHaveWeapon)
 	{
-		char buffer[MSGSIZE];
-		sprintf(buffer, "%c$%d$%d$%d$", MousePress, local_Id, (int)MousePosition.x, (int)MousePosition.y);
-		client->Send(buffer, MSGSIZE);
+		if (!gameMode) {
+			char buffer[MSGSIZE];
+			sprintf(buffer, "%c$%d$%d$%d$", MousePress, local_Id, (int)MousePosition.x, (int)MousePosition.y);
+			client->Send(buffer, MSGSIZE);
+		}
+		
 		Player->AttackBegan(MousePosition);
 	}
 	if (!MouseDown&&Player->AttackEndFlag)
 	{
-		char buffer[MSGSIZE];
-		sprintf(buffer, "%c$%d$%d", MouseRelease, local_Id, PressNum);
-		client->Send(buffer, MSGSIZE);
+		if (!gameMode) {
+			char buffer[MSGSIZE];
+			sprintf(buffer, "%c$%d$%d", MouseRelease, local_Id, PressNum);
+			client->Send(buffer, MSGSIZE);
+		}
+		
 		Player->AttackEnd(PressNum);
 		this->unschedule(schedule_selector(Operator::PassOperatorInfo));
 	}
@@ -80,9 +86,12 @@ void Operator::OnKeyPressed(EventKeyboard::KeyCode keyCode, Event * event)
 	int keycode = (int)keyCode - 26;
 	if (0 <= keycode && 3 >= keycode)
 	{
-		char buffer[MSGSIZE];
-		sprintf(buffer, "%c$%d$%d", KeyPress, local_Id, keycode);
-		client->Send(buffer, MSGSIZE);
+		if (!gameMode) {
+			char buffer[MSGSIZE];
+			sprintf(buffer, "%c$%d$%d", KeyPress, local_Id, keycode);
+			client->Send(buffer, MSGSIZE);
+		}
+		
 		if (!PressNum)
 		{
 			auto Player = getMyplayer("Player");
@@ -98,9 +107,12 @@ void Operator::OnKeyReleased(EventKeyboard::KeyCode keyCode, Event * event)
 	int keycode = (int)keyCode - 26;
 	if (0 <= keycode && 3 >= keycode)
 	{
-		char buffer[MSGSIZE];
-		sprintf(buffer, "%c$%d$%d", KeyRelease, local_Id, keycode);
-		client->Send(buffer, MSGSIZE);
+		if (!gameMode) {
+			char buffer[MSGSIZE];
+			sprintf(buffer, "%c$%d$%d", KeyRelease, local_Id, keycode);
+			client->Send(buffer, MSGSIZE);
+		}
+		
 		PressNum--;
 		this->unschedule(move[keycode]);
 		if (!PressNum)

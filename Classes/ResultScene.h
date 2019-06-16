@@ -9,7 +9,10 @@ public:
 	virtual bool init();
 	CREATE_FUNC(ResultScene);
 	virtual void onEnter();
-	void startCallback(cocos2d::Ref* ref); 
+	void reroomCallback(cocos2d::Ref* ref);
+	void exitCallback(cocos2d::Ref* ref);
+
+	
 private:
 		cocos2d::Sprite* bg;
 		//cocos2d::ui::TextField * id;

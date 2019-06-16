@@ -77,21 +77,36 @@ void GameScene::onEnter() {
 	posList.push_back(Vec2(300, 100));
 	posList.push_back(Vec2(300, 300));
 
-	for (int i = 0; i < players; i++) {
-		std::string name(playerList[i]->_name);
-		int id = playerList[i]->_id;
+	if (!gameMode) {
+		for (int i = 0; i < players; i++) {
+			std::string name(playerList[i]->_name);
+			int id = playerList[i]->_id;
 
-		auto player = Player::create(name, id);
-		player->setPosition(posList[id]);
-		if (id != local_Id) {
-			player->setTag(player->getId());
-			auto op = OPOperator::create();
-			op->setName("op");
-			player->addChild(op);
+			auto player = Player::create(name, id);
+			player->setPosition(posList[id]);
+			if (id != local_Id) {
+				player->setTag(player->getId());
+				auto op = OPOperator::create();
+				op->setName("op");
+				player->addChild(op);
+			}
+			tileMap->addChild(player);
+			Players->addObject(player);
 		}
+	}
+	else
+	{
+		//std::string name(playerList[0]->_name);
+		//int id = playerList[0]->_id;
+		int ap = 1;
+		local_Id = ap;
+		auto player = Player::create(local_username, ap);
+		player->setPosition(posList[ap]);
+
 		tileMap->addChild(player);
 		Players->addObject(player);
 	}
+	
 
 	auto sp = Sprite::create("KnightStand1.png");
 	sp->setScale(0.5);
