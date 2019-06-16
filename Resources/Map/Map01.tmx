@@ -3,7 +3,14 @@
  <tileset firstgid="1" source="desert.tsx"/>
  <tileset firstgid="49" name="Meta1" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="2" columns="2">
   <image source="meta_tiles.png" width="67" height="34"/>
-  <tile id="0">
+  <terraintypes>
+   <terrain name="Type 1" tile="-1"/>
+   <terrain name="Type 2" tile="-1"/>
+   <terrain name="Type 3" tile="-1"/>
+   <terrain name="Type 4" tile="-1"/>
+   <terrain name="Type 5" tile="-1"/>
+  </terraintypes>
+  <tile id="0" terrain="4,4,3,4">
    <properties>
     <property name="BirthPoint" type="bool" value="false"/>
     <property name="Collidable" type="bool" value="true"/>
@@ -55,6 +62,9 @@
    <image width="22" height="18" source="diamond.png"/>
   </tile>
  </tileset>
+ <tileset firstgid="55" name="WALL" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="48" columns="8">
+  <image source="tmw_desert_spacing_WALL.png" width="265" height="199"/>
+ </tileset>
  <layer name="Ground" width="40" height="40">
   <data encoding="base64" compression="zlib">
    eJzt1zEOgCAQBEBeglepnf7/dYbCzijKHiyyxRTGBBeOU4whhOhsrfAMEXlmN/dmgnzI+YzAq2YbwdzQGL9DXzIZQW5GC1mdkFr24/Rw3RsjyFBjjux1ShlLe3aEWvZkdx6ffU/nKDmzGUH+mv54Dj3fed69onXPq4O8M8LeSAw4FmKv5eZB5pZrrf8HBeMAK+68iw==
@@ -65,7 +75,7 @@
    <property name="collision" value="1"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztlrsOgzAMRYFOlAlK1/7/Z9ZLJAaH+BUbkI/kKYpz49zIHobEmiVaQAOOvhFignh10oLB0TdDvJl7jnwFezhnrRAbxAdZo9R2ZpxVsPIfpbaR+s5qW4jURyH16ZDo24QhzZskCU7EfMFBO19o2RvrlB5Yw+JOPetyZ31UX0fpo/q6rP9MFOG5Mbj6enCWm/rv8n/E56hRm9c4Z1LmRus73DGfps976NP0eQ99nn3eeybj6oueyVpo3upqSLzg6R+JFzz9I/HCk/xzdf5w5wdu
+   eJztlkkOwjAMRXsSDoIYBGJaUO5/HMyCnZt8D7Er8JO8aRv7N/mtPU2FN9tsAR1Ogmd3FHuKwyAtHBJ9F4orxU1ZS3NWEn1PipnixdxD9lZSy7KGA9nbTH2tvbXU8tI3qlbps9X6+OYhjCOQ986sa3mzKP6djPlCgnW+sNKbT5AeqM2NMPJf75E7Sx/q6yx9qK+/OTYuivjcHFJ9I2jlRr+7+j7ycyyxNAdKehEyS3r3Nu89ichn6fMR+ix93lvfmblm6fNSfdEzGfe+LbJnsh6Ws1obGi9E+kfjhUj/aLzwS/5ZO2+prClC
   </data>
  </layer>
  <layer name="Meta" width="40" height="40" opacity="0">

@@ -53,7 +53,7 @@ void RoomScene::connectService(char* buffer){
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-	char * ip = "192.168.1.106";//getIp();
+	char * ip = "192.168.1.104";//getIp();
 
 	client = new ODSocket();
 	client->Init();

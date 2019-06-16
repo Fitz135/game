@@ -86,7 +86,7 @@ void addPlayer(char* buffer) {
 }
 void gamestartCallback() {
 	auto scene = GameScene::createScene();
-	Director::getInstance()->replaceScene(TransitionFade::create(0.5, scene));
+	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
 }
 void updatePlayer(char* buffer) {
 	if (buffer[0] == KeyPress || buffer[0] == KeyRelease) {

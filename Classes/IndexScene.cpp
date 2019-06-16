@@ -7,6 +7,7 @@ Scene* Index::createScene() {
 	auto layer=Index::create();
 	layer->setTag(1);
 	scene->addChild(layer);
+	
 	return scene;
 }
 
@@ -24,6 +25,8 @@ bool Index::init() {
 	for (int i = 1; i <= 7; i++)
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Player/" + std::to_string(i) + ".plist");
 	//schedule(schedule_selector(Index::test), 0.1);
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Bullet.plist");
+
 	return true;
 }
 void Index::startCallback(Ref* ref) {
