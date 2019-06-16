@@ -12,20 +12,21 @@ bool LoginScene::init() {
 	auto center_y = Director::getInstance()->getWinSize().height / 2;
 
 	bg = Sprite::create("UI/LoginBG.png");
-	bg->setScale(2);
+	bg->setScale(0.55);
 	bg->setPosition(center_x, center_y);
 
-	id = ui::TextField::create("input your ID ", "fonts/arial.ttf", 15);
+	id = ui::TextField::create("12 character most ", "fonts/arial.ttf", 15);
 	//auto idBG = Sprite::create("UI/TextFieldBG.png");
 	id->setPosition(Vec2(center_x, center_y*23/20));
-	id->setColor(Color3B::BLACK);
+	id->setColor(Color3B(150,150,150));
 	id->setTag(1);
 	id->setCursorEnabled(true);
 	id->setCursorChar('|');
+	id->setMaxLength(12);
 	//idBG->setPosition(center_x, center_y);
 
-	auto finish = MenuItemLabel::create(Label::create("Finish", "fonts/arial.ttf", 20), CC_CALLBACK_1(LoginScene::startCallback, this));
-	auto canel = MenuItemLabel::create(Label::create("Cancel", "fonts/arial.ttf", 20), CC_CALLBACK_1(LoginScene::startCallback, this));
+	auto finish = MenuItemLabel::create(Label::create("Finish", "fonts/Cordelia.ttf", 20), CC_CALLBACK_1(LoginScene::startCallback, this));
+	auto canel = MenuItemLabel::create(Label::create("Cancel", "fonts/Cordelia.ttf", 20), CC_CALLBACK_1(LoginScene::startCallback, this));
 	auto menu = Menu::create();
 	menu->setPosition(center_x, center_y * 2 / 3);
 	menu->addChild(finish);

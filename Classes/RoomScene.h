@@ -18,6 +18,7 @@ public:
 
 	void readyCallback(Ref*);
 	void sendCallback(Ref*);
+	void backCallback(Ref*);
 	static void gamestartCallback();
 	//static void updateDialog(char*);
 	//void getMsg(ODSocket*);

@@ -35,12 +35,16 @@ bool RoomScene::init() {
 	initPlayer(buffer);
 
 	auto menu = Menu::create();
-	auto readyItem = MenuItemLabel::create(Label::create("Ready", "fonts/arial.ttf", 30), CC_CALLBACK_1(RoomScene::readyCallback, this));
+	auto readyItem = MenuItemLabel::create(Label::create("Ready", "fonts/Cordelia.ttf", 22), CC_CALLBACK_1(RoomScene::readyCallback, this));
 	menu->addChild(readyItem);
-	readyItem->setPosition(-center_x*4/5, -center_y*4/5);
-	auto sendItem= MenuItemLabel::create(Label::create("Send", "fonts/arial.ttf", 30), CC_CALLBACK_1(RoomScene::sendCallback, this));
+	readyItem->setPosition(-center_x*0.55, -center_y*0.55);
+	auto backItem = MenuItemLabel::create(Label::create("Back", "fonts/Cordelia.ttf", 22), CC_CALLBACK_1(RoomScene::backCallback, this));
+	menu->addChild(backItem);
+	backItem->setPosition(-center_x * 0.55, -center_y * 0.83);
+	auto sendItem= MenuItemLabel::create(Label::create("Send", "fonts/Cordelia.ttf", 17), CC_CALLBACK_1(RoomScene::sendCallback, this));
 	menu->addChild(sendItem);
-	sendItem->setPosition(center_x * 4 / 5, -center_y * 4 / 5);
+	sendItem->setPosition(center_x * 0.75, -center_y * 0.85);
+	menu->setColor(Color3B(143, 137, 137));
 	this->addChild(menu,1);
 
 	initChat();
@@ -121,7 +125,7 @@ bool RoomScene::initPlayer(char* buffer) {
 		auto player = Player::create(playerList[i]->getName(), playerList[i]->getId());
 		if (i == 0) {
 			player->setPosition(w/4, h*4/7);
-			player->setScale(1.5f);
+			player->setScale(2.0f);
 		}
 		else {
 			player->setPosition(w*(3+i)/7, h*3/4);
@@ -138,15 +142,19 @@ void RoomScene::readyCallback(Ref* ref) {
 	MenuItemLabel* item = (MenuItemLabel*)ref;
 	char buffer[MSGSIZE];
 	if (item->getString() == "Ready") {
-		item->setString("Unready");
+		item->setString("UnReady");
 		sprintf(buffer, "%c$%d$r", Ready,playerList[0]->_id);
 		client->Send(buffer, MSGSIZE);
 	}
-	else if(item->getString() == "Unready"){
+	else if(item->getString() == "UnReady"){
 		item->setString("Ready");
 		sprintf(buffer, "%c$%d$u", Ready,playerList[0]->_id);
 		client->Send(buffer, MSGSIZE);
 	}
+}
+void RoomScene::backCallback(Ref* ref) {
+	Director::getInstance()->popScene();
+	client->Close();
 }
 void RoomScene::sendCallback(Ref* ref) {
 	char buffer[MSGSIZE];
@@ -172,7 +180,7 @@ void RoomScene::initChat() {
 	auto center_y = Director::getInstance()->getWinSize().height / 2;
 
 	text = ui::TextField::create("Enter the message here", "fonts/arial.ttf", 15);
-	text->setPosition(Vec2(center_x , center_y/5 ));
+	text->setPosition(Vec2(center_x*1.2 , center_y*0.18 ));
 	text->setName("TextField");
 	text->setCursorEnabled(true);
 	text->setCursorChar('|');
