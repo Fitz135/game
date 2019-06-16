@@ -27,6 +27,8 @@ public:
 	void IsBulletIntoPlayer();
 
 	void IsWeaponIntoPlayer();
+
+	void exitCallback(Ref*ref);
 	//Sprite* tileMap;
     TMXTiledMap *tileMap;
 	TMXLayer *BG;

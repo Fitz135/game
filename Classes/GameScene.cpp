@@ -55,7 +55,16 @@ bool GameScene::init() {
 
 	auto operate = Operator::create();
 	addChild(operate);
-	
+
+	auto x=Director::getInstance()->getWinSize().width;
+	auto y = Director::getInstance()->getWinSize().height;
+
+	auto exitItem = MenuItemLabel::create(
+		Label::create("Exit", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
+	exitItem->setPosition(-x *0.45, y *0.45);
+	auto menu = Menu::create();
+	menu->addChild(exitItem);
+	addChild(menu,5);
 	return true;
 }
 
@@ -107,12 +116,12 @@ void GameScene::onEnter() {
 		Players->addObject(player);
 	}
 
-	auto player = Player::create("ai", 5);
+	/*auto player = Player::create("ai", 5);
 	player->setPosition(50,50);
 	player->setTag(2);
 	auto aiop = AiPlayer::create();
 	player->addChild(aiop);
-	tileMap->addChild(player);
+	tileMap->addChild(player);*/
 
 	this->scheduleUpdate();
 	this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
@@ -328,7 +337,9 @@ void GameScene::IsBulletIntoWall()
 }
 
 
-
+void GameScene::exitCallback(Ref*ref) {
+	Director::getInstance()->popScene();
+}
 ////////AI need//////////
 /*bool GameScene::isInMap(const cocos2d::Vec2& pos) {
 	auto mapSize = tileMap->getMapSize();
