@@ -50,7 +50,7 @@ void Operator::PassOperatorInfo(float dt)
 		client->Send(buffer, MSGSIZE);
 		Player->AttackBegan(MousePosition);
 	}
-	if (!MouseDown&&Player->AttackEndFlag)
+	if (!MouseDown&&Player->AttackEndFlag&&Player->IsHaveWeapon)
 	{
 		char buffer[MSGSIZE];
 		sprintf(buffer, "%c$%d$%d", MouseRelease, local_Id, PressNum);

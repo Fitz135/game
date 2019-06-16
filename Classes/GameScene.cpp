@@ -93,15 +93,14 @@ void GameScene::onEnter() {
 		Players->addObject(player);
 	}
 
-	auto sp = Sprite::create("KnightStand1.png");
-	sp->setScale(0.5);
-	sp->setName("test");
+	/*auto sp = Sprite::create("Bow.png");
 	tileMap->addChild(sp);
-	sp->setPosition(100,100);
-	sp->setZOrder(1);
-	Players->addObject(sp);
-	this->scheduleUpdate();
+	sp->setPosition(100, 100);
+	sp->setTag(0);
+	MapItems->addObject(sp);*/
 
+	this->scheduleUpdate();
+	this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
 }
 void GameScene::onExit() {
 	Layer::onExit();
@@ -114,7 +113,31 @@ void GameScene::update(float delta)
 	this->IsWeaponIntoPlayer();
 	this->PickMapItems();
 	this->IsBulletIntoWall();
-	//this->IsBulletIntoPlayer();
+	this->IsBulletIntoPlayer();
+}
+void GameScene::SpawnItems(float dt)
+{
+	srand(int(time(0)) + rand());
+	float x, y;
+	while (true)
+	{
+		x = (float)(rand() % 1280);
+		y = (float)(rand() % 1280);
+		auto git = Meta->getTileGIDAt(Vec2((int)floor(x/ 32), (int)(39 - floor(y/ 32))));
+		auto value = tileMap->getPropertiesForGID(git);
+		auto valueMap = value.asValueMap();
+		if (!valueMap.at("Collidable").asBool())break;
+	}
+	int type = rand() % 5;
+	auto items = Sprite::create(settings::weapon_paths[type]);
+	items->setTag(type);
+	items->setPosition(x, y);
+	auto jump = JumpBy::create(0.5f,Vec2(0,10),10,1);
+	auto seq = Sequence::create(jump, jump->reverse(), nullptr);
+	items->runAction(RepeatForever::create(seq));
+	auto map=this->getChildByName("Map");
+	MapItems->addObject(items);
+	map->addChild(items);
 }
 void GameScene::MapMove()
 {
@@ -132,26 +155,27 @@ void GameScene::IsWeaponIntoPlayer()
 {
 	auto players = Array::create();
 	players->retain();
-	auto weapons = Array::create();
-	weapons->retain();
 	Object*iplayer;
-	Object*iweapon;
+	Object*iplayer2;
 
 	CCARRAY_FOREACH(Players, iplayer)
 	{
-		Sprite* player = (Sprite*)iplayer;
-		auto playerZone = CCRectMake(player->getPositionX() - 9, player->getPositionY() - 24, 18, 42);
-		CCARRAY_FOREACH(Weapons, iweapon)
+		Player* player = (Player*)iplayer;
+		if (player->weapon!=nullptr&&player->weapon->MyWeapon->getOpacity()!= 0 && (player->WeaponType == 1 || player->WeaponType== 4))
 		{
-			Sprite* weapon = (Sprite*)iweapon;
-			auto weaponZone = weapon->boundingBox();
-			if (weaponZone.intersectsRect(playerZone))
+			auto weaponZone = (player->weapon->MyWeapon)->boundingBox();
+			CCARRAY_FOREACH(Players, iplayer2)
 			{
-				if (((Sprite*)iweapon)->getName() != ((Player*)iplayer)->getName())
+				Player* player2=(Player*)iplayer2;
+				if (player != player2)
 				{
-					log("ys");
-					players->addObject(iplayer);
-					weapons->addObject(iweapon);
+					auto playerZone = CCRectMake(player2->getPositionX() - 9, player2->getPositionY() - 24, 18, 42);
+					if (weaponZone.intersectsRect(playerZone))
+					{
+					
+							//players->addObject(iplayer);
+							//weapons->addObject(iweapon);
+					}
 				}
 			}
 		}
@@ -166,7 +190,7 @@ void GameScene::IsBulletIntoPlayer()
 	Object*iplayer;
 	Object*ibullet;
 
-<<<<<<< HEAD
+
 	CCARRAY_FOREACH(Players, iplayer)
 	{
 		Sprite* player = (Sprite*)iplayer;
@@ -215,19 +239,7 @@ bool GameScene::isAccessable(Point Position, int Direction)
 		if (valueMap.at("Collidable").asBool())return true;
 	}
 	return false;
-=======
-void GameScene::onEnter() {
-	Layer::onEnter();
-	//endThread = 0;
-	/*client->Send("4", 1);//////
-	
-	std::thread t(getMsg, client);
-	t.detach();*/
-}
-void GameScene::onExit() {
-	Layer::onExit();
-	//endThread = 1;
->>>>>>> 1281fbf4a0a1d22e7bea688934c665c41b074dcf
+
 }
 void GameScene::PickMapItems()
 {
@@ -249,8 +261,7 @@ void GameScene::PickMapItems()
 
 			if (mapitemZone.intersectsRect(playerZone))
 			{
-				players->addObject(iplayer);
-				((Player*)iplayer)->WeaponType = 1;
+				((Player*)iplayer)->WeaponType =((Sprite*)imapitem)->getTag();
 				((Player*)iplayer)->scheduleUpdate();
 				mapitems->addObject(imapitem);
 			}

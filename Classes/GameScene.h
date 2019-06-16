@@ -19,12 +19,13 @@ public:
 	virtual void onEnter();
 	virtual void onExit();
 	void update(float delta);
+	void SpawnItems(float dt);
 	void MapMove();
 	bool isAccessable(Point Position, int Direction);
 	void PickMapItems();
 	void IsBulletIntoWall();
 	void IsBulletIntoPlayer();
-	//void IsWeaponIntoPlayer();
+	void IsWeaponIntoPlayer();
 	//Sprite* tileMap;
     TMXTiledMap *tileMap;
 	TMXLayer *BG;

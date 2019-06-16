@@ -64,7 +64,8 @@ bool Player::initWithPlayerType(int i)
 	Body = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Body/Body-0.png");
 	Head = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Head/Head-0.png");
 	Hand = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Arm/Arm-0.png");
-	ChangeWeapon(-1);
+	//ChangeWeapon(-1);
+	this->weapon = nullptr;
 
 	Legs->setPosition(0, -14);
 	Head->setPosition(0, -1);
@@ -85,29 +86,28 @@ bool Player::initWithPlayerType(int i)
 
 	AttackAbleFlag = 1;
 	AttackEndFlag = 1;
-	IsHaveWeapon = 1;
+	IsHaveWeapon = 0;
 	return true;
 }
 void Player::update(float dt)
 {
-	if (weapon->getReferenceCount() == 1)
+	if (!weapon||weapon->getReferenceCount() == 1)
 	{
 		ChangeWeapon(WeaponType);
 		this->unscheduleUpdate();
 	}
 }
-void Player::ChangeWeapon(int WeaponType)
+void Player::ChangeWeapon(int weapontype)
 {
-
-	if (WeaponType!=-1)
+	if (weapon)
 	{
 		weapon->MyWeapon->removeFromParentAndCleanup(TRUE);
-
 		delete weapon;
 	}
-	WeaponType=1;
+
 	weapon = Weapon::create(WeaponType);
 	weapon->retain();
+	IsHaveWeapon = 1;
 	weapon->MyWeapon->setTag(WeaponType);
 	AttackSpeed = weapon->WeaponSpeed[WeaponType];
 	addChild(weapon->MyWeapon);
