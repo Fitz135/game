@@ -5,7 +5,7 @@
 #include "cocos2d.h"
 #include"ui/CocosGUI.h"
 
-class RoomScene :public cocos2d::Layer {
+class RoomScene :public cocos2d::Scene {
 public:
 	static cocos2d::Scene* createScene();
 	virtual bool init();
@@ -18,6 +18,7 @@ public:
 
 	void readyCallback(Ref*);
 	void sendCallback(Ref*);
+	void backCallback(Ref*);
 	static void gamestartCallback();
 	//static void updateDialog(char*);
 	//void getMsg(ODSocket*);
@@ -25,13 +26,12 @@ public:
 	virtual void  onExit();
 
 	void initChat();
-	void addMsg(std::string);
+	//void addMsg(std::string);
+	cocos2d::ui::ListView* dialog;
+	//cocos2d::ui::Text* msglog;
+	void update(float dt);
 private:
 	bool isReady[4];
-	cocos2d::ui::ListView* dialog;
 	cocos2d::ui::TextField* text;
-	
-	
-	
 };
 #endif // !_ROOM_SCENE_H_

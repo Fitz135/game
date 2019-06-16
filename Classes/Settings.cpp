@@ -23,8 +23,7 @@ void getMsg(ODSocket* m_client) {
 		log(buffer);
 		switch (buffer[0]) {
 		case NewPlayer:addPlayer(buffer); break;
-		case GameStart: gamestartCallback();
-					   log("gamestart\n"); break;
+		case GameStart: gamestartCallback();break;
 		case KeyPress:;
 		case KeyRelease:;
 		case MousePress:;
@@ -46,12 +45,10 @@ void updateDialog(char* buffer) {
 	strcpy(msg, &buffer[4]);
 	char finaltext[sizeof(name) + sizeof(msg) + 1];
 	sprintf(finaltext, "%s:%s", name.c_str(), msg);
-	//log(finaltext);
-	//int len = name.length() + strlen(msg) + 1;
-	std::string temp(finaltext);
-	//int t = temp.length();
-	auto layer = dynamic_cast<RoomScene*>(Director::getInstance()->getRunningScene()->getChildByName("layer"));
-	//layer->addMsg(temp);//readyCallback(NULL);
+	
+	
+	newMsg= std::string(finaltext);
+	isNewMsg = true;
 	
 }
 void addPlayer(char* buffer) {
@@ -70,24 +67,26 @@ void addPlayer(char* buffer) {
 	name[start_pos - 2] = '\0';
 	id = static_cast<int>(buffer[start_pos+1]) - 48;
 	//start_pos += 2;
-	auto newPlayer = Player::create(std::string(name), id);
+	
 	auto entity = Entity::create(std::string(name), id);
 	playerList.push_back(entity);
 	players++;
-
+	isNewPlayer = true;
+	/*auto newPlayer = Player::create(std::string(name), id);
 	auto w = Director::getInstance()->getWinSize().width;
 	auto h = Director::getInstance()->getWinSize().height;
 	//auto label = Label::create(name, "fonts/arial.ttf", 15);
 	//label->setPosition(0, 40);
 	//label->setColor(Color3B::BLACK);
-	newPlayer->setPosition(w*(2 + players) / 7, h * 3 / 4);
+	newPlayer->setPosition(w*(1 + players*3.5) / 17, h * 3 / 4);
 	//newPlayer->addChild(label);
-	Director::getInstance()->getRunningScene()->addChild(newPlayer);
+	Director::getInstance()->getRunningScene()->addChild(newPlayer);*/
 }
 void gamestartCallback() {
 	auto scene = GameScene::createScene();
 	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
 }
+
 void updatePlayer(char* buffer) {
 	if (buffer[0] == KeyPress || buffer[0] == KeyRelease) {
 		int id = static_cast<int>(buffer[2]) - 48;
@@ -104,3 +103,9 @@ void updatePlayer(char* buffer) {
 					GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->MouseStart(buffer);
 	}
 }
+
+RoomScene *roomscene;
+
+bool isNewPlayer = false;
+bool isNewMsg = false;
+std::string newMsg;

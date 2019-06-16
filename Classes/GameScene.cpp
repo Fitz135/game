@@ -166,6 +166,7 @@ void GameScene::IsBulletIntoPlayer()
 	Object*iplayer;
 	Object*ibullet;
 
+<<<<<<< HEAD
 	CCARRAY_FOREACH(Players, iplayer)
 	{
 		Sprite* player = (Sprite*)iplayer;
@@ -214,6 +215,19 @@ bool GameScene::isAccessable(Point Position, int Direction)
 		if (valueMap.at("Collidable").asBool())return true;
 	}
 	return false;
+=======
+void GameScene::onEnter() {
+	Layer::onEnter();
+	//endThread = 0;
+	/*client->Send("4", 1);//////
+	
+	std::thread t(getMsg, client);
+	t.detach();*/
+}
+void GameScene::onExit() {
+	Layer::onExit();
+	//endThread = 1;
+>>>>>>> 1281fbf4a0a1d22e7bea688934c665c41b074dcf
 }
 void GameScene::PickMapItems()
 {
