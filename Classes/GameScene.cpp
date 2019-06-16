@@ -106,24 +106,14 @@ void GameScene::onEnter() {
 		tileMap->addChild(player);
 		Players->addObject(player);
 	}
-<<<<<<< HEAD
-	
 
-	auto sp = Sprite::create("KnightStand1.png");
-	sp->setScale(0.5);
-	sp->setName("test");
-	tileMap->addChild(sp);
-	sp->setPosition(100,100);
-	sp->setZOrder(1);
-	Players->addObject(sp);
-=======
 	auto player = Player::create("ai", 5);
 	player->setPosition(50,50);
 	player->setTag(2);
 	auto aiop = AiPlayer::create();
 	player->addChild(aiop);
 	tileMap->addChild(player);
->>>>>>> 243550dfbecb1e329122eddeff0297aec18969a7
+
 	this->scheduleUpdate();
 	this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
 }
