@@ -19,16 +19,17 @@ Player::Player(std::string name, int id) :info(Entity(name, id)){
 
 	
 }
-Player* Player::getMychara(char* str) {
+/*Player* Player::getMychara(char* str) {
 	return dynamic_cast<Player*>(GameScene::getCurrentMap()->getChildByName(str));
-}
+}*/
 Player* Player::create(std::string name,int id)
 {
 	Player* player = new Player(name, id);
-	if (player && player->initWithPlayerType(id+1))
+	if (player && player->initWithPlayerType(id))
 	{	
 		if(id==local_Id)
 		player->setName("Player");
+		else player->setName(name);
 		player->autorelease();
 		return player;
 	}
@@ -57,12 +58,13 @@ Player* Player::create(Entity* e)
 }
 bool Player::initWithPlayerType(int i)
 {
-	this->CharaType = i;
+	CharaType = i;
+	MoveSpeed = 8;
 	Legs = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Legs/Legs-0.png");
 	Body = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Body/Body-0.png");
 	Head = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Head/Head-0.png");
 	Hand = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Arm/Arm-0.png");
-	 Player::ChangeWeapon(0);
+	ChangeWeapon(-1);
 
 	Legs->setPosition(0, -14);
 	Head->setPosition(0, -1);
@@ -86,23 +88,30 @@ bool Player::initWithPlayerType(int i)
 	IsHaveWeapon = 1;
 	return true;
 }
-Weapon* Player::ChangeWeapon(int WeaponType)
+void Player::update(float dt)
 {
-	if (WeaponType == 1)
-		this->AttackMode = &Player::AttackMode2;
-	else
-		this->AttackMode = &Player::AttackMode1;
-	/*
-	if (weapon)
+	if (weapon->getReferenceCount() == 1)
+	{
+		ChangeWeapon(WeaponType);
+		this->unscheduleUpdate();
+	}
+}
+void Player::ChangeWeapon(int WeaponType)
+{
+
+	if (WeaponType!=-1)
 	{
 		weapon->MyWeapon->removeFromParentAndCleanup(TRUE);
+
 		delete weapon;
-	}*/
+	}
+	WeaponType=1;
 	weapon = Weapon::create(WeaponType);
 	weapon->retain();
+	weapon->MyWeapon->setTag(WeaponType);
 	AttackSpeed = weapon->WeaponSpeed[WeaponType];
 	addChild(weapon->MyWeapon);
-	return weapon;
+	return ;
 }
 Vector<SpriteFrame*> Player::AnimationFrames(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end)
 {
@@ -120,17 +129,17 @@ Animate* Player::createAnimate(int FramesIndex, float delay)
 
 void Player::MoveBegin()
 {
-	auto LegsAni = RepeatForever::create(createAnimate(LEGSMOVE, 1.0f / 16));
+	auto LegsAni = RepeatForever::create(createAnimate(LEGSMOVE, 2.0f / (MoveSpeed * 8)));
 	LegsAni->setTag(LEGSMOVE);
 	Legs->runAction(LegsAni);
 
 	if (AttackEndFlag)
 	{
-		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE, 1.0f / 16));
+		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE, 2.0f / (MoveSpeed * 8)));
 		HeadAni->setTag(HEADMOVE);
 		Head->runAction(HeadAni);
 
-		auto BodyAni = RepeatForever::create(createAnimate(BODYMOVE, 1.0f / 16));
+		auto BodyAni = RepeatForever::create(createAnimate(BODYMOVE, 2.0f / (MoveSpeed * 8)));
 		BodyAni->setTag(BODYMOVE);
 		Body->runAction(BodyAni);
 	}
@@ -165,11 +174,11 @@ void Player::AttackEnd(int pressnum)
 	Hand->stopActionByTag(HANDATTACK);
 	if (pressnum)
 	{
-		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE, 1.0f / 16));
+		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE, 2.0f / (MoveSpeed * 8)));
 		HeadAni->setTag(HEADMOVE);
 		Head->runAction(HeadAni);
 
-		auto BodyAni = RepeatForever::create(createAnimate(BODYMOVE, 1.0f / 16));
+		auto BodyAni = RepeatForever::create(createAnimate(BODYMOVE, 2.0f / (MoveSpeed * 8)));
 		BodyAni->setTag(BODYMOVE);
 		Body->runAction(BodyAni);
 	}
@@ -183,17 +192,23 @@ void Player::AttackBegan(Point TouchPosition)
 {
 	AttackAbleFlag = 0;
 	AttackEndFlag = 0;
+
+	auto map = (TMXTiledMap *)this->getParent();
+	TouchPosition -= map->getPosition();
+	if (TouchPosition.x < this->getPositionX())
+		this->setScaleX(-1);
+	else
+		this->setScaleX(1);
+
 	this->unschedule(schedule_selector(Player::AttackAbleflag));
 	this->schedule(schedule_selector(Player::AttackAbleflag), AttackSpeed);
 	this->scheduleOnce(schedule_selector(Player::AttackEndflag), AttackSpeed);
 	(weapon->*(weapon->WeaponMode))(TouchPosition);
-	(this->*(this->AttackMode))(TouchPosition);
 	return;
 }
 void Player::AttackMode1(Point TouchPosition)
 {
-	auto Player = getMychara("Player");
-	auto PlayerPosition = Player->getPosition();
+	auto PlayerPosition = this->getPosition();
 	float dir1 = TouchPosition.x - PlayerPosition.x - TouchPosition.y + PlayerPosition.y;
 	float dir2 = TouchPosition.x - PlayerPosition.x + TouchPosition.y - PlayerPosition.y;
 
@@ -238,6 +253,6 @@ void Player::AttackMode2(Point TouchPosition)
 int Player::getId() {
 	return info._id;
 }
-std::string Player::getName() {
+/*std::string Player::getName() {
 	return info._name;
-}
+}*/

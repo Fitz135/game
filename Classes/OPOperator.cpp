@@ -36,7 +36,7 @@ void OPOperator::KeyStart(char* buffer) {
 			}
 			PressNum++;
 			//auto scene = GameScene::getCurrentMap();
-			this->schedule(move[keycode], 1.0f / 60);
+			this->schedule(move[keycode], 2.0f / 60);
 		}
 	}
 	else if (buffer[0] == KeyRelease) {
@@ -142,49 +142,33 @@ void OPOperator::onMouseEnded(Touch * ptouch, Event *pevent)
 
 void OPOperator::MoveUP(float dt)
 {
-	MoveBy* move = MoveBy::create(1 / 60, Vec2(0, 1));
 	auto player = dynamic_cast<Player*>(getParent());
 
-	player->Legs->runAction(move);
-	player->Body->runAction(move->clone());
-	player->Head->runAction(move->clone());
+	MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, player->MoveSpeed));
+	player->runAction(move);
 }
 void OPOperator::MoveDOWN(float dt)
 {
 
-	MoveBy* move = MoveBy::create(1 / 60, Vec2(0, -1));
 	auto player = dynamic_cast<Player*>(getParent());
 
-	player->Legs->runAction(move);
-	player->Body->runAction(move->clone());
-	player->Head->runAction(move->clone());
+	MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, -player->MoveSpeed));
+	player->runAction(move);
 }
 void OPOperator::MoveLEFT(float dt)
 {
 	auto player = dynamic_cast<Player*>(getParent());
-	if (player->AttackEndFlag && !MouseDown)
-	{
-		player->Legs->setFlippedX(true);
-		player->Body->setFlippedX(true);
-		player->Head->setFlippedX(true);
-	}
-	MoveBy* move = MoveBy::create(1 / 60, Vec2(-1, 0));
-	player->Legs->runAction(move);
-	player->Body->runAction(move->clone());
-	player->Head->runAction(move->clone());
+	if (player->AttackAbleFlag && !MouseDown)
+		player->setScaleX(-1);
+	MoveBy* move = MoveBy::create(2.0f / 60, Vec2(-player->MoveSpeed, 0));
+	player->runAction(move);
 }
 void OPOperator::MoveRIGHT(float dt)
 {
 	auto player = dynamic_cast<Player*>(getParent());
-	if (player->AttackEndFlag && !MouseDown)
-	{
-		player->Legs->setFlippedX(false);
-		player->Body->setFlippedX(false);
-		player->Head->setFlippedX(false);
-	}
-	MoveBy* move = MoveBy::create(1.0f / 60, Vec2(1, 0));
+	if (player->AttackAbleFlag && !MouseDown)
+		player->setScaleX(1);
 
-	player->Legs->runAction(move);
-	player->Body->runAction(move->clone());
-	player->Head->runAction(move->clone());
+	MoveBy* move = MoveBy::create(2.0f / 60, Vec2(player->MoveSpeed, 0));
+	player->runAction(move);
 }
