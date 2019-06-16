@@ -2,6 +2,7 @@
 #include"GameScene.h"
 #include"Settings.h"
 #include"Player.h"
+#include "SimpleAudioEngine.h"
 
 #define PI 3.1415
 
@@ -24,6 +25,9 @@ Weapon* Weapon::create(int WeaponType)
 }
 void Weapon::Bow(Point MousePosition)
 {
+	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+	audio->playEffect("audio/bow.wav", false);
+
 	auto player = (Player*)this->MyWeapon->getParent();
 	auto map = (TMXTiledMap*)player->getParent();
 	auto scene = (GameScene*)map->getParent();
@@ -87,6 +91,9 @@ void Weapon::ArrowEnd(Node* who)
 }
 void Weapon::Sword(Point MousePosition)
 {
+	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+	audio->playEffect("audio/sword.wav", false);
+
 	auto player = (Player*)this->MyWeapon->getParent();
 	auto map = (TMXTiledMap*)player->getParent();
 	auto scene = (GameScene*)map->getParent();
@@ -200,6 +207,9 @@ void Weapon::StarEnd(Node* who)
 }
 void Weapon::BubbleGun(Point MousePosition)
 {
+	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+	audio->playEffect("audio/Bubblegun.wav", false);
+
 	auto player = (Player*)this->MyWeapon->getParent();
 	auto map = (TMXTiledMap*)player->getParent();
 	auto scene = (GameScene*)map->getParent();
@@ -278,6 +288,9 @@ void Weapon::BubbleEnd(Node* who)
 Sprite* boomerang;
 void Weapon::Boomerang(Point MousePosition)
 {
+	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+	audio->playEffect("audio/Bubblegun.wav", false);
+	
 	auto player = (Player*)this->MyWeapon->getParent();
 	auto map = (TMXTiledMap*)player->getParent();
 	auto scene = (GameScene*)map->getParent();

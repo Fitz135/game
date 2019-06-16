@@ -24,6 +24,19 @@ public:
 	void PickMapItems();
 	void IsBulletIntoWall();
 	void IsBulletIntoPlayer();
+
+
+	////////////ai/////////////
+	bool isInMap(const cocos2d::Vec2& pos);
+	Vec2 positionToTileCoord(const cocos2d::Vec2 & pos);
+	int birthPoint[7][2];
+	Vec2 tileCoordToPosition(const cocos2d::Vec2 & coord);
+	////////////ai/////////////
+
+
+
+
+
 	//void IsWeaponIntoPlayer();
 	//Sprite* tileMap;
     TMXTiledMap *tileMap;

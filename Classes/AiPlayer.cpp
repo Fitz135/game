@@ -71,8 +71,8 @@ std::string AiPlayer::sortWay( std::vector<Vec2>& closed, const Vec2& from) {
 
 
 std::string AiPlayer::findMyWay(char aiNum) {
-	Character* enmy = getMychara("Player");
-	Character* aiMe = getMychara(const_cast<char*>("AiNumber:") + aiNum);
+	Player* enmy = getMychara("Player");
+	Player* aiMe = getMychara(const_cast<char*>("AiNumber:") + aiNum);
 
 	Vec2 enmyCoord = tileMap->positionToTileCoord(enmy->getPosition());
 	Vec2 aiMeCoord = tileMap->positionToTileCoord(aiMe->getPosition());

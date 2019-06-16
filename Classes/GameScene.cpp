@@ -111,7 +111,7 @@ void GameScene::update(float delta)
 {
 	
 	this->MapMove();
-	this->IsWeaponIntoPlayer();
+	//this->IsWeaponIntoPlayer();
 	this->PickMapItems();
 	this->IsBulletIntoWall();
 	//this->IsBulletIntoPlayer();
@@ -128,7 +128,7 @@ void GameScene::MapMove()
 	if (playerPosition.y > visiblesize.height / 2 && playerPosition.y < (1280 - visiblesize.height / 2))
 		tileMap->setPositionY(visiblesize.height / 2 - playerPosition.y);
 }
-void GameScene::IsWeaponIntoPlayer()
+/*void GameScene::IsWeaponIntoPlayer()
 {
 	auto players = Array::create();
 	players->retain();
@@ -156,7 +156,7 @@ void GameScene::IsWeaponIntoPlayer()
 			}
 		}
 	}
-}
+}*/
 void GameScene::IsBulletIntoPlayer()
 {
 	auto players = Array::create();
@@ -166,7 +166,7 @@ void GameScene::IsBulletIntoPlayer()
 	Object*iplayer;
 	Object*ibullet;
 
-<<<<<<< HEAD
+
 	CCARRAY_FOREACH(Players, iplayer)
 	{
 		Sprite* player = (Sprite*)iplayer;
@@ -215,19 +215,7 @@ bool GameScene::isAccessable(Point Position, int Direction)
 		if (valueMap.at("Collidable").asBool())return true;
 	}
 	return false;
-=======
-void GameScene::onEnter() {
-	Layer::onEnter();
-	//endThread = 0;
-	/*client->Send("4", 1);//////
-	
-	std::thread t(getMsg, client);
-	t.detach();*/
-}
-void GameScene::onExit() {
-	Layer::onExit();
-	//endThread = 1;
->>>>>>> 1281fbf4a0a1d22e7bea688934c665c41b074dcf
+
 }
 void GameScene::PickMapItems()
 {
@@ -299,4 +287,38 @@ void GameScene::IsBulletIntoWall()
 			(weapon->*(weapon->BulletEnd[bullet->getTag()]))(bullet);
 		}
 	}
+}
+
+
+
+////////AI need//////////
+bool GameScene::isInMap(const cocos2d::Vec2& pos) {
+	auto mapSize = tileMap->getMapSize();
+	auto tileSize = tileMap->getTileSize();
+	return 0 <= pos.x && pos.x < mapSize.width * tileSize.width
+		&& 0 <= pos.y && pos.y < mapSize.height * tileSize.height;
+}
+
+Vec2 GameScene::positionToTileCoord(const cocos2d::Vec2 & pos)
+{
+	cocos2d::Size mapSize = tileMap->getMapSize();
+	cocos2d::Size tileSize = tileMap->getTileSize();
+
+	int x = pos.x / tileSize.width;
+	int y = (mapSize.height * tileSize.height - pos.y) / tileSize.height;
+	// edge case
+	x = MIN(MAX(0, x), mapSize.width - 1);
+	y = MIN(MAX(0, y), mapSize.height - 1);
+	//CCLOG("coord x: %f y: %f", x, y);
+	return Vec2(x, y);
+}
+Vec2 GameScene::tileCoordToPosition(const cocos2d::Vec2 & coord)
+{
+	auto mapSize = tileMap->getMapSize();
+	auto tileSize = tileMap->getTileSize();
+
+	int x = coord.x * tileSize.width + tileSize.width / 2;
+	int y = (mapSize.height - coord.y) * tileSize.height - tileSize.height / 2;
+	//CCLOG("pos x: %f y: %f", x, y);
+	return Vec2(x, y);
 }
