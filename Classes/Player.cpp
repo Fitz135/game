@@ -60,6 +60,7 @@ bool Player::initWithPlayerType(int i)
 {
 	CharaType = i;
 	MoveSpeed = 8;
+	HP = 100;
 	Legs = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Legs/Legs-0.png");
 	Body = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Body/Body-0.png");
 	Head = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Head/Head-0.png");
@@ -250,9 +251,21 @@ void Player::AttackMode2(Point TouchPosition)
 	HandAni->setTag(HANDATTACK);
 	Hand->runAction(HandAni);
 }
+void Player::Dead(Node* who)
+{
+	who->unscheduleAllSelectors();
+	((Player*)who)->AttackAbleFlag = 0;
+	auto spritecache = SpriteFrameCache::getInstance();
+	Vector<SpriteFrame*> animFrames;
+	for (int i = 0; i <= 3; i++)
+		animFrames.pushBack(spritecache->getSpriteFrameByName("ghost/ghost-" + std::to_string(i) + ".png"));
+	auto dead =Animate::create(Animation::createWithSpriteFrames(animFrames, 1.0f / 10));
+	who->runAction(dead);
+}
 int Player::getId() {
 	return info._id;
 }
+
 /*std::string Player::getName() {
 	return info._name;
 }*/

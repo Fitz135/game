@@ -28,6 +28,8 @@ bool Index::init() {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Player/" + std::to_string(i) + ".plist");
 	//schedule(schedule_selector(Index::test), 0.1);
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Bullet.plist");
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("death.plist");
+
 
 
 

@@ -92,14 +92,14 @@ void GameScene::onEnter() {
 		tileMap->addChild(player);
 		Players->addObject(player);
 	}
-	auto player = Player::create("ai", 5);
+	/*auto player = Player::create("ai", 5);
 	player->setPosition(50,50);
 	player->setTag(2);
 	auto aiop = AiPlayer::create();
 	player->addChild(aiop);
 	tileMap->addChild(player);
 	this->scheduleUpdate();
-	this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
+	this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);*/
 }
 void GameScene::onExit() {
 	Layer::onExit();
@@ -107,7 +107,14 @@ void GameScene::onExit() {
 }
 void GameScene::update(float delta)
 {
-	
+	Object* iplayer;
+	CCARRAY_FOREACH(Players, iplayer)
+	{
+		Player *player= (Player*)iplayer;
+		if (player->HP <= 0)
+			player->Dead(player);
+	}
+	this->SpawnItems();
 	this->MapMove();
 	this->IsWeaponIntoPlayer();
 	this->PickMapItems();
@@ -116,7 +123,7 @@ void GameScene::update(float delta)
 }
 void GameScene::SpawnItems(float dt)
 {
-	srand(int(time(0)) + rand());
+	srand(0);
 	float x, y;
 	while (true)
 	{
@@ -171,9 +178,7 @@ void GameScene::IsWeaponIntoPlayer()
 					auto playerZone = CCRectMake(player2->getPositionX() - 9, player2->getPositionY() - 24, 18, 42);
 					if (weaponZone.intersectsRect(playerZone))
 					{
-					
-							//players->addObject(iplayer);
-							//weapons->addObject(iweapon);
+						player2->HP -= 10;
 					}
 				}
 			}
@@ -202,7 +207,7 @@ void GameScene::IsBulletIntoPlayer()
 			{
 				if (((Sprite*)ibullet)->getName() != ((Player*)iplayer)->getName())
 				{
-					players->addObject(iplayer);
+					((Player*)iplayer)->HP -= 10;
 					bullets->addObject(ibullet);
 				}
 			}
