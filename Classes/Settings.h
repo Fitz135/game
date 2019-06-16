@@ -1,8 +1,13 @@
 #pragma once
+#ifndef __SETTINGS_H__
+#define __SETTINGS_H__
+
 #include "cocos2d.h"
 #include"Player.h"
 #include"Entity.h"
 #include"ODSocket.h"
+#include"RoomScene.h"
+
 #define NewPlayer '1' 
 #define KeyPress '2'
 #define KeyRelease '3'
@@ -11,6 +16,7 @@
 #define Dialog '5'
 #define MousePress '6'
 #define MouseRelease '7'
+
 		extern int local_Id ;
 		extern std::string local_username ;
 		extern int Scale ;//Í¼Æ¬±ÈÀý
@@ -26,7 +32,7 @@
 		void addPlayer(char* buffer);
 		void gamestartCallback();
 		void updatePlayer(char* buffer);
-
+		void addMsg(std::string temp);
 
 		namespace settings
 		{
@@ -37,3 +43,6 @@
 					"Boomerang.png"
 			};
 		}
+
+		extern RoomScene* roomscene;
+#endif

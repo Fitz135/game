@@ -5,7 +5,7 @@
 #include "cocos2d.h"
 #include"ui/CocosGUI.h"
 
-class RoomScene :public cocos2d::Layer {
+class RoomScene :public cocos2d::Scene {
 public:
 	static cocos2d::Scene* createScene();
 	virtual bool init();
@@ -26,10 +26,11 @@ public:
 	virtual void  onExit();
 
 	void initChat();
-	void addMsg(std::string);
+	//void addMsg(std::string);
+	cocos2d::ui::ListView* dialog;
 private:
 	bool isReady[4];
-	cocos2d::ui::ListView* dialog;
+	
 	cocos2d::ui::TextField* text;
 	
 	

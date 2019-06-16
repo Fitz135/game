@@ -9,16 +9,16 @@ USING_NS_CC;
 static bool endThread;
 
 Scene* RoomScene::createScene() {
-	auto scene = Scene::create();
-	auto layer = RoomScene::create();
+	auto scene = RoomScene::create();
+	/*auto layer = RoomScene::create();
 	layer->setName("layer");
-	scene->addChild(layer);
+	scene->addChild(layer);*/
 	return scene;
 }
 
 
 bool RoomScene::init() {
-	if (!Layer::init()) {
+	if (!Scene::init()) {
 		return false;
 	}
 
@@ -27,23 +27,23 @@ bool RoomScene::init() {
 	
 	auto imgBG = Sprite::create("UI/RoomBG.png");
 	imgBG->setPosition(center_x, center_y);
-	imgBG->setScale(1.9);
-	imgBG->setScaleY(2.6);
+	imgBG->setScaleX(2.2);
+	imgBG->setScaleY(2.85);
 	this->addChild(imgBG,-1);
 	char buffer[MSGSIZE];
 	connectService(buffer);
 	initPlayer(buffer);
 
 	auto menu = Menu::create();
-	auto readyItem = MenuItemLabel::create(Label::create("Ready", "fonts/Cordelia.ttf", 22), CC_CALLBACK_1(RoomScene::readyCallback, this));
+	auto readyItem = MenuItemLabel::create(Label::create("Ready", "fonts/Cordelia.ttf", 47), CC_CALLBACK_1(RoomScene::readyCallback, this));
 	menu->addChild(readyItem);
-	readyItem->setPosition(-center_x*0.55, -center_y*0.55);
-	auto backItem = MenuItemLabel::create(Label::create("Back", "fonts/Cordelia.ttf", 22), CC_CALLBACK_1(RoomScene::backCallback, this));
+	readyItem->setPosition(-center_x*0.58, -center_y*0.55);
+	auto backItem = MenuItemLabel::create(Label::create("Back", "fonts/Cordelia.ttf", 47), CC_CALLBACK_1(RoomScene::backCallback, this));
 	menu->addChild(backItem);
-	backItem->setPosition(-center_x * 0.55, -center_y * 0.83);
-	auto sendItem= MenuItemLabel::create(Label::create("Send", "fonts/Cordelia.ttf", 17), CC_CALLBACK_1(RoomScene::sendCallback, this));
+	backItem->setPosition(-center_x * 0.58, -center_y * 0.83);
+	auto sendItem= MenuItemLabel::create(Label::create("Send", "fonts/Cordelia.ttf", 34), CC_CALLBACK_1(RoomScene::sendCallback, this));
 	menu->addChild(sendItem);
-	sendItem->setPosition(center_x * 0.75, -center_y * 0.85);
+	sendItem->setPosition(center_x * 0.83, -center_y * 0.85);
 	menu->setColor(Color3B(143, 137, 137));
 	this->addChild(menu,1);
 
@@ -162,17 +162,17 @@ void RoomScene::sendCallback(Ref* ref) {
 	auto msg=dynamic_cast<ui::TextField*>(this->getChildByName("TextField"))->getString().c_str();
 	sprintf(buffer, "%c$%d$%s", Dialog, local_Id, msg);
 	client->Send(buffer, MSGSIZE);
-	addMsg(dynamic_cast<ui::TextField*>(this->getChildByName("TextField"))->getString());
+	//addMsg(dynamic_cast<ui::TextField*>(this->getChildByName("TextField"))->getString());
 }
 
 void RoomScene::onEnter(){
-	Layer::onEnter();
+	Scene::onEnter();
 	endThread = 0;
 	std::thread t(getMsg,client);
 	t.detach();
 }
 void RoomScene::onExit() {
-	Layer::onExit();
+	Scene::onExit();
 	endThread = 1;
 }
 
@@ -181,8 +181,8 @@ void RoomScene::initChat() {
 	auto center_x = Director::getInstance()->getWinSize().width / 2;
 	auto center_y = Director::getInstance()->getWinSize().height / 2;
 
-	text = ui::TextField::create("Enter the message here", "fonts/arial.ttf", 15);
-	text->setPosition(Vec2(center_x*1.2 , center_y*0.18 ));
+	text = ui::TextField::create("Enter the message here", "fonts/arial.ttf", 30);
+	text->setPosition(Vec2(center_x*1.2 , center_y*0.185 ));
 	text->setName("TextField");
 	text->setCursorEnabled(true);
 	text->setCursorChar('|');
@@ -205,14 +205,4 @@ void RoomScene::initChat() {
 	
 	this->addChild(dialog,1);
 }
-void RoomScene::addMsg(std::string temp) {
-	auto hello = ui::Text::create("666", "fonts/arial.ttf", 15);
-	hello->ignoreContentAdaptWithSize(false);
-	hello->setColor(cocos2d::Color3B::BLUE);
 
-	auto dial = this->dialog;//dynamic_cast<ui::ListView*>(this->getChildByName("ListView"));
-	dial->addChild(hello, 1);
-	/*if (dial->getChildrenCount() > 6)dial->removeItem(0);
-	dial->forceDoLayout();
-	dial->jumpToBottom();*/
-}

@@ -11,14 +11,15 @@ Scene* Index::createScene() {
 }
 
 bool Index::init() {
-	auto labelStart = Label::create("Start", "fonts/Cordelia.ttf", 30);
-	auto labelExit = Label::create("Exit", "fonts/Cordelia.ttf", 30);
+	auto labelStart = Label::create("Start", "fonts/Cordelia.ttf", 60);
+	auto labelExit = Label::create("Exit", "fonts/Cordelia.ttf", 60);
 	auto itemStart = MenuItemLabel::create(labelStart, CC_CALLBACK_1( Index::startCallback,this));
 	auto itemExit = MenuItemLabel::create(labelExit, CC_CALLBACK_1(Index::exitCallback,this));
 	auto menu = Menu::create();
 	menu->addChild(itemStart);
 	menu->addChild(itemExit);
-	menu->alignItemsVerticallyWithPadding(20);
+	menu->alignItemsVerticallyWithPadding(40);
+	//menu->setScale(2);
 	this->addChild(menu);
 
 	for (int i = 1; i <= 7; i++)

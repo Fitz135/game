@@ -23,8 +23,7 @@ void getMsg(ODSocket* m_client) {
 		log(buffer);
 		switch (buffer[0]) {
 		case NewPlayer:addPlayer(buffer); break;
-		case GameStart: gamestartCallback();
-					   log("gamestart\n"); break;
+		case GameStart: gamestartCallback();break;
 		case KeyPress:;
 		case KeyRelease:;
 		case MousePress:;
@@ -46,13 +45,19 @@ void updateDialog(char* buffer) {
 	strcpy(msg, &buffer[4]);
 	char finaltext[sizeof(name) + sizeof(msg) + 1];
 	sprintf(finaltext, "%s:%s", name.c_str(), msg);
-	//log(finaltext);
-	//int len = name.length() + strlen(msg) + 1;
 	std::string temp(finaltext);
-	//int t = temp.length();
-	auto layer = dynamic_cast<RoomScene*>(Director::getInstance()->getRunningScene()->getChildByName("layer"));
-	//layer->addMsg(temp);//readyCallback(NULL);
 	
+	//auto layer = dynamic_cast<RoomScene*>(Director::getInstance()->getRunningScene()->getChildByName("layer"));
+	
+	//log("here");
+	
+	auto hello = ui::Text::create(temp, "fonts/arial.ttf", 15);
+	hello->ignoreContentAdaptWithSize(false);
+	hello->setColor(cocos2d::Color3B::BLUE);
+	//roomscene->addChild(hello, 1);
+	//auto dial = roomscene->getChildByName("ListView"); dialog->
+	//dial->addChild(hello, 1);
+	//log("here2");
 }
 void addPlayer(char* buffer) {
 	int start_pos = 2;
@@ -86,7 +91,7 @@ void addPlayer(char* buffer) {
 }
 void gamestartCallback() {
 	auto scene = GameScene::createScene();
-	Director::getInstance()->replaceScene(TransitionFade::create(0.5, scene));
+	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
 }
 void updatePlayer(char* buffer) {
 	if (buffer[0] == KeyPress || buffer[0] == KeyRelease) {
@@ -104,3 +109,15 @@ void updatePlayer(char* buffer) {
 					GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->MouseStart(buffer);
 	}
 }
+void addMsg(std::string temp) {
+	auto hello = ui::Text::create("666", "fonts/arial.ttf", 15);
+	hello->ignoreContentAdaptWithSize(false);
+	hello->setColor(cocos2d::Color3B::BLUE);
+	auto layer = dynamic_cast<RoomScene*>(Director::getInstance()->getRunningScene()->getChildByName("layer"));
+	auto dial = layer->getChildByName("ListView");//dynamic_cast<ui::ListView*>(this->);
+	dial->addChild(hello, 1);
+	/*if (dial->getChildrenCount() > 6)dial->removeItem(0);
+	dial->forceDoLayout();
+	dial->jumpToBottom();*/
+}
+RoomScene *roomscene;

@@ -77,13 +77,14 @@ bool GameScene::init() {
 
 void GameScene::onEnter() {
 	Layer::onEnter();
-	client->Send("4", 1);//////
-	endThread = 0;
+	//endThread = 0;
+	/*client->Send("4", 1);//////
+	
 	std::thread t(getMsg, client);
-	t.detach();
+	t.detach();*/
 }
 void GameScene::onExit() {
 	Layer::onExit();
-	endThread = 1;
+	//endThread = 1;
 }
 
