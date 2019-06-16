@@ -5,6 +5,7 @@
 #include "Settings.h"
 #include"OPOperator.h"
 #include"thread"
+#include"AiPlayer.h"
 #include"Settings.h"
 USING_NS_CC;
 //static Player* player;
@@ -55,7 +56,6 @@ bool GameScene::init() {
 	auto operate = Operator::create();
 	addChild(operate);
 	
-
 	return true;
 }
 
@@ -92,13 +92,12 @@ void GameScene::onEnter() {
 		tileMap->addChild(player);
 		Players->addObject(player);
 	}
-
-	/*auto sp = Sprite::create("Bow.png");
-	tileMap->addChild(sp);
-	sp->setPosition(100, 100);
-	sp->setTag(0);
-	MapItems->addObject(sp);*/
-
+	auto player = Player::create("ai", 5);
+	player->setPosition(50,50);
+	player->setTag(2);
+	auto aiop = AiPlayer::create();
+	player->addChild(aiop);
+	tileMap->addChild(player);
 	this->scheduleUpdate();
 	this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
 }
@@ -311,3 +310,37 @@ void GameScene::IsBulletIntoWall()
 		}
 	}
 }
+
+
+
+////////AI need//////////
+/*bool GameScene::isInMap(const cocos2d::Vec2& pos) {
+	auto mapSize = tileMap->getMapSize();
+	auto tileSize = tileMap->getTileSize();
+	return 0 <= pos.x && pos.x < mapSize.width * tileSize.width
+		&& 0 <= pos.y && pos.y < mapSize.height * tileSize.height;
+}
+
+Vec2 GameScene::positionToTileCoord(const cocos2d::Vec2 & pos)
+{
+	cocos2d::Size mapSize = tileMap->getMapSize();
+	cocos2d::Size tileSize = tileMap->getTileSize();
+
+	int x = pos.x / tileSize.width;
+	int y = (mapSize.height * tileSize.height - pos.y) / tileSize.height;
+	// edge case
+	x = MIN(MAX(0, x), mapSize.width - 1);
+	y = MIN(MAX(0, y), mapSize.height - 1);
+	//CCLOG("coord x: %f y: %f", x, y);
+	return Vec2(x, y);
+}
+Vec2 GameScene::tileCoordToPosition(const cocos2d::Vec2 & coord)
+{
+	auto mapSize = tileMap->getMapSize();
+	auto tileSize = tileMap->getTileSize();
+
+	int x = coord.x * tileSize.width + tileSize.width / 2;
+	int y = (mapSize.height - coord.y) * tileSize.height - tileSize.height / 2;
+	//CCLOG("pos x: %f y: %f", x, y);
+	return Vec2(x, y);
+}*/

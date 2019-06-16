@@ -49,7 +49,7 @@ public:
 	void AttackMode2(Point TouchPosition);
 	void(Player::*AttackMode)(Point MousePosition);
 	float AttackSpeed;
-	struct Attr
+	typedef struct 
 	{
 		uint8_t speed;//速度
 		uint8_t attack;//攻击力
@@ -58,7 +58,7 @@ public:
 		uint8_t superPower;//加成效果
 		uint8_t level;//等级
 		uint8_t exp;//经验
-	};//角色属性
+	}Attr;//角色属性
 
 
 

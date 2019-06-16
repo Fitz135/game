@@ -66,6 +66,9 @@
     <ClCompile Include="..\Classes\Settings.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\AiPlayer.cpp">
+      <Filter>src\Control</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -109,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Entity.h">
       <Filter>src\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AiPlayer.h">
+      <Filter>src\Control</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 #include"IndexScene.h"
 #include"LoginScene.h"
+#include"SimpleAudioEngine.h"
 USING_NS_CC;//using namespace cocos2d;
 
 Scene* Index::createScene() {
@@ -27,6 +28,11 @@ bool Index::init() {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Player/" + std::to_string(i) + ".plist");
 	//schedule(schedule_selector(Index::test), 0.1);
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Bullet.plist");
+
+
+
+	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+	audio->playBackgroundMusic("audio/bgm.mp3", true);
 
 	return true;
 }

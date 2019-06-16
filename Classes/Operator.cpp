@@ -53,7 +53,7 @@ void Operator::PassOperatorInfo(float dt)
 	if (!MouseDown&&Player->AttackEndFlag&&Player->IsHaveWeapon)
 	{
 		char buffer[MSGSIZE];
-		sprintf(buffer, "%c$%d$%d", MouseRelease, local_Id, PressNum);
+		sprintf(buffer, "%c$%d$%d", MouseRelease,local_Id, PressNum);
 		client->Send(buffer, MSGSIZE);
 		Player->AttackEnd(PressNum);
 		this->unschedule(schedule_selector(Operator::PassOperatorInfo));

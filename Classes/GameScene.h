@@ -25,6 +25,7 @@ public:
 	void PickMapItems();
 	void IsBulletIntoWall();
 	void IsBulletIntoPlayer();
+
 	void IsWeaponIntoPlayer();
 	//Sprite* tileMap;
     TMXTiledMap *tileMap;
