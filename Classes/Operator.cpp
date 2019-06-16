@@ -53,14 +53,20 @@ void Operator::PassOperatorInfo(float dt)
 		
 		Player->AttackBegan(MousePosition);
 	}
-	if (!MouseDown&&Player->AttackEndFlag)
+	if (!MouseDown&&Player->AttackEndFlag&&Player->IsHaveWeapon)
 	{
+<<<<<<< HEAD
 		if (!gameMode) {
 			char buffer[MSGSIZE];
 			sprintf(buffer, "%c$%d$%d", MouseRelease, local_Id, PressNum);
 			client->Send(buffer, MSGSIZE);
 		}
 		
+=======
+		char buffer[MSGSIZE];
+		sprintf(buffer, "%c$%d$%d", MouseRelease,local_Id, PressNum);
+		client->Send(buffer, MSGSIZE);
+>>>>>>> 243550dfbecb1e329122eddeff0297aec18969a7
 		Player->AttackEnd(PressNum);
 		this->unschedule(schedule_selector(Operator::PassOperatorInfo));
 	}

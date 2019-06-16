@@ -19,25 +19,14 @@ public:
 	virtual void onEnter();
 	virtual void onExit();
 	void update(float delta);
+	void SpawnItems(float dt);
 	void MapMove();
 	bool isAccessable(Point Position, int Direction);
 	void PickMapItems();
 	void IsBulletIntoWall();
 	void IsBulletIntoPlayer();
 
-
-	////////////ai/////////////
-	bool isInMap(const cocos2d::Vec2& pos);
-	Vec2 positionToTileCoord(const cocos2d::Vec2 & pos);
-	int birthPoint[7][2];
-	Vec2 tileCoordToPosition(const cocos2d::Vec2 & coord);
-	////////////ai/////////////
-
-
-
-
-
-	//void IsWeaponIntoPlayer();
+	void IsWeaponIntoPlayer();
 	//Sprite* tileMap;
     TMXTiledMap *tileMap;
 	TMXLayer *BG;

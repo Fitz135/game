@@ -103,7 +103,6 @@ void updatePlayer(char* buffer) {
 					GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->MouseStart(buffer);
 	}
 }
-
 RoomScene *roomscene;
 
 bool isNewPlayer = false;

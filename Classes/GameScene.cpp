@@ -5,6 +5,7 @@
 #include "Settings.h"
 #include"OPOperator.h"
 #include"thread"
+#include"AiPlayer.h"
 #include"Settings.h"
 USING_NS_CC;
 //static Player* player;
@@ -55,7 +56,6 @@ bool GameScene::init() {
 	auto operate = Operator::create();
 	addChild(operate);
 	
-
 	return true;
 }
 
@@ -106,6 +106,7 @@ void GameScene::onEnter() {
 		tileMap->addChild(player);
 		Players->addObject(player);
 	}
+<<<<<<< HEAD
 	
 
 	auto sp = Sprite::create("KnightStand1.png");
@@ -115,8 +116,16 @@ void GameScene::onEnter() {
 	sp->setPosition(100,100);
 	sp->setZOrder(1);
 	Players->addObject(sp);
+=======
+	auto player = Player::create("ai", 5);
+	player->setPosition(50,50);
+	player->setTag(2);
+	auto aiop = AiPlayer::create();
+	player->addChild(aiop);
+	tileMap->addChild(player);
+>>>>>>> 243550dfbecb1e329122eddeff0297aec18969a7
 	this->scheduleUpdate();
-
+	this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
 }
 void GameScene::onExit() {
 	Layer::onExit();
@@ -126,10 +135,34 @@ void GameScene::update(float delta)
 {
 	
 	this->MapMove();
-	//this->IsWeaponIntoPlayer();
+	this->IsWeaponIntoPlayer();
 	this->PickMapItems();
 	this->IsBulletIntoWall();
-	//this->IsBulletIntoPlayer();
+	this->IsBulletIntoPlayer();
+}
+void GameScene::SpawnItems(float dt)
+{
+	srand(int(time(0)) + rand());
+	float x, y;
+	while (true)
+	{
+		x = (float)(rand() % 1280);
+		y = (float)(rand() % 1280);
+		auto git = Meta->getTileGIDAt(Vec2((int)floor(x/ 32), (int)(39 - floor(y/ 32))));
+		auto value = tileMap->getPropertiesForGID(git);
+		auto valueMap = value.asValueMap();
+		if (!valueMap.at("Collidable").asBool())break;
+	}
+	int type = rand() % 5;
+	auto items = Sprite::create(settings::weapon_paths[type]);
+	items->setTag(type);
+	items->setPosition(x, y);
+	auto jump = JumpBy::create(0.5f,Vec2(0,10),10,1);
+	auto seq = Sequence::create(jump, jump->reverse(), nullptr);
+	items->runAction(RepeatForever::create(seq));
+	auto map=this->getChildByName("Map");
+	MapItems->addObject(items);
+	map->addChild(items);
 }
 void GameScene::MapMove()
 {
@@ -143,35 +176,36 @@ void GameScene::MapMove()
 	if (playerPosition.y > visiblesize.height / 2 && playerPosition.y < (1280 - visiblesize.height / 2))
 		tileMap->setPositionY(visiblesize.height / 2 - playerPosition.y);
 }
-/*void GameScene::IsWeaponIntoPlayer()
+void GameScene::IsWeaponIntoPlayer()
 {
 	auto players = Array::create();
 	players->retain();
-	auto weapons = Array::create();
-	weapons->retain();
 	Object*iplayer;
-	Object*iweapon;
+	Object*iplayer2;
 
 	CCARRAY_FOREACH(Players, iplayer)
 	{
-		Sprite* player = (Sprite*)iplayer;
-		auto playerZone = CCRectMake(player->getPositionX() - 9, player->getPositionY() - 24, 18, 42);
-		CCARRAY_FOREACH(Weapons, iweapon)
+		Player* player = (Player*)iplayer;
+		if (player->weapon!=nullptr&&player->weapon->MyWeapon->getOpacity()!= 0 && (player->WeaponType == 1 || player->WeaponType== 4))
 		{
-			Sprite* weapon = (Sprite*)iweapon;
-			auto weaponZone = weapon->boundingBox();
-			if (weaponZone.intersectsRect(playerZone))
+			auto weaponZone = (player->weapon->MyWeapon)->boundingBox();
+			CCARRAY_FOREACH(Players, iplayer2)
 			{
-				if (((Sprite*)iweapon)->getName() != ((Player*)iplayer)->getName())
+				Player* player2=(Player*)iplayer2;
+				if (player != player2)
 				{
-					log("ys");
-					players->addObject(iplayer);
-					weapons->addObject(iweapon);
+					auto playerZone = CCRectMake(player2->getPositionX() - 9, player2->getPositionY() - 24, 18, 42);
+					if (weaponZone.intersectsRect(playerZone))
+					{
+					
+							//players->addObject(iplayer);
+							//weapons->addObject(iweapon);
+					}
 				}
 			}
 		}
 	}
-}*/
+}
 void GameScene::IsBulletIntoPlayer()
 {
 	auto players = Array::create();
@@ -252,8 +286,7 @@ void GameScene::PickMapItems()
 
 			if (mapitemZone.intersectsRect(playerZone))
 			{
-				players->addObject(iplayer);
-				((Player*)iplayer)->WeaponType = 1;
+				((Player*)iplayer)->WeaponType =((Sprite*)imapitem)->getTag();
 				((Player*)iplayer)->scheduleUpdate();
 				mapitems->addObject(imapitem);
 			}
@@ -307,7 +340,7 @@ void GameScene::IsBulletIntoWall()
 
 
 ////////AI need//////////
-bool GameScene::isInMap(const cocos2d::Vec2& pos) {
+/*bool GameScene::isInMap(const cocos2d::Vec2& pos) {
 	auto mapSize = tileMap->getMapSize();
 	auto tileSize = tileMap->getTileSize();
 	return 0 <= pos.x && pos.x < mapSize.width * tileSize.width
@@ -336,4 +369,4 @@ Vec2 GameScene::tileCoordToPosition(const cocos2d::Vec2 & coord)
 	int y = (mapSize.height - coord.y) * tileSize.height - tileSize.height / 2;
 	//CCLOG("pos x: %f y: %f", x, y);
 	return Vec2(x, y);
-}
+}*/

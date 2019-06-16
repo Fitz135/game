@@ -1,5 +1,5 @@
 #include "AiPlayer.h"
-
+#include"Settings.h"
 #include <string>
 #include <set>
 #include <map>
@@ -8,30 +8,79 @@
 using namespace cocos2d;
 
 bool AiPlayer::init() {
-	Vec2 pos;
-	int x, y;
-	std::string aiName = "AiNumber:" ;
-	Player* aiPlayer=new Player();
-	
-
-	if (aiPlayer && aiPlayer->initWithPlayerType(i))
-	{
-		aiPlayer->autorelease();
-		aiPlayer->setZOrder(100);
-		aiPlayer->setName(aiName + Num[i]);
-
-		x = tileMap->birthPoint[i][1];
-		y = tileMap->birthPoint[i][0];
-		pos = tileMap->tileCoordToPosition(cocos2d::Vec2(x, y));
-		aiPlayer->setPosition(pos);
-		aiPlayer->retain();
-		tileMap->addChild(aiPlayer);
-	}
-	
 	return true;
 }
+void AiPlayer::onEnter() {
+	//Layer::onEnter();
+	((Player*)this->getParent())->WeaponType = 0;
+	((Player*)this->getParent())->ChangeWeapon(0);
+	((Player*)this->getParent())->MoveBegin();
+	this->getParent()->schedule(schedule_selector(AiPlayer::AiMove), 2.0f / 60);
+	this->getParent()->schedule(schedule_selector(AiPlayer::AiAttack), 1.0f / 4);
+}
+void AiPlayer::AiMove(float dt)
+{
+	auto ai = (Player*)this->getParent();
+	/*auto move = MoveTo::create(5, Vec2(1230, 50));
+	auto move1 = MoveTo::create(5, Vec2(1230, 1230));
+	auto move2= MoveTo::create(5, Vec2(50, 1230));
+	auto move3= MoveTo::create(5, Vec2(50, 50));
+	auto seq = Sequence::create(move, move1, move2, move3, nullptr);
+	
+	ai->runAction(RepeatForever::create(seq));*/
 
-int AiPlayer::getManhattanDis(Vec2& from, Vec2& to) {
+	auto map = (TMXTiledMap*)ai->getParent();
+	auto scene = (GameScene*)map->getParent();
+	auto Meta = map->getLayer("Meta");
+	auto aiPosition = ai->getPosition();
+	int x, y;
+	while (1)
+	{
+		srand(int(time(0)) + rand());
+		y = rand() % 3 - 1;
+		if (y > 0 && !scene->isAccessable(aiPosition + Vec2(0, ai->MoveSpeed), 3))
+		{
+			break;
+		}
+		else if (y < 0 && !scene->isAccessable(aiPosition + Vec2(0, -ai->MoveSpeed), 1))
+		{
+			break;
+		}
+		else if (y == 0)
+			break;
+	}
+	while (1)
+	{
+		srand(int(time(0)) + rand());
+		x = rand() % 3 - 1;
+		if (x > 0 && !scene->isAccessable(aiPosition + Vec2(ai->MoveSpeed,0), 0))
+		{
+			break;
+		}
+		else if (x < 0 && !scene->isAccessable(aiPosition + Vec2(-ai->MoveSpeed,0), 2))
+		{
+			break;
+		}
+		else if (x == 0)break;
+	}
+	auto move = MoveBy::create(2.0f / 60, Vec2(x, y)*ai->MoveSpeed);
+	ai->runAction(move);
+}
+void AiPlayer::AiAttack(float dt)
+{
+	auto ai = (Player*)this->getParent();
+	auto map =(TMXTiledMap*)ai->getParent();
+	auto mapPosition = map->getPosition();
+	auto player=map->getChildByName("Player");
+	if (player)
+	{
+		auto aiPosition = ai->getPosition();
+		auto playerPosition = player->getPosition();
+		auto dir = playerPosition + mapPosition;
+		ai->AttackBegan(Vec2(dir.x, dir.y));
+	}
+}
+/*int AiPlayer::getManhattanDis(Vec2& from, Vec2& to) {
 	return abs(from.x - to.x) + abs(from.y + to.y);
 }
 
@@ -54,7 +103,7 @@ std::vector<Vec2>::iterator AiPlayer::getSmallestF_Gvalue(const std::map<Vec2, i
 	return target;
 }
 
-std::string AiPlayer::sortWay( std::vector<Vec2>& closed, const Vec2& from) {
+/*std::string AiPlayer::sortWay( std::vector<Vec2>& closed, const Vec2& from) {
 	std::string rout;
 	std::vector<Vec2>::iterator begin, end;
 	begin = closed.begin();
@@ -114,5 +163,5 @@ std::string AiPlayer::findMyWay(char aiNum) {
 		}
 	}
 	return const_cast<char*>("AiNumber:") + aiNum  + sortWay(closedStack, aiMeCoord);
-}
+}*/
 

@@ -12,6 +12,8 @@ public:
 	void KeyStart(char*);
 	void MouseStart(char*);
 
+	//void AIMove(char * buffer);
+
 	void PassOperatorInfo(float dt);
 
 	bool onMouseBegan(Touch * ptouch, Event * pevent);

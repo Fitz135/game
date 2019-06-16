@@ -18,6 +18,7 @@
 #define Dialog '5'
 #define MousePress '6'
 #define MouseRelease '7'
+#define AIMove '8'
 
 		extern int local_Id ;
 		extern std::string local_username ;
@@ -42,7 +43,8 @@
 					"Bow.png",
 					"Sword.png",
 					"BubbleGun.png",
-					"Boomerang.png"
+					"Boomerang.png",
+					"Lance.png"
 			};
 		}
 

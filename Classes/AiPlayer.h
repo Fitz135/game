@@ -7,7 +7,7 @@
 #include <string>
 #include <map>
 using namespace cocos2d;
-class AiPlayer :public Player {
+class AiPlayer :public Layer {
 private:
 	std::string AiName;
 	GameScene* tileMap = GameScene::getCurrentScene();
@@ -19,6 +19,11 @@ public:
 
 	CREATE_FUNC(AiPlayer);
 	bool init();
+	virtual void onEnter();
+	void AiMove(float dt);
+	void AiAttack(float dt);
+	int MapInfo[40][40];
+	int Dir[2];
 	std::string findMyWay(char aiNum);
 	int getManhattanDis(Vec2& from, Vec2& to);
 	std::vector<Vec2>::iterator getSmallestF_Gvalue(const std::map<Vec2, int>&, 
