@@ -80,7 +80,7 @@ void addPlayer(char* buffer) {
 	//auto label = Label::create(name, "fonts/arial.ttf", 15);
 	//label->setPosition(0, 40);
 	//label->setColor(Color3B::BLACK);
-	newPlayer->setPosition(w*(2 + players) / 7, h * 3 / 4);
+	newPlayer->setPosition(w*(1 + players*3.5) / 17, h * 3 / 4);
 	//newPlayer->addChild(label);
 	Director::getInstance()->getRunningScene()->addChild(newPlayer);
 }

@@ -124,11 +124,12 @@ bool RoomScene::initPlayer(char* buffer) {
 		//auto label = Label::create(playerList[i]->getName(), "arial.ttf", 15);
 		auto player = Player::create(playerList[i]->getName(), playerList[i]->getId());
 		if (i == 0) {
-			player->setPosition(w/4, h*4/7);
-			player->setScale(2.0f);
+			player->setPosition(w*0.23, h*0.65);
+			player->setScale(3.0f);
 		}
 		else {
-			player->setPosition(w*(3+i)/7, h*3/4);
+			player->setPosition(w*(4.5+i*3.5)/17, h*3/4);
+			player->setScale(2.0f);
 		}
 		//label->setPosition(0, 40);
 		//label->setColor(Color3B::BLACK);
@@ -161,6 +162,7 @@ void RoomScene::sendCallback(Ref* ref) {
 	auto msg=dynamic_cast<ui::TextField*>(this->getChildByName("TextField"))->getString().c_str();
 	sprintf(buffer, "%c$%d$%s", Dialog, local_Id, msg);
 	client->Send(buffer, MSGSIZE);
+	addMsg(dynamic_cast<ui::TextField*>(this->getChildByName("TextField"))->getString());
 }
 
 void RoomScene::onEnter(){
