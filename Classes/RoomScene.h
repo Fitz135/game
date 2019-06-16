@@ -28,12 +28,10 @@ public:
 	void initChat();
 	//void addMsg(std::string);
 	cocos2d::ui::ListView* dialog;
+	//cocos2d::ui::Text* msglog;
+	void update(float dt);
 private:
 	bool isReady[4];
-	
 	cocos2d::ui::TextField* text;
-	
-	
-	
 };
 #endif // !_ROOM_SCENE_H_

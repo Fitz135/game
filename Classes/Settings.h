@@ -45,4 +45,7 @@
 		}
 
 		extern RoomScene* roomscene;
+		extern bool isNewPlayer;
+		extern bool isNewMsg;
+		extern std::string newMsg;
 #endif

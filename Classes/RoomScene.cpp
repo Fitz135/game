@@ -48,6 +48,7 @@ bool RoomScene::init() {
 	this->addChild(menu,1);
 
 	initChat();
+	this->scheduleUpdate();
 	return true;
 }
 
@@ -173,7 +174,7 @@ void RoomScene::onEnter(){
 }
 void RoomScene::onExit() {
 	Scene::onExit();
-	endThread = 1;
+	//endThread = 1;
 }
 
 
@@ -188,11 +189,19 @@ void RoomScene::initChat() {
 	text->setCursorChar('|');
 	this->addChild(text);
 
+	/*msglog = ui::Text::create("chat here", "fonts/arial.ttf", 40);
+	msglog->setPosition(Vec2(center_x, center_y));
+
+	this->addChild(msglog);*/
+
+	
+	
 	dialog= ui::ListView::create();
 	dialog->setDirection(ui::ScrollView::Direction::VERTICAL);
-	dialog->setContentSize(Size(230, 110));//26个15大小的字符，6行
+	dialog->setContentSize(Size(551, 260));//33个30大小的字符，6行
 	dialog->setName("ListView");
-	dialog->setPosition(Vec2(center_x*0.833, center_y*0.40));
+	dialog->setPosition(Vec2(center_x*0.83, center_y*0.40));
+	this->addChild(dialog,1);
 	/*
 	for (int i = 0; i < 10; i++) {
 		auto hello = ui::Text::create("123456678912345678912345678", "fonts/arial.ttf",15);
@@ -203,6 +212,32 @@ void RoomScene::initChat() {
 	}*/
 	//dialog->jumpToBottom();
 	
-	this->addChild(dialog,1);
+	
 }
-
+void RoomScene::update(float dt) {
+	if (isNewMsg) {
+		auto hello = ui::Text::create(newMsg, "fonts/arial.ttf", 30);
+		hello->ignoreContentAdaptWithSize(false);
+		hello->setColor(cocos2d::Color3B::BLUE);
+		dialog->addChild(hello, 1);
+		isNewMsg = false;
+		if (dialog->getChildrenCount() >= 30)dialog->removeItem(0);
+		dialog->forceDoLayout();
+		dialog->jumpToBottom();
+		//dialog->scrollToBottom(0.5, false);
+	}
+	if (isNewPlayer) {
+		auto name = std::string(playerList[players - 1]->_name);
+		auto id = playerList[players - 1]->_id;
+		auto newPlayer = Player::create(name, id);
+		auto w = Director::getInstance()->getWinSize().width;
+		auto h = Director::getInstance()->getWinSize().height;
+		auto label = Label::create(name, "fonts/arial.ttf", 15);
+		label->setPosition(0, 40);
+		label->setColor(Color3B::BLACK);
+		newPlayer->setPosition(w*(1 + players * 3.5) / 17, h * 3 / 4);
+		newPlayer->addChild(label);
+		this->addChild(newPlayer);
+		isNewPlayer = false;
+	}
+}

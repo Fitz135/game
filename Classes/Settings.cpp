@@ -45,19 +45,11 @@ void updateDialog(char* buffer) {
 	strcpy(msg, &buffer[4]);
 	char finaltext[sizeof(name) + sizeof(msg) + 1];
 	sprintf(finaltext, "%s:%s", name.c_str(), msg);
-	std::string temp(finaltext);
 	
-	//auto layer = dynamic_cast<RoomScene*>(Director::getInstance()->getRunningScene()->getChildByName("layer"));
 	
-	//log("here");
+	newMsg= std::string(finaltext);
+	isNewMsg = true;
 	
-	auto hello = ui::Text::create(temp, "fonts/arial.ttf", 15);
-	hello->ignoreContentAdaptWithSize(false);
-	hello->setColor(cocos2d::Color3B::BLUE);
-	//roomscene->addChild(hello, 1);
-	//auto dial = roomscene->getChildByName("ListView"); dialog->
-	//dial->addChild(hello, 1);
-	//log("here2");
 }
 void addPlayer(char* buffer) {
 	int start_pos = 2;
@@ -75,11 +67,12 @@ void addPlayer(char* buffer) {
 	name[start_pos - 2] = '\0';
 	id = static_cast<int>(buffer[start_pos+1]) - 48;
 	//start_pos += 2;
-	auto newPlayer = Player::create(std::string(name), id);
+	
 	auto entity = Entity::create(std::string(name), id);
 	playerList.push_back(entity);
 	players++;
-
+	isNewPlayer = true;
+	/*auto newPlayer = Player::create(std::string(name), id);
 	auto w = Director::getInstance()->getWinSize().width;
 	auto h = Director::getInstance()->getWinSize().height;
 	//auto label = Label::create(name, "fonts/arial.ttf", 15);
@@ -87,12 +80,13 @@ void addPlayer(char* buffer) {
 	//label->setColor(Color3B::BLACK);
 	newPlayer->setPosition(w*(1 + players*3.5) / 17, h * 3 / 4);
 	//newPlayer->addChild(label);
-	Director::getInstance()->getRunningScene()->addChild(newPlayer);
+	Director::getInstance()->getRunningScene()->addChild(newPlayer);*/
 }
 void gamestartCallback() {
 	auto scene = GameScene::createScene();
 	Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
 }
+
 void updatePlayer(char* buffer) {
 	if (buffer[0] == KeyPress || buffer[0] == KeyRelease) {
 		int id = static_cast<int>(buffer[2]) - 48;
@@ -109,15 +103,9 @@ void updatePlayer(char* buffer) {
 					GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->MouseStart(buffer);
 	}
 }
-void addMsg(std::string temp) {
-	auto hello = ui::Text::create("666", "fonts/arial.ttf", 15);
-	hello->ignoreContentAdaptWithSize(false);
-	hello->setColor(cocos2d::Color3B::BLUE);
-	auto layer = dynamic_cast<RoomScene*>(Director::getInstance()->getRunningScene()->getChildByName("layer"));
-	auto dial = layer->getChildByName("ListView");//dynamic_cast<ui::ListView*>(this->);
-	dial->addChild(hello, 1);
-	/*if (dial->getChildrenCount() > 6)dial->removeItem(0);
-	dial->forceDoLayout();
-	dial->jumpToBottom();*/
-}
+
 RoomScene *roomscene;
+
+bool isNewPlayer = false;
+bool isNewMsg = false;
+std::string newMsg;
