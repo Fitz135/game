@@ -63,8 +63,6 @@ void Operator::PassOperatorInfo(float dt)
 			sprintf(buffer, "%c$%d$%d", MouseRelease, local_Id, PressNum);
 			client->Send(buffer, MSGSIZE);
 		}
-		
-
 		player->AttackEnd(PressNum);
 		this->unschedule(schedule_selector(Operator::PassOperatorInfo));
 	}
@@ -154,7 +152,7 @@ void Operator::MoveLEFT(float dt)
 {
 	auto scene = (GameScene*)this->getParent();
 	auto player = getMyplayer("Player");
-	if (player->AttackEndFlag && !MouseDown)
+	if (player->WeaponType==5||(player->AttackEndFlag && !MouseDown))
 		player->setScaleX(-1);
 	if (player->HP <= 0 || !scene->isAccessable(player->getPosition() + Vec2(-player->MoveSpeed, 0), 2))
 	{
@@ -166,7 +164,7 @@ void Operator::MoveRIGHT(float dt)
 {
 	auto scene = (GameScene*)this->getParent();
 	auto player = getMyplayer("Player");
-	if (player->AttackEndFlag && !MouseDown)
+	if (player->WeaponType == 5 || (player->AttackEndFlag && !MouseDown))
 		player->setScaleX(1);
 	if (player->HP<=0||!scene->isAccessable(player->getPosition() + Vec2(player->MoveSpeed, 0), 0))
 	{

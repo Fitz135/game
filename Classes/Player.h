@@ -12,6 +12,7 @@ public:
 	static Player* create(std::string , int);
 	static Player* create(Entity*);
 	bool initWithPlayerType(int id);
+	bool IsAI=0;
 	void update(float dt);
 	void ChangeWeapon(int WeaponType);
 	//Player * getMychara(char* str);

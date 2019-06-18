@@ -80,7 +80,7 @@ void GameScene::onEnter() {
 	this->addChild(tileMap);
 
 	Bulletset = Sprite::create();
-	tileMap->addChild(Bulletset);
+	tileMap->addChild(Bulletset,100);
 
 	auto w = Director::getInstance()->getWinSize().width / (players + 1);
 	auto h = Director::getInstance()->getWinSize().height / (players + 1);
@@ -118,12 +118,12 @@ void GameScene::onEnter() {
 		tileMap->addChild(player);
 		Players->addObject(player);
 
-		for (int i = 4; i <= 6; i++)
+		/*for (int i = 4; i <= 4; i++)
 		{
 			auto ai = Player::create("ai"+std::to_string(i), i);
+			ai->IsAI = 1;
 			ai->setPosition(posList[i-3]);
 			ai->MoveBegin();
-			//ai->setTag(-i);
 			tileMap->addChild(ai);
 
 			auto aiop = AiPlayer::create();
@@ -131,7 +131,7 @@ void GameScene::onEnter() {
 			ai->setZOrder(100);
 			ai->addChild(aiop);
 			Players->addObject(ai);
-		}
+		}*/
 	}
 
 
@@ -151,23 +151,6 @@ void GameScene::update(float delta)
 	this->IsBulletIntoWall();
 	this->IsBulletIntoPlayer();
 
-
-	////////ai//////
-	/*Player* player = dynamic_cast<Player* >(Players[0]);
-	auto pos_x = player->getPosition().x;
-	auto pos_y = player->getPosition().y;
-	Player* ai = dynamic_cast<Player*>(Players[1]);
-	auto m_x = ai->getPosition().x;
-	auto m_y = ai->getPosition().y;
-	if (pos_x >= m_x) {
-		char buffer[MSGSIZE];
-		//sprinf(buffer, "%d$2$3");
-	}*/
-
-
-	
-		
-	
 }
 void GameScene::IsDead()
 {
@@ -202,7 +185,8 @@ void GameScene::SpawnItems(float dt)
 		auto valueMap = value.asValueMap();
 		if (!valueMap.at("Collidable").asBool())break;
 	}
-	int type = 0;
+	//int type = rand()%5;
+	int type = 5;
 	auto items = Sprite::create(settings::weapon_paths[type]);
 	items->setTag(type);
 	items->setPosition(x, y);
@@ -237,7 +221,9 @@ void GameScene::IsWeaponIntoPlayer()
 		Player* player = (Player*)iplayer;
 		if (player->weapon&&(player->weapon->MyWeapon->getOpacity())&& (player->WeaponType == 1 || player->WeaponType== 4))
 		{
-			auto weaponZone = (player->weapon->MyWeapon)->boundingBox();
+
+			auto tmpZone = (player->weapon->MyWeapon)->boundingBox();
+			auto weaponZone = CCRectMake(tmpZone.origin.x + player->getPositionX(), tmpZone.origin.y + player->getPositionY(), tmpZone.size.width, tmpZone.size.height);;
 			CCARRAY_FOREACH(Players, iplayer2)
 			{
 				Player* player2=(Player*)iplayer2;
@@ -246,7 +232,7 @@ void GameScene::IsWeaponIntoPlayer()
 					auto playerZone = CCRectMake(player2->getPositionX() - 9, player2->getPositionY() - 24, 18, 42);
 					if (weaponZone.intersectsRect(playerZone))
 					{
-						player2->HP -= 50;
+						player2->HP -= 2;
 					}
 				}
 			}
@@ -300,7 +286,6 @@ bool GameScene::isAccessable(Point Position, int Direction)
 	if (Position.x - 9 <=0 || Position.y - 24 <=0 || Position.x + 9 >= 1280 || Position.y + 18 >= 1280)
 		return true;
 	int dir[8][2] = { {9,0},{0,-24},{-9,0},{0,18},{9,-24},{-9,-24},{-9,18},{9,18}};
-	log("%d,%d", (int)floor((Position.x + dir[Direction][0]) / 32), (int)(39 - floor((Position.y + dir[Direction][1]) / 32)));
 	auto git = Meta->getTileGIDAt(Vec2((int)floor((Position.x + dir[Direction][0]) / 32), (int)(39 - floor((Position.y + dir[Direction][1]) / 32))));
 	auto value = tileMap->getPropertiesForGID(git);
 	auto valueMap = value.asValueMap();

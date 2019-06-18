@@ -65,7 +65,6 @@ bool Player::initWithPlayerType(int i)
 	this->Body = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Body/Body-0.png");
 	this->Head = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Head/Head-0.png");
 	this->Hand = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Arm/Arm-0.png");
-	//ChangeWeapon(-1);
 	this->weapon = nullptr;
 
 	Legs->setPosition(0, -14);
@@ -111,7 +110,7 @@ void Player::ChangeWeapon(int weapontype)
 	IsHaveWeapon = 1;
 	weapon->MyWeapon->setTag(WeaponType);
 	AttackSpeed = weapon->WeaponSpeed[WeaponType];
-	addChild(weapon->MyWeapon);
+	addChild(weapon->MyWeapon,1);
 	return ;
 }
 Vector<SpriteFrame*> Player::AnimationFrames(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end)
@@ -130,12 +129,15 @@ Animate* Player::createAnimate(int FramesIndex, float delay)
 
 void Player::MoveBegin()
 {
+	Legs->stopAllActionsByTag(LEGSMOVE);
 	auto LegsAni = RepeatForever::create(createAnimate(LEGSMOVE, 2.0f / (MoveSpeed * 8)));
 	LegsAni->setTag(LEGSMOVE);
 	Legs->runAction(LegsAni);
-
 	if (AttackEndFlag)
 	{
+		Head->stopAllActionsByTag(HEADMOVE);
+		Body->stopAllActionsByTag(BODYMOVE);
+
 		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE, 2.0f / (MoveSpeed * 8)));
 		HeadAni->setTag(HEADMOVE);
 		Head->runAction(HeadAni);
@@ -147,15 +149,15 @@ void Player::MoveBegin()
 }
 void Player::MoveEnd()
 {
-	Legs->stopActionByTag(LEGSMOVE);
+	Legs->stopAllActionsByTag(LEGSMOVE);
 	Legs->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Legs/Legs-0.png"));
 
 	if (AttackEndFlag)
 	{
-		Head->stopActionByTag(HEADMOVE);
+		Head->stopAllActionsByTag(HEADMOVE);
 		Head->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Head/Head-0.png"));
 
-		Body->stopActionByTag(BODYMOVE);
+		Body->stopAllActionsByTag(BODYMOVE);
 		Body->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Body/Body-0.png"));
 	}
 }
@@ -171,9 +173,10 @@ void Player::AttackEnd(int pressnum)
 {
 	auto player = (Player*)this;
 	Hand->setOpacity(0);
+	MoveSpeed = 8;
 	weapon->MyWeapon->setOpacity(0);
-	Body->stopActionByTag(BODYATTACK);
-	Hand->stopActionByTag(HANDATTACK);
+	Body->stopAllActionsByTag(BODYATTACK);
+	Hand->stopAllActionsByTag(HANDATTACK);
 	if (pressnum)
 	{
 		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE, 2.0f / (MoveSpeed * 8)));
@@ -197,10 +200,13 @@ void Player::AttackBegan(Point TouchPosition)
 
 	auto map = (TMXTiledMap *)this->getParent();
 	TouchPosition -= map->getPosition();
-	if (TouchPosition.x < this->getPositionX())
-		this->setScaleX(-1);
-	else
-		this->setScaleX(1);
+	if (WeaponType != 5)
+	{
+		if (TouchPosition.x < this->getPositionX())
+			this->setScaleX(-1);
+		else
+			this->setScaleX(1);
+	}
 
 	this->unschedule(schedule_selector(Player::AttackAbleflag));
 	this->schedule(schedule_selector(Player::AttackAbleflag), AttackSpeed);
@@ -214,8 +220,8 @@ void Player::AttackMode1(Point TouchPosition)
 	float dir1 = TouchPosition.x - PlayerPosition.x - TouchPosition.y + PlayerPosition.y;
 	float dir2 = TouchPosition.x - PlayerPosition.x + TouchPosition.y - PlayerPosition.y;
 
-	Head->stopActionByTag(HEADMOVE);
-	Body->stopActionByTag(BODYMOVE);
+	Head->stopAllActionsByTag(HEADMOVE);
+	Body->stopAllActionsByTag(BODYMOVE);
 	Hand->setOpacity(255);
 	if (dir1*dir2 >= 0)
 	{
@@ -240,12 +246,12 @@ void Player::AttackMode1(Point TouchPosition)
 void Player::AttackMode2(Point TouchPosition)
 {
 	Hand->setOpacity(255);
-	Head->stopActionByTag(HEADMOVE);
+	Head->stopAllActionsByTag(HEADMOVE);
 	Head->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Head/Head-0.png"));
 
 	auto BodyAni = createAnimate(BODYATTACK, 1.0f / 8);
 	BodyAni->setTag(BODYATTACK);
-	Body->stopActionByTag(BODYMOVE);
+	Body->stopAllActionsByTag(BODYMOVE);
 	Body->runAction(BodyAni);
 
 	auto HandAni = createAnimate(HANDATTACK, 1.0f / 8);
@@ -254,8 +260,9 @@ void Player::AttackMode2(Point TouchPosition)
 }
 void Player::Dead(Node* who)
 {
-	if(who->getTag()<0)who->getChildByName("aiop")->unschedule(schedule_selector(AiPlayer::AiAttack));
-	this->AttackAbleFlag = 0;
+	if(((Player*)who)->IsAI)who->getChildByName("aiop")->unschedule(schedule_selector(AiPlayer::AiAttack));
+	else who->unscheduleAllSelectors();
+	AttackAbleFlag = 0;
 	auto spritecache = SpriteFrameCache::getInstance();
 	Vector<SpriteFrame*> animFrames;
 	for (int i = 0; i <= 3; i++)

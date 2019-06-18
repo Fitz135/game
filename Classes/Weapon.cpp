@@ -6,7 +6,11 @@
 
 #define PI 3.1415
 
-void(Weapon::*weaponmode[5])(Point MousePosition) = { &Weapon::Bow,&Weapon::Sword,&Weapon::BubbleGun,&Weapon::Boomerang,&Weapon::Lance };
+#define HEADMOVE 0
+#define BODYMOVE 1
+#define LEGSMOVE 2
+
+void(Weapon::*weaponmode[6])(Point MousePosition) = { &Weapon::Bow,&Weapon::Sword,&Weapon::BubbleGun,&Weapon::Boomerang,&Weapon::Lance,&Weapon::Shield};
 
 inline Player* getMyplayer(char* str) {
 	auto scene = GameScene::getCurrentMap();
@@ -17,11 +21,10 @@ Weapon* Weapon::create(int WeaponType)
 {
 	auto weapon = Weapon::create();
 	weapon->MyWeapon = Sprite::create(settings::weapon_paths[WeaponType]);
+
 	weapon->MyWeapon->retain();
 	weapon->MyWeapon->setOpacity(0);
-	weapon->MyWeapon->setZOrder(1);
 	weapon->WeaponMode = weaponmode[WeaponType];
-
 	return weapon;
 }
 void Weapon::Bow(Point MousePosition)
@@ -63,7 +66,7 @@ void Weapon::Bow(Point MousePosition)
 	double range = 200;
 	float x = range * cos(PI / 2 + J * PI / 2 + Theta) + ArrowPosition.x;
 	float y = range * sin(PI / 2 + J * PI / 2 + Theta) + ArrowPosition.y;
-	auto move = MoveTo::create(1, Vec2(x, y));
+	auto move = MoveTo::create(1.0f/2, Vec2(x, y));
 	auto arrowend = CallFuncN::create(this, callfuncN_selector(Weapon::ArrowEnd));
 	auto attackmove = Sequence::create(move, arrowend, NULL);
 	attackmove->setTag(0);
@@ -72,11 +75,11 @@ void Weapon::Bow(Point MousePosition)
 	Arrow->setRotation((-Theta + J * PI / 2 + PI) / PI * 180);
 	Arrow->setAnchorPoint(Vec2(0.5, 0.31250));
 	Arrow->runAction(attackmove);
-	scene->Bulletset->addChild(Arrow);
+
 
 	Arrow->setTag(0);
 	Arrow->setName(player->getName());
-	//Arrow->setName("arrow");
+	scene->Bulletset->addChild(Arrow);
 	scene->Bullets->addObject(Arrow);
 	Arrow->setZOrder(1);
 }
@@ -118,19 +121,14 @@ void Weapon::Sword(Point MousePosition)
 
 	auto visiblesize = Director::getInstance()->getOpenGLView()->getVisibleSize();
 	Point StarPosition;
-	float dir1 = MousePosition.x - playerPosition.x - MousePosition.y + playerPosition.y;
-	float dir2 = MousePosition.x - playerPosition.x + MousePosition.y - playerPosition.y;
-	if (dir1 < 0 && dir2>0)
-		StarPosition = Vec2(-90, 128 + 90);
-	else if (dir1*dir2 >= 0)
-	{
-		if (MousePosition.x > playerPosition.x)
-			StarPosition = Vec2(visiblesize.width + 90, visiblesize.height / 2);
-		else
-			StarPosition = Vec2(-90, visiblesize.height / 2);
-	}
-	else if (dir1 > 0 && dir2 < 0)
-		StarPosition = Vec2(visiblesize.width / 2, -90);
+
+	if (MousePosition.x > playerPosition.x)
+		StarPosition.x = 1280 + 90;
+	else StarPosition.x = -90;
+	if (MousePosition.y > playerPosition.y)
+		StarPosition.y = 1280 + 90;
+	else
+		StarPosition.y = -90;
 	auto starlight = Sprite::create("Starlight.png");
 	auto star = Sprite::create("Star2.png");
 	star->setPosition(17, 18);
@@ -143,14 +141,13 @@ void Weapon::Sword(Point MousePosition)
 	if (MousePosition.x - StarPosition.x > 0)Theta += PI;
 
 	starlight->setRotation(-Theta / PI * 180 + 90);
-	auto move4 = MoveTo::create(1.0f / 300 * l, MousePosition);
+	auto move4 = MoveTo::create(1.0f / 600 * l, MousePosition);
 	auto starend = CallFuncN::create(this, callfuncN_selector(Weapon::StarEnd));
 	auto attackmove = Sequence::create(move4, starend, nullptr);
 
-	map->addChild(starlight);
-	attackmove->setTag(1);
 	starlight->setTag(1);
 	starlight->setName(player->getName());
+	scene->Bulletset->addChild(starlight);
 	scene->Bullets->addObject(starlight);
 	starlight->setZOrder(1);
 
@@ -256,11 +253,12 @@ void Weapon::BubbleGun(Point MousePosition)
 	Bubble->setPosition(BubblePosition);
 	Bubble->setScale(scale);
 	Bubble->runAction(attackmove);
-	map->addChild(Bubble);
+
 
 	Bubble->setName(player->getName());
 	attackmove->setTag(2);
 	Bubble->setTag(2);
+	scene->Bulletset->addChild(Bubble);
 	scene->Bullets->addObject(Bubble);
 	Bubble->setZOrder(1);
 }
@@ -325,11 +323,11 @@ void Weapon::Boomerang(Point MousePosition)
 	boomerang->setPosition(BoomerangPosition);
 	boomerang->runAction(move);
 	boomerang->runAction(move2);
-	map->addChild(boomerang);
 	player->schedule(schedule_selector(Weapon::BoomerangBack), 2.0f / 60);
 
 	boomerang->setName(player->getName());
 	boomerang->setTag(3);
+	scene->Bulletset->addChild(boomerang);
 	scene->Bullets->addObject(boomerang);
 	boomerang->setZOrder(100);
 }
@@ -417,6 +415,12 @@ void Weapon::Lance(Point MousePosition)
 		auto seq = Sequence::create(move, move->reverse(), back, nullptr);
 		MyWeapon->runAction(seq);
 	}
+}
+void Weapon::Shield(Point MousePosition)
+{
+	auto player = (Player*)this->MyWeapon->getParent();
+	auto playerPosition = player->getPosition();
+	player->MoveSpeed = 24;
 }
 void Weapon::disappear(Node* who)
 {
