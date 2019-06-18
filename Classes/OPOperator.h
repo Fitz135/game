@@ -9,8 +9,8 @@ using namespace cocos2d;
 class OPOperator : public Layer
 {
 public:
-	void KeyStart(char*);
-	void MouseStart(char*);
+	void KeyStart(const char*);
+	void MouseStart(const char*);
 
 	//void AIMove(char * buffer);
 

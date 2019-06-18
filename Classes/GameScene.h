@@ -32,6 +32,8 @@ public:
 	void IsDead();
 	void IsWeaponIntoPlayer();
 
+
+	void MovePlayer();
 	void exitCallback(Ref*ref);
 	//Sprite* tileMap;
     TMXTiledMap *tileMap;

@@ -24,7 +24,7 @@ bool OPOperator::init() {
 	return true;
 }
 
-void OPOperator::KeyStart(char* buffer) {
+void OPOperator::KeyStart(const char* buffer) {
 	if (buffer[0] == KeyPress) {
 		int keycode = static_cast<int>(buffer[4]) - 48;
 		
@@ -53,7 +53,7 @@ void OPOperator::KeyStart(char* buffer) {
 		}
 	}
 }
-void OPOperator::MouseStart(char* buffer) {
+void OPOperator::MouseStart(const char* buffer) {
 	auto player = dynamic_cast<Player*>(getParent());
 	if (buffer[0] == MousePress) {
 		int x=0, y=0;
