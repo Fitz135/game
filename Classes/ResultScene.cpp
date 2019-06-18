@@ -21,8 +21,15 @@ bool ResultScene::init() {
 	bg->setPosition(center_x, center_y*1.2);
 	this->addChild(bg);
 
+	char* tmp;
+	if (!gameMode) {
+		tmp = "Return to room";
+	}
+	else {
+		tmp = "Mode Select";
+	}
 	auto returnroomItem = MenuItemLabel::create(
-		Label::create("Return to room", "fonts/Cordelia.ttf", 45), CC_CALLBACK_1(ResultScene::reroomCallback, this));
+		Label::create(tmp, "fonts/Cordelia.ttf", 45), CC_CALLBACK_1(ResultScene::reroomCallback, this));
 	auto exitItem= MenuItemLabel::create(
 		Label::create("Exit", "fonts/Cordelia.ttf", 45), CC_CALLBACK_1(ResultScene::exitCallback, this));
 
@@ -37,13 +44,21 @@ bool ResultScene::init() {
 	return true;
 }
 void ResultScene::reroomCallback(Ref* ref) {
-	//TODO;
-	Director::getInstance()->getRunningScene()->getChildByTag(1)->removeChildByTag(1);/////¼ÇµÃsettag
+
+		Director::getInstance()->popScene();
+	
+	/*Director::getInstance()->getRunningScene()->getChildByTag(10)->removeChildByName("solid");
+	Director::getInstance()->getRunningScene()->getChildByTag(10)->removeChildByTag(1);*/
 }
 void ResultScene::exitCallback(Ref* ref) {
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->stopBackgroundMusic();
-	if(client!=nullptr)client->Close();
+	if (client != nullptr) {
+		char buffer[MSGSIZE];
+		sprintf(buffer, "%c$%d", DisConnect, local_Id);
+		client->Send(buffer, MSGSIZE);
+		client->Close();
+	}
 	Director::getInstance()->end();
 }
 

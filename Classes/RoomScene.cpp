@@ -158,13 +158,24 @@ void RoomScene::readyCallback(Ref* ref) {
 }
 void RoomScene::backCallback(Ref* ref) {
 	Director::getInstance()->popScene();
-	client->Close();
+	if (client != nullptr) {
+		char buffer[MSGSIZE];
+		sprintf(buffer, "%c$%d", DisConnect, local_Id);
+		client->Send(buffer, MSGSIZE);
+		client->Close();
+	}
 }
 void RoomScene::sendCallback(Ref* ref) {
 	char buffer[MSGSIZE];
 	auto msg=dynamic_cast<ui::TextField*>(this->getChildByName("TextField"))->getString().c_str();
 	sprintf(buffer, "%c$%d$%s", Dialog, local_Id, msg);
-	client->Send(buffer, MSGSIZE);
+	if (strlen(buffer) > MSGSIZE) {
+		isNewMsg = true;
+		newMsg = std::string("Too long to send it!");
+	}
+	else {
+		client->Send(buffer, MSGSIZE);
+	}
 	
 }
 
