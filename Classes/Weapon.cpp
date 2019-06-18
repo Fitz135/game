@@ -61,9 +61,7 @@ void Weapon::Bow(Point MousePosition)
 	MyWeapon->setPosition(BowPosition);
 	MyWeapon->setOpacity(255);
 
-	
-	auto Arrow = Sprite::createWithTexture(textrue);
-	//Arrow->retain();
+	auto Arrow = Sprite::create("arrow.png");
 	auto ArrowPosition = Vec2(PlayerPosition.x + K * BowPosition.x, PlayerPosition.y + BowPosition.y);
 
 	double range = 200;
@@ -72,15 +70,15 @@ void Weapon::Bow(Point MousePosition)
 	auto move = MoveTo::create(1.0f/2, Vec2(x, y));
 	auto arrowend = CallFuncN::create(this, callfuncN_selector(Weapon::ArrowEnd));
 	auto attackmove = Sequence::create(move, arrowend, NULL);
-	attackmove->setTag(0+100);
+	attackmove->setTag(100);
 
 	Arrow->setPosition(ArrowPosition);
 	Arrow->setRotation((-Theta + J * PI / 2 + PI) / PI * 180);
 	Arrow->setAnchorPoint(Vec2(0.5, 0.31250));
 	Arrow->runAction(attackmove);
 
-	Arrow->setTag(0+100);
-	Arrow->setName(player->getName());
+	Arrow->setTag(player->getTag());
+	Arrow->setName("Arrow");
 	scene->Bulletset->addChild(Arrow);
 	scene->Bullets->addObject(Arrow);
 	Arrow->setZOrder(1);
@@ -147,11 +145,11 @@ void Weapon::Sword(Point MousePosition)
 	auto starend = CallFuncN::create(this, callfuncN_selector(Weapon::StarEnd));
 	auto attackmove = Sequence::create(move4, starend, nullptr);
 
-	starlight->setTag(1+100);
-	starlight->setName(player->getName());
+	starlight->setTag(player->getTag());
+	starlight->setName("Starlight.png");
 	scene->Bulletset->addChild(starlight);
 	scene->Bullets->addObject(starlight);
-	starlight->setZOrder(1);
+	starlight->setZOrder(100);
 
 	auto light = ParticleExplosion::createWithTotalParticles(3);
 	light->setEmitterMode((cocos2d::ParticleSystem::Mode)1);
@@ -199,11 +197,9 @@ void Weapon::StarEnd(Node* who)
 	boom->setLifeVar(0);
 	boom->setPosition(who->getPosition());
 	boom->setZOrder(2);
-	/*auto player = (Player*)this->MyWeapon->getParent();
-	auto map = (TMXTiledMap*)player->getParent();*/
+
 	auto map = who->getParent();
-	if (map)
-		map->addChild(boom);
+	if (map)map->addChild(boom);
 	disappear(who);
 }
 void Weapon::BubbleGun(Point MousePosition)
@@ -257,9 +253,9 @@ void Weapon::BubbleGun(Point MousePosition)
 	Bubble->runAction(attackmove);
 
 
-	Bubble->setName(player->getName());
-	attackmove->setTag(2+100);
-	Bubble->setTag(2+100);
+	Bubble->setName("Bubble");
+	attackmove->setTag(100);
+	Bubble->setTag(player->getTag());
 	scene->Bulletset->addChild(Bubble);
 	scene->Bullets->addObject(Bubble);
 	Bubble->setZOrder(1);
@@ -327,8 +323,8 @@ void Weapon::Boomerang(Point MousePosition)
 	boomerang->runAction(move2);
 	player->schedule(schedule_selector(Weapon::BoomerangBack), 2.0f / 60);
 
-	boomerang->setName(player->getName());
-	boomerang->setTag(3+100);
+	boomerang->setName("Boomerang");
+	boomerang->setTag(player->getTag());
 	scene->Bulletset->addChild(boomerang);
 	scene->Bullets->addObject(boomerang);
 	boomerang->setZOrder(100);

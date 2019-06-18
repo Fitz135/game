@@ -27,10 +27,10 @@ public:
 
 	void MapMove();
 	void PickMapItems();
-	void IsBulletIntoWall();
+	//void IsBulletIntoWall();
 	void IsBulletIntoPlayer();
-	void IsDead();
-	void IsWeaponIntoPlayer();
+	//void IsDead();
+	//void IsWeaponIntoPlayer();
 
 
 	void MovePlayer();

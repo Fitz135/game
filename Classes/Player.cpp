@@ -83,18 +83,10 @@ bool Player::initWithPlayerType(int i)
 	Hand->setOpacity(0);
 	Hand->setZOrder(2);
 
-	/*MoveFrames[HEADMOVE] = AnimationFrames("Player" + std::to_string(CharaType) + "/Head/Head-", 6, 19);
-	MoveFrames[BODYMOVE] = AnimationFrames("Player" + std::to_string(CharaType) + "/Body/Body-", 6, 19);
-	MoveFrames[LEGSMOVE] = AnimationFrames("Player" + std::to_string(CharaType) + "/Legs/Legs-", 6, 19);
-	MoveFrames[BODYATTACK] = AnimationFrames("Player" + std::to_string(CharaType) + "/Body/Body-", 1, 4);
-	MoveFrames[HANDATTACK] = AnimationFrames("Player" + std::to_string(CharaType) + "/Arm/Arm-", 1, 4);*/
-
 	AttackAbleFlag = 1;
 	AttackEndFlag = 1;
-	IsHaveWeapon = 1;
-	WeaponType = 0;
-	ChangeWeapon(0);
-	///////////////////
+	IsHaveWeapon = 0;
+
 	return true;
 }
 void Player::update(float dt)
