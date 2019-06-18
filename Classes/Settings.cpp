@@ -65,26 +65,15 @@ void addPlayer(char* buffer) {
 			start_pos = j;
 			break;
 		}
-		//name[j-start_pos] = buffer[j];
 	}
 	strncpy(name, &buffer[2], start_pos - 2);
 	name[start_pos - 2] = '\0';
 	id = static_cast<int>(buffer[start_pos+1]) - 48;
-	//start_pos += 2;
 	
 	auto entity = Entity::create(std::string(name), id);
 	playerList.push_back(entity);
 	players++;
 	isNewPlayer = true;
-	/*auto newPlayer = Player::create(std::string(name), id);
-	auto w = Director::getInstance()->getWinSize().width;
-	auto h = Director::getInstance()->getWinSize().height;
-	//auto label = Label::create(name, "fonts/arial.ttf", 15);
-	//label->setPosition(0, 40);
-	//label->setColor(Color3B::BLACK);
-	newPlayer->setPosition(w*(1 + players*3.5) / 17, h * 3 / 4);
-	//newPlayer->addChild(label);
-	Director::getInstance()->getRunningScene()->addChild(newPlayer);*/
 }
 void gamestartCallback() {
 	auto scene = GameScene::createScene();

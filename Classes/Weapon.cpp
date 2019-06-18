@@ -144,9 +144,9 @@ void Weapon::Sword(Point MousePosition)
 	auto move4 = MoveTo::create(1.0f / 600 * l, MousePosition);
 	auto starend = CallFuncN::create(this, callfuncN_selector(Weapon::StarEnd));
 	auto attackmove = Sequence::create(move4, starend, nullptr);
-
+	attackmove->setTag(100);
 	starlight->setTag(player->getTag());
-	starlight->setName("Starlight.png");
+	starlight->setName("Starlight");
 	scene->Bulletset->addChild(starlight);
 	scene->Bullets->addObject(starlight);
 	starlight->setZOrder(100);

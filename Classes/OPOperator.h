@@ -9,29 +9,27 @@ using namespace cocos2d;
 class OPOperator : public Layer
 {
 public:
+	CREATE_FUNC(OPOperator);
+
 	void KeyStart(const char*);
-	void MouseStart(const char*);
+	void TouchStart(const char*);
+private:
+	virtual bool init();
 
-	//void AIMove(char * buffer);
-
-	void PassOperatorInfo(float dt);
-
-	bool onMouseBegan(Touch * ptouch, Event * pevent);
-	void onMouseMoved(Touch * ptouch, Event * pevent);
-	void onMouseEnded(Touch * ptouch, Event * pevent);
-	bool Isschedule[4] = { 0,0,0,0, };
-
-
-	int PressNum;
-	bool MouseDown;
+	int PressNum=0;
+	bool MouseDown=0;
 	Point MousePosition;
 
 	void MoveUP(float dt);
 	void MoveDOWN(float dt);
 	void MoveLEFT(float dt);
 	void MoveRIGHT(float dt);
-	CREATE_FUNC(OPOperator);
-	virtual bool init();
+
+	const SEL_SCHEDULE move[4] = {
+	schedule_selector(OPOperator::MoveLEFT),
+	schedule_selector(OPOperator::MoveRIGHT),
+	schedule_selector(OPOperator::MoveUP),
+	schedule_selector(OPOperator::MoveDOWN) };
 };
 #endif
 
