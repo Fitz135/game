@@ -20,6 +20,7 @@ public:
 	virtual void onExit();
 	void update(float delta);
 	void SpawnItems(float dt);
+	void SpawnItems(Vec3 pos);
 
 
 	bool isAccessable(Point Position, int Direction);

@@ -59,32 +59,11 @@ bool GameScene::init() {
 	auto x = Director::getInstance()->getWinSize().width;
 	auto y = Director::getInstance()->getWinSize().height;
 
-	/*auto exitItem = MenuItemLabel::create(
-		Label::create("Exit", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
+	/*auto exitItem = MenuItemLabel::create(Label::create("Exit", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
 	exitItem->setPosition(-x * 0.45, y *0.45);
 	auto menu = Menu::create();
 	menu->addChild(exitItem);
 	addChild(menu, 100);*/
-
-	/*auto upItem = MenuItemLabel::create(
-		Label::create("up", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
-	auto downItem = MenuItemLabel::create(
-		Label::create("down", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
-	auto leftItem = MenuItemLabel::create(
-		Label::create("left", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
-	auto rightItem = MenuItemLabel::create(
-		Label::create("right", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
-	upItem->setPosition(0, y *0.15);
-	downItem->setPosition(0, -y *0.15);
-	leftItem -> setPosition(-x*0.15, 0);
-	rightItem -> setPosition(x * 0.15, 0);
-	auto menu = Menu::create();
-	menu->addChild(upItem);
-	menu->addChild(downItem);
-	menu->addChild(rightItem);
-	menu->addChild(leftItem);
-	addChild(menu, 100);*/
-
 
 	return true;
 }
@@ -118,7 +97,6 @@ void GameScene::onEnter() {
 			int id = playerList[i]->_id;
 
 			auto player = Player::create(name, id);
-			tileMap->addChild(player->HPBar);
 			player->setZOrder(100);
 			player->setPosition(posList[id]);
 			if (id != local_Id) {
@@ -163,7 +141,7 @@ void GameScene::onEnter() {
 
 
 	this->scheduleUpdate();
-	this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
+	if(gameMode)this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
 }
 void GameScene::onExit() {
 	Layer::onExit();
@@ -171,10 +149,11 @@ void GameScene::onExit() {
 }
 void GameScene::update(float delta)
 {
-	this->MapMove();
-	this->PickMapItems();
-	this->IsBulletIntoPlayer();
-	this->MovePlayer();
+	if (!gameMode&&isNewProp)SpawnItems(propPos);
+	MapMove();
+	PickMapItems();
+	IsBulletIntoPlayer();
+	MovePlayer();
 }
 void GameScene::SpawnItems(float dt)
 {
@@ -189,17 +168,35 @@ void GameScene::SpawnItems(float dt)
 		auto valueMap = value.asValueMap();
 		if (!valueMap.at("Collidable").asBool())break;
 	}
-	//int type = rand()%6;
-	int type = 0;
+	int type = rand()%7;
 	auto items = Sprite::create(settings::weapon_paths[type]);
-	items->setTag(type+100);
+	items->setTag(type);
 	items->setPosition(x, y);
 	auto jump = JumpBy::create(0.5f,Vec2(0,10),10,1);
 	auto seq = Sequence::create(jump, jump->reverse(), nullptr);
 	items->runAction(RepeatForever::create(seq));
-	auto map=this->getChildByName("Map");
 	MapItems->addObject(items);
 	this->Itemset->addChild(items);
+}
+void GameScene::SpawnItems(Vec3 pos)
+{
+	isNewProp = false;
+	float x = pos.x,y=pos.y;
+	int type = static_cast<int>(pos.z);
+		auto git = Meta->getTileGIDAt(Vec2((int)floor(x / 32), (int)(39 - floor(y / 32))));
+		auto value = tileMap->getPropertiesForGID(git);
+		auto valueMap = value.asValueMap();
+		if (!valueMap.at("Collidable").asBool())
+		{
+			auto items = Sprite::create(settings::weapon_paths[type]);
+			items->setTag(type);
+			items->setPosition(x, y);
+			auto jump = JumpBy::create(0.5f, Vec2(0, 10), 10, 1);
+			auto seq = Sequence::create(jump, jump->reverse(), nullptr);
+			items->runAction(RepeatForever::create(seq));
+			MapItems->addObject(items);
+			this->Itemset->addChild(items);
+		}
 }
 void GameScene::MapMove()
 {
@@ -255,12 +252,20 @@ void GameScene::PickMapItems()
 			if (mapitemZone.intersectsRect(playerZone))
 			{
 				auto player = (Player*)iplayer;
-				auto weapontype = ((Sprite*)imapitem)->getTag()-100;
-				player->WeaponType = weapontype;
-				player->scheduleUpdate();
-				if(player->getName()=="ai4"|| player->getName() == "ai5"|| player->getName() == "ai6")
-					(player->getChildByName("aiop"))->scheduleOnce(schedule_selector(AiPlayer::AiAttack),player->AttackSpeed);
-
+				auto type = ((Sprite*)imapitem)->getTag();
+				if (type != 6)
+				{
+					player->WeaponType = type;
+					player->scheduleUpdate();
+					if (player->IsAI)
+						(player->getChildByName("aiop"))->scheduleOnce(schedule_selector(AiPlayer::AiAttack), player->AttackSpeed);
+				}
+				else 
+				{
+					auto hp = player->HP;
+					if (0<hp <= 80)hp += 20;
+					else if (hp > 80)hp = 100;
+				}
 				mapitems->addObject(imapitem);
 			}
 		}
@@ -296,13 +301,13 @@ void GameScene::IsBulletIntoPlayer()
 			auto bulletZone = bullet->boundingBox();
 			if (bulletZone.intersectsRect(playerZone))
 			{
-				if (((Sprite*)ibullet)->getName() != ((Player*)iplayer)->getName())
+				if (((Sprite*)ibullet)->getTag() != ((Player*)iplayer)->getTag())
 				{
-					((Player*)iplayer)->HP -= 2;
+					((Player*)iplayer)->HP -= 10;
 					bullets->addObject(ibullet);
 				}
 			}
-			else if(bullet->getTag()-100==0|| bullet->getTag() - 100 == 2)
+			else if(bullet->getName()== "Arrow" || bullet->getName() == "Bubble")
 			{
 				int flag = 0;
 				auto bulletPosition = bullet->getPosition();
@@ -321,7 +326,7 @@ void GameScene::IsBulletIntoPlayer()
 				}
 			}
 		}
-		if (player->weapon && (player->weapon->MyWeapon->getOpacity()) && (player->WeaponType == 1 || player->WeaponType == 4))
+		if (player->weapon && (player->weapon->MyWeapon->getOpacity()) && (player->WeaponType == 1 || player->WeaponType == 4|| player->WeaponType == 5))
 		{
 
 			auto tmpZone = (player->weapon->MyWeapon)->boundingBox();
@@ -334,7 +339,7 @@ void GameScene::IsBulletIntoPlayer()
 					auto playerZone = CCRectMake(player2->getPositionX() - 9, player2->getPositionY() - 24, 18, 42);
 					if (weaponZone.intersectsRect(playerZone))
 					{
-						player2->HP -= 2;
+						player2->HP -= 1;
 					}
 				}
 			}
@@ -344,12 +349,14 @@ void GameScene::IsBulletIntoPlayer()
 	CCARRAY_FOREACH(bullets, ibullet)
 	{
 		Sprite* bullet = (Sprite*)ibullet;
-		if (bullet->getTag() - 100 < 3)
+		auto bulletName=bullet->getName();
+		int i = 0;
+		if ((++i&&bulletName=="Arrow")|| (++i&&bulletName == "Starlight")||(++i&&bulletName=="Bubble"))
 		{
 			Bullets->removeObject(ibullet);
-			bullet->stopActionByTag(bullet->getTag());
+			bullet->stopActionByTag(100);
 			auto weapon = Weapon::create();
-			(weapon->*(weapon->BulletEnd[bullet->getTag() - 100]))(bullet);
+			(weapon->*(weapon->BulletEnd[i-1]))(bullet);
 		}
 	}
 	CCARRAY_FOREACH(Players, iplayer)
@@ -376,6 +383,7 @@ void GameScene::IsBulletIntoPlayer()
 		}
 		Players->removeObject(iplayer);
 	}
+
 }
 void GameScene::exitCallback(Ref*ref) {
 	//Director::getInstance()->popScene();
@@ -451,7 +459,7 @@ void GameScene::MovePlayer() {
 			if (id != local_Id)
 				dynamic_cast<OPOperator*>(
 					dynamic_cast<Player*>(
-						GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->MouseStart(buffer);
+						GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->TouchStart(buffer);
 		}
 		cmdList.pop_front();
 	}

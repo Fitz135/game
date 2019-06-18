@@ -6,12 +6,6 @@
 #define BODYMOVE 1
 #define LEGSMOVE 2
 
-SEL_SCHEDULE move[4] = {
-	schedule_selector(Operator::MoveLEFT),
-	schedule_selector(Operator::MoveRIGHT),
-	schedule_selector(Operator::MoveUP),
-	schedule_selector(Operator::MoveDOWN) };
-
 inline Player* getMyplayer(char* str) {
 	auto map = GameScene::getCurrentMap();
 	return dynamic_cast<Player*>(map->getChildByName(str));
@@ -20,8 +14,7 @@ inline Player* getMyplayer(char* str) {
 bool Operator::init()
 {
 	KeyStart();
-	MouseStart();
-	PressNum = 0;
+	TouchStart();
 	return true;
 }
 void Operator::KeyStart()
@@ -31,20 +24,18 @@ void Operator::KeyStart()
 	listener->onKeyReleased = CC_CALLBACK_2(Operator::OnKeyReleased, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 }
-void Operator::MouseStart()
+void Operator::TouchStart()
 {
 	auto listener = EventListenerTouchOneByOne::create();
-	listener->onTouchBegan = CC_CALLBACK_2(Operator::onMouseBegan, this);
-	listener->onTouchMoved = CC_CALLBACK_2(Operator::onMouseMoved, this);
-	listener->onTouchEnded = CC_CALLBACK_2(Operator::onMouseEnded, this);
+	listener->onTouchBegan = CC_CALLBACK_2(Operator::onTouchBegan, this);
+	listener->onTouchMoved = CC_CALLBACK_2(Operator::onTouchMoved, this);
+	listener->onTouchEnded = CC_CALLBACK_2(Operator::onThouchEnded, this);
 	listener->setSwallowTouches(true);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 }
 void Operator::PassOperatorInfo(float dt)
 {
-	auto scene =(GameScene*) this->getParent();
-	auto map = (TMXTiledMap*)scene->getChildByName("Map");
-	auto player = (Player*)map->getChildByName("Player");
+	auto player = getMyplayer("Player");
 	if (MouseDown&&player->AttackAbleFlag&&player->IsHaveWeapon)
 	{
 		if (!gameMode) {
@@ -67,19 +58,19 @@ void Operator::PassOperatorInfo(float dt)
 		this->unschedule(schedule_selector(Operator::PassOperatorInfo));
 	}
 }
-bool Operator::onMouseBegan(Touch * ptouch, Event *pevent)
+bool Operator::onTouchBegan(Touch * ptouch, Event *pevent)
 {
 	MousePosition = ptouch->getLocation();
 	MouseDown = 1;
 	this->schedule(schedule_selector(Operator::PassOperatorInfo), 2.0f/60);
 	return true;
 }
-void Operator::onMouseMoved(Touch * ptouch, Event *pevent)
+void Operator::onTouchMoved(Touch * ptouch, Event *pevent)
 {
 	MousePosition = ptouch->getLocation();
 	return;
 }
-void Operator::onMouseEnded(Touch * ptouch, Event *pevent)
+void Operator::onThouchEnded(Touch * ptouch, Event *pevent)
 {
 	MouseDown = 0;
 }
@@ -106,7 +97,7 @@ void Operator::OnKeyPressed(EventKeyboard::KeyCode keyCode, Event * event)
 
 void Operator::OnKeyReleased(EventKeyboard::KeyCode keyCode, Event * event)
 {
-	int keycode = (int)keyCode - 26;
+	int keycode =static_cast<int>(keyCode) - 26;
 	if (0 <= keycode && 3 >= keycode)
 	{
 		
@@ -127,7 +118,7 @@ void Operator::OnKeyReleased(EventKeyboard::KeyCode keyCode, Event * event)
 
 void Operator::MoveUP(float dt)
 {
-	auto scene = (GameScene*)this->getParent();
+	auto scene = GameScene::getCurrentScene();
 	auto player = getMyplayer("Player");
 	if (player->HP <= 0 || !scene->isAccessable(player->getPosition() + Vec2(0, player->MoveSpeed), 3))
 	{
@@ -137,7 +128,7 @@ void Operator::MoveUP(float dt)
 }
 void Operator::MoveDOWN(float dt)
 {
-	auto scene = (GameScene*)this->getParent();
+	auto scene = GameScene::getCurrentScene();
 	auto player = getMyplayer("Player");
 
 	if (player->HP <= 0 || !scene->isAccessable(player->getPosition() + Vec2(0, -player->MoveSpeed), 1))
@@ -150,7 +141,7 @@ void Operator::MoveDOWN(float dt)
 }
 void Operator::MoveLEFT(float dt)
 {
-	auto scene = (GameScene*)this->getParent();
+	auto scene = GameScene::getCurrentScene();
 	auto player = getMyplayer("Player");
 	if (player->WeaponType==5||(player->AttackEndFlag && !MouseDown))
 		player->setScaleX(-1);
@@ -162,7 +153,7 @@ void Operator::MoveLEFT(float dt)
 }
 void Operator::MoveRIGHT(float dt)
 {
-	auto scene = (GameScene*)this->getParent();
+	auto scene = GameScene::getCurrentScene();
 	auto player = getMyplayer("Player");
 	if (player->WeaponType == 5 || (player->AttackEndFlag && !MouseDown))
 		player->setScaleX(1);

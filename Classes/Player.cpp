@@ -18,9 +18,6 @@ Player::Player(std::string name, int id) :info(Entity(name, id)){
 	attr.weapon = 1;
 	attr.superPower = 0;
 }
-/*Player* Player::getMychara(char* str) {
-	return dynamic_cast<Player*>(GameScene::getCurrentMap()->getChildByName(str));
-}*/
 Player* Player::create(std::string name,int id)
 {
 	Player* player = new Player(name, id);
@@ -29,7 +26,7 @@ Player* Player::create(std::string name,int id)
 		if(id==local_Id)
 		player->setName("Player");
 		else player->setName(name);
-		//player->setTag(id);
+		player->setTag(id);
 		player->autorelease();
 		return player;
 	}
@@ -61,7 +58,6 @@ bool Player::initWithPlayerType(int i)
 	CharaType = i;
 	MoveSpeed = 8;
 	weapon = static_cast<Weapon*>(nullptr);
-	//weapon->retain();
 	HP = 100;
 	HPBar = Hp::create();
 	HPBar->setScale(0.5);
