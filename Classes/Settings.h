@@ -26,6 +26,7 @@
 
 		extern std::vector<Entity*> playerList;
 		extern std::vector<Vec2> posList;
+		extern std::list<std::string> cmdList;
 		const int MSGSIZE = 32;
 		extern int players;// num of players
 		extern ODSocket* client;
@@ -57,4 +58,6 @@
 		extern bool isWin;
 		extern bool gameMode;
 		extern std::string ser_ip;
+
+		
 #endif

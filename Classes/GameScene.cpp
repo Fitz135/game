@@ -56,14 +56,34 @@ bool GameScene::init() {
 	auto operate = Operator::create();
 	addChild(operate);
 	
-	/*auto x = Director::getInstance()->getWinSize().width;
+	auto x = Director::getInstance()->getWinSize().width;
 	auto y = Director::getInstance()->getWinSize().height;
-	auto exitItem = MenuItemLabel::create(
+
+	/*auto exitItem = MenuItemLabel::create(
 		Label::create("Exit", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
 	exitItem->setPosition(-x * 0.45, y *0.45);
 	auto menu = Menu::create();
 	menu->addChild(exitItem);
-	addChild(menu, 5);*/
+	addChild(menu, 100);*/
+
+	/*auto upItem = MenuItemLabel::create(
+		Label::create("up", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
+	auto downItem = MenuItemLabel::create(
+		Label::create("down", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
+	auto leftItem = MenuItemLabel::create(
+		Label::create("left", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
+	auto rightItem = MenuItemLabel::create(
+		Label::create("right", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
+	upItem->setPosition(0, y *0.15);
+	downItem->setPosition(0, -y *0.15);
+	leftItem -> setPosition(-x*0.15, 0);
+	rightItem -> setPosition(x * 0.15, 0);
+	auto menu = Menu::create();
+	menu->addChild(upItem);
+	menu->addChild(downItem);
+	menu->addChild(rightItem);
+	menu->addChild(leftItem);
+	addChild(menu, 100);*/
 
 
 	return true;
@@ -121,7 +141,7 @@ void GameScene::onEnter() {
 		tileMap->addChild(player);
 		Players->addObject(player);
 
-		for (int i = 4; i <= 4; i++)
+		/*for (int i = 4; i <= 4; i++)
 		{
 			auto ai = Player::create("ai"+std::to_string(i), i);
 			ai->IsAI = 1;
@@ -136,7 +156,20 @@ void GameScene::onEnter() {
 			ai->setZOrder(100);
 			ai->addChild(aiop);
 			Players->addObject(ai);
-		}
+
+			
+			
+		}*/
+		auto ai = AiTest::create("ai", 2);
+		auto op = OPOperator::create();
+		op->setName("op");
+		ai->addChild(op);
+		ai->setTag(8);
+		ai->setPosition(posList[1]);
+		ai->setZOrder(100);
+		ai->setName("aitest");
+		tileMap->addChild(ai);
+		Players->addObject(ai);
 	}
 
 
@@ -149,13 +182,13 @@ void GameScene::onExit() {
 }
 void GameScene::update(float delta)
 {
-	/*this->IsDead();
+	this->IsDead();
 	this->MapMove();
 	this->IsWeaponIntoPlayer();
 	this->PickMapItems();
 	this->IsBulletIntoWall();
-	this->IsBulletIntoPlayer();*/
-
+	this->IsBulletIntoPlayer();
+	this->MovePlayer();
 }
 void GameScene::IsDead()
 {
@@ -385,5 +418,81 @@ void GameScene::IsBulletIntoWall()
 
 
 void GameScene::exitCallback(Ref*ref) {
-	Director::getInstance()->popScene();
+	//Director::getInstance()->popScene();
+	MenuItemLabel* item = (MenuItemLabel*)ref;
+	auto ai = static_cast<AiTest*>(tileMap->getChildByName("aitest"));
+	char buffer[MSGSIZE];
+	if (item->getString() == "up") {
+		if (!ai->isUp) {
+			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 2);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			ai->isUp = true;
+		}
+		else {
+			ai->isUp = false;
+			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 2);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+		}
+	}
+	else if (item->getString() == "down") {
+		if (!ai->isDown) {
+			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 3);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			ai->isDown = true;
+		}
+		else {
+			ai->isDown = false;
+			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 3);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+		}
+	}
+	else if (item->getString() == "right") {
+		if (!ai->isRight) {
+			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 1);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			ai->isRight = true;
+		}
+		else {
+			ai->isRight = false;
+			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 1);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+		}
+	}
+	else if (item->getString() == "left") {
+		if (!ai->isLeft) {
+			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 0);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			ai->isLeft = true;
+		}
+		else {
+			ai->isLeft = false;
+			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 0);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+		}
+	}
+	
+}
+void GameScene::MovePlayer() {
+	
+	if (!cmdList.empty()) {
+		
+		std::list<std::string>::iterator it = cmdList.begin();
+		auto buffer = (*it).c_str();
+		
+		if (buffer[0] == KeyPress || buffer[0] == KeyRelease) {
+			int id = static_cast<int>(buffer[2]) - 48;
+			if (id != local_Id)
+				dynamic_cast<OPOperator*>(
+					dynamic_cast<Player*>(
+						GameScene::getCurrentMap()->getChildByTag(id + 6))->getChildByName("op"))->KeyStart(buffer);
+		}
+		else if (buffer[0] == MousePress || buffer[0] == MouseRelease) {
+			int id = static_cast<int>(buffer[2]) - 48;
+			if (id != local_Id)
+				dynamic_cast<OPOperator*>(
+					dynamic_cast<Player*>(
+						GameScene::getCurrentMap()->getChildByTag(id + 6))->getChildByName("op"))->MouseStart(buffer);
+		}
+		cmdList.pop_front();
+	}
 }
