@@ -27,15 +27,18 @@ bool OPOperator::init() {
 void OPOperator::KeyStart(char* buffer) {
 	if (buffer[0] == KeyPress) {
 		int keycode = static_cast<int>(buffer[4]) - 48;
-		
+		auto player = dynamic_cast<Player*>(this->getParent());
 			if (!PressNum)
 			{
-				auto player = dynamic_cast<Player*>(this->getParent());
 				player->MoveBegin();
 			}
 			PressNum++;
-			//auto scene = GameScene::getCurrentMap();
-			this->schedule(move[keycode], 2.0f / 60);
+			
+			/*if (this->Isschedule[keycode] == false)
+			{
+				player->schedule(move[keycode], 2.0f / 60);
+				this->Isschedule[keycode] = true;
+			}*/
 		
 	}
 	else if (buffer[0] == KeyRelease) {
@@ -43,11 +46,16 @@ void OPOperator::KeyStart(char* buffer) {
 		if (0 <= keycode && 3 >= keycode)
 		{
 			PressNum--;
-			//auto scene = GameScene::getCurrentMap();
-			this->unschedule(move[keycode]);
+			auto player = dynamic_cast<Player*>(getParent());
+
+			//if(player->sche)
+			/*if (this->Isschedule[keycode] == true)
+			{
+				player->unschedule(move[keycode]);
+				this->Isschedule[keycode] == false;
+			}*/
 			if (!PressNum)
 			{
-				auto player = dynamic_cast<Player*>(getParent());
 				player->MoveEnd();
 			}
 		}
@@ -139,7 +147,7 @@ void OPOperator::onMouseEnded(Touch * ptouch, Event *pevent)
 
 
 
-void OPOperator::MoveUP(float dt)
+/*void OPOperator::MoveUP(float dt)
 {
 	auto scene = ((GameScene*)this->getParent()->getParent()->getParent());
 	auto player = dynamic_cast<Player*>(getParent());
@@ -177,6 +185,52 @@ void OPOperator::MoveRIGHT(float dt)
 {
 	auto scene = ((GameScene*)this->getParent()->getParent()->getParent());
 	auto player = dynamic_cast<Player*>(getParent());
+	if (player->AttackEndFlag && !MouseDown)
+		player->setScaleX(1);
+	if (!scene->isAccessable(player->getPosition() + Vec2(player->MoveSpeed, 0), 0))
+	{
+		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(player->MoveSpeed, 0));
+		player->runAction(move);
+	}
+}*/
+void OPOperator::MoveUP(float dt)
+{
+	auto scene = ((GameScene*)this->getParent()->getParent());
+	auto player = (Player*)(this);
+	if (!scene->isAccessable(player->getPosition() + Vec2(0, player->MoveSpeed), 3))
+	{
+		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, player->MoveSpeed));
+		player->runAction(move);
+	}
+}
+void OPOperator::MoveDOWN(float dt)
+{
+	auto scene = ((GameScene*)this->getParent()->getParent());
+	auto player = (Player*)(this);
+	if (!scene->isAccessable(player->getPosition() + Vec2(0, -player->MoveSpeed), 1))
+	{
+		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, -player->MoveSpeed));
+		player->runAction(move);
+	}
+
+}
+void OPOperator::MoveLEFT(float dt)
+{
+	auto scene = ((GameScene*)this->getParent()->getParent());
+	auto player = (Player*)(this);
+	if (player->AttackEndFlag && !MouseDown)
+		player->setScaleX(-1);
+	if (!scene->isAccessable(player->getPosition() + Vec2(-player->MoveSpeed, 0), 2))
+	{
+		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(-player->MoveSpeed, 0));
+		player->runAction(move);
+	}
+}
+void OPOperator::MoveRIGHT(float dt)
+{
+	auto scene = ((GameScene*)this->getParent()->getParent());
+	//auto player = dynamic_cast<Player*>(this);
+	auto player = (Player*)(this);
 	if (player->AttackEndFlag && !MouseDown)
 		player->setScaleX(1);
 	if (!scene->isAccessable(player->getPosition() + Vec2(player->MoveSpeed, 0), 0))

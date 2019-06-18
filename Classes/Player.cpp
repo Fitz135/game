@@ -83,11 +83,11 @@ bool Player::initWithPlayerType(int i)
 	Hand->setOpacity(0);
 	Hand->setZOrder(2);
 
-	MoveFrames[HEADMOVE] = AnimationFrames("Player" + std::to_string(CharaType) + "/Head/Head-", 6, 19);
+	/*MoveFrames[HEADMOVE] = AnimationFrames("Player" + std::to_string(CharaType) + "/Head/Head-", 6, 19);
 	MoveFrames[BODYMOVE] = AnimationFrames("Player" + std::to_string(CharaType) + "/Body/Body-", 6, 19);
 	MoveFrames[LEGSMOVE] = AnimationFrames("Player" + std::to_string(CharaType) + "/Legs/Legs-", 6, 19);
 	MoveFrames[BODYATTACK] = AnimationFrames("Player" + std::to_string(CharaType) + "/Body/Body-", 1, 4);
-	MoveFrames[HANDATTACK] = AnimationFrames("Player" + std::to_string(CharaType) + "/Arm/Arm-", 1, 4);
+	MoveFrames[HANDATTACK] = AnimationFrames("Player" + std::to_string(CharaType) + "/Arm/Arm-", 1, 4);*/
 
 	AttackAbleFlag = 1;
 	AttackEndFlag = 1;
@@ -121,33 +121,34 @@ void Player::ChangeWeapon(int weapontype)
 	addChild(weapon->MyWeapon,1);
 	return ;
 }
-Vector<SpriteFrame*> Player::AnimationFrames(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end)
+
+Animate* Player::createAnimate(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end, float delay)
 {
 	auto spritecache = SpriteFrameCache::getInstance();
 	Vector<SpriteFrame*> animFrames;
 	for (int i = begin; i <= end; i++)
 		animFrames.pushBack(spritecache->getSpriteFrameByName(FrameName + std::to_string(i) + ".png"));
-	return animFrames;
-}
-Animate* Player::createAnimate(int FramesIndex, float delay)
-{
-	auto MoveAnimation = Animation::createWithSpriteFrames(MoveFrames[FramesIndex], delay);
+	auto MoveAnimation = Animation::createWithSpriteFrames(animFrames, delay);
+	MoveAnimation->retain();
 	return Animate::create(MoveAnimation);
 }
 
 void Player::MoveBegin()
 {
 	Legs->stopAllActionsByTag(LEGSMOVE);
-	auto LegsAni = RepeatForever::create(createAnimate(LEGSMOVE, 2.0f / (MoveSpeed * 8)));
+	auto LegsAni = RepeatForever::create(createAnimate("Player" + std::to_string(CharaType) + "/Legs/Legs-", 6, 19, 2.0f / (MoveSpeed * 8)));
 	LegsAni->setTag(LEGSMOVE);
 	Legs->runAction(LegsAni);
 	if (AttackEndFlag)
 	{
-		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE, 2.0f / (MoveSpeed * 8)));
+		Head->stopAllActionsByTag(HEADMOVE);
+		auto HeadAni = RepeatForever::create(createAnimate("Player" + std::to_string(CharaType) + "/Head/Head-", 6, 19, 2.0f / (MoveSpeed * 8)));
 		HeadAni->setTag(HEADMOVE);
 		Head->runAction(HeadAni);
 
-		auto BodyAni = RepeatForever::create(createAnimate(BODYMOVE, 2.0f / (MoveSpeed * 8)));
+		Body->stopAllActionsByTag(BODYMOVE);
+		Body->stopAllActionsByTag(BODYATTACK);
+		auto BodyAni = RepeatForever::create(createAnimate("Player" + std::to_string(CharaType) + "/Body/Body-", 6, 19, 2.0f / (MoveSpeed * 8)));
 		BodyAni->setTag(BODYMOVE);
 		Body->runAction(BodyAni);
 	}
@@ -163,6 +164,7 @@ void Player::MoveEnd()
 		Head->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Head/Head-0.png"));
 
 		Body->stopAllActionsByTag(BODYMOVE);
+		Body->stopAllActionsByTag(BODYATTACK);
 		Body->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Body/Body-0.png"));
 	}
 }
@@ -184,17 +186,20 @@ void Player::AttackEnd(int pressnum)
 	Hand->stopAllActionsByTag(HANDATTACK);
 	if (pressnum)
 	{
-		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE, 2.0f / (MoveSpeed * 8)));
+		Head->stopAllActionsByTag(HEADMOVE);
+		auto HeadAni = RepeatForever::create(createAnimate("Player" + std::to_string(CharaType) + "/Head/Head-", 6, 19, 2.0f / (MoveSpeed * 8)));
 		HeadAni->setTag(HEADMOVE);
 		Head->runAction(HeadAni);
 
-		auto BodyAni = RepeatForever::create(createAnimate(BODYMOVE, 2.0f / (MoveSpeed * 8)));
+		Body->stopAllActionsByTag(BODYMOVE);
+		auto BodyAni = RepeatForever::create(createAnimate("Player" + std::to_string(CharaType) + "/Body/Body-", 6, 19, 2.0f / (MoveSpeed * 8)));
 		BodyAni->setTag(BODYMOVE);
 		Body->runAction(BodyAni);
 
 		if (WeaponType == 5)
 		{
-			auto LegsAni = RepeatForever::create(createAnimate(LEGSMOVE, 2.0f / (MoveSpeed * 8)));
+			Legs->stopAllActionsByTag(LEGSMOVE);
+			auto LegsAni = RepeatForever::create(createAnimate("Player" + std::to_string(CharaType) + "/Legs/Legs-", 6, 19, 2.0f / (MoveSpeed * 8)));
 			LegsAni->setTag(LEGSMOVE);
 			Legs->runAction(LegsAni);
 		}
@@ -260,12 +265,14 @@ void Player::AttackMode2(Point TouchPosition)
 	Head->stopAllActionsByTag(HEADMOVE);
 	Head->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Head/Head-0.png"));
 
-	auto BodyAni = createAnimate(BODYATTACK, AttackSpeed / 5);
-	BodyAni->setTag(BODYATTACK);
+	Body->stopAllActionsByTag(BODYATTACK);
 	Body->stopAllActionsByTag(BODYMOVE);
+	auto BodyAni = createAnimate("Player" + std::to_string(CharaType) + "/Body/Body-", 1, 4, AttackSpeed / 5);
+	BodyAni->setTag(BODYATTACK);
 	Body->runAction(BodyAni);
 
-	auto HandAni = createAnimate(HANDATTACK, AttackSpeed / 5);
+	Hand->stopAllActionsByTag(HANDATTACK);
+	auto HandAni = createAnimate("Player" + std::to_string(CharaType) + "/Arm/Arm-", 1, 4, AttackSpeed / 5);
 	HandAni->setTag(HANDATTACK);
 	Hand->runAction(HandAni);
 	this->scheduleOnce(schedule_selector(Player::AttackAbleflag), 6.0*AttackSpeed / 10);
@@ -277,15 +284,15 @@ void Player::AttackMode3(Point TouchPosition)
 	Body->stopAllActionsByTag(BODYMOVE);
 	Legs->stopAllActionsByTag(LEGSMOVE);
 
-	auto HeadAni =createAnimate(HEADMOVE, 2.0f / (MoveSpeed * 8));
+	auto HeadAni =createAnimate("Player" + std::to_string(CharaType) + "/Head/Head-", 6, 19, 2.0f / (MoveSpeed * 8));
 	HeadAni->setTag(HEADMOVE);
 	Head->runAction(HeadAni);
 
-	auto BodyAni =createAnimate(BODYMOVE, 2.0f / (MoveSpeed * 8));
+	auto BodyAni =createAnimate("Player" + std::to_string(CharaType) + "/Body/Body-", 6, 19, 2.0f / (MoveSpeed * 8));
 	BodyAni->setTag(BODYMOVE);
 	Body->runAction(BodyAni);
 
-	auto LegsAni = createAnimate(LEGSMOVE, 2.0f / (MoveSpeed * 8));
+	auto LegsAni = createAnimate("Player" + std::to_string(CharaType) + "/Legs/Legs-", 6, 19, 2.0f / (MoveSpeed * 8));
 	LegsAni->setTag(LEGSMOVE);
 	Legs->runAction(LegsAni);
 

@@ -17,6 +17,7 @@ public:
 	Hp* HPBar;
 	void update(float dt);
 	void ChangeWeapon(int WeaponType);
+	Animate * createAnimate(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end, float delay);
 	//Player * getMychara(char* str);
 	int CharaType;
 	int MoveSpeed;
@@ -32,10 +33,10 @@ public:
 	bool AttackAbleFlag;
 	bool AttackEndFlag;
 
-	Vector<SpriteFrame*> MoveFrames[5];
+	//Vector<SpriteFrame*> MoveFrames[5];
 
-	Vector<SpriteFrame*> AnimationFrames(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end);
-	Animate * createAnimate(int FramesIndex, float delay);
+	//Vector<SpriteFrame*> AnimationFrames(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end);
+	//Animate * createAnimate(int FramesIndex, float delay);
 
 	void MoveBegin();
 

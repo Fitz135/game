@@ -9,6 +9,7 @@ public:
 	CREATE_FUNC(Weapon);
 	Sprite *MyWeapon;
 	Sprite* boomerang;
+	Texture2D* textrue;
 	static Weapon * create(int WeaponType);
 	void(Weapon::*WeaponMode)(Point MousePosition);
 	void(Weapon::*BulletEnd[3])(Node* who) = { &Weapon::ArrowEnd,&Weapon::StarEnd,&Weapon::BubbleEnd};

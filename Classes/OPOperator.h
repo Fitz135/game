@@ -19,7 +19,7 @@ public:
 	bool onMouseBegan(Touch * ptouch, Event * pevent);
 	void onMouseMoved(Touch * ptouch, Event * pevent);
 	void onMouseEnded(Touch * ptouch, Event * pevent);
-
+	bool Isschedule[4] = { 0,0,0,0, };
 
 
 	int PressNum;

@@ -141,7 +141,7 @@ void GameScene::onEnter() {
 
 
 	this->scheduleUpdate();
-	this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
+	//this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
 }
 void GameScene::onExit() {
 	Layer::onExit();
@@ -149,12 +149,12 @@ void GameScene::onExit() {
 }
 void GameScene::update(float delta)
 {
-	this->IsDead();
+	/*this->IsDead();
 	this->MapMove();
 	this->IsWeaponIntoPlayer();
 	this->PickMapItems();
 	this->IsBulletIntoWall();
-	this->IsBulletIntoPlayer();
+	this->IsBulletIntoPlayer();*/
 
 }
 void GameScene::IsDead()
@@ -195,7 +195,7 @@ void GameScene::SpawnItems(float dt)
 	//int type = rand()%5;
 	int type = 5;
 	auto items = Sprite::create(settings::weapon_paths[type]);
-	items->setTag(type);
+	items->setTag(type+100);
 	items->setPosition(x, y);
 	auto jump = JumpBy::create(0.5f,Vec2(0,10),10,1);
 	auto seq = Sequence::create(jump, jump->reverse(), nullptr);
@@ -278,12 +278,12 @@ void GameScene::IsBulletIntoPlayer()
 	CCARRAY_FOREACH(bullets, ibullet)
 	{
 		Sprite* bullet = (Sprite*)ibullet;
-		if (bullet->getTag()<3)
+		if (bullet->getTag()-100<3)
 		{
 			Bullets->removeObject(ibullet);
 			bullet->stopActionByTag(bullet->getTag());
 			auto weapon = Weapon::create();
-			(weapon->*(weapon->BulletEnd[bullet->getTag()]))(bullet);
+			(weapon->*(weapon->BulletEnd[bullet->getTag()-100]))(bullet);
 		}
 	}
 }
@@ -328,7 +328,7 @@ void GameScene::PickMapItems()
 			if (mapitemZone.intersectsRect(playerZone))
 			{
 				auto player = (Player*)iplayer;
-				auto weapontype = ((Sprite*)imapitem)->getTag();
+				auto weapontype = ((Sprite*)imapitem)->getTag()-100;
 				player->WeaponType = weapontype;
 				player->scheduleUpdate();
 				if(player->getName()=="ai4"|| player->getName() == "ai5"|| player->getName() == "ai6")
@@ -373,12 +373,12 @@ void GameScene::IsBulletIntoWall()
 	CCARRAY_FOREACH(bullets, ibullet)
 	{
 		Sprite* bullet = (Sprite*)ibullet;
-		if (bullet->getTag() == 0 || bullet->getTag() == 2)
+		if (bullet->getTag() -100== 0 || bullet->getTag()-100 == 2)
 		{
 			Bullets->removeObject(ibullet);
 			bullet->stopActionByTag(bullet->getTag());
 			auto weapon = Weapon::create();
-			(weapon->*(weapon->BulletEnd[bullet->getTag()]))(bullet);
+			(weapon->*(weapon->BulletEnd[bullet->getTag()-100]))(bullet);
 		}
 	}
 }
