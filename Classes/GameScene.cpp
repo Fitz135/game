@@ -117,15 +117,18 @@ void GameScene::onEnter() {
 		auto player = Player::create(local_username, ap);
 		player->setPosition(posList[0]);
 		player->setZOrder(100);
+		tileMap->addChild(player->HPBar);
 		tileMap->addChild(player);
 		Players->addObject(player);
 
-		/*for (int i = 4; i <= 4; i++)
+		for (int i = 4; i <= 4; i++)
 		{
 			auto ai = Player::create("ai"+std::to_string(i), i);
 			ai->IsAI = 1;
 			ai->setPosition(posList[i-3]);
+			ai->weapon=nullptr;
 			ai->MoveBegin();
+			tileMap->addChild(ai->HPBar);
 			tileMap->addChild(ai);
 
 			auto aiop = AiPlayer::create();
@@ -133,7 +136,7 @@ void GameScene::onEnter() {
 			ai->setZOrder(100);
 			ai->addChild(aiop);
 			Players->addObject(ai);
-		}*/
+		}
 	}
 
 
@@ -162,6 +165,8 @@ void GameScene::IsDead()
 	CCARRAY_FOREACH(Players, iplayer)
 	{
 		Player *player = (Player*)iplayer;
+		player->HPBar->setHp(player->HP);
+		player->HPBar->setPosition(player->getPosition() + Vec2(0,35));
 		if (player->HP <= 0)
 		{
 			player->Dead(player);
@@ -187,8 +192,8 @@ void GameScene::SpawnItems(float dt)
 		auto valueMap = value.asValueMap();
 		if (!valueMap.at("Collidable").asBool())break;
 	}
-	int type = rand()%5;
-	//int type = 0;
+	//int type = rand()%5;
+	int type = 5;
 	auto items = Sprite::create(settings::weapon_paths[type]);
 	items->setTag(type);
 	items->setPosition(x, y);

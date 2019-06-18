@@ -60,15 +60,17 @@ bool Player::initWithPlayerType(int i)
 {
 	CharaType = i;
 	MoveSpeed = 8;
-
+	weapon = static_cast<Weapon*>(nullptr);
+	//weapon->retain();
 	HP = 100;
+	HPBar = Hp::create();
+	HPBar->setScale(0.5);
+	HPBar->retain();
 	this->Legs = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Legs/Legs-0.png");
 	this->Body = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Body/Body-0.png");
 	this->Head = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Head/Head-0.png");
 	this->Hand = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Arm/Arm-0.png");
 
-	this->weapon = nullptr;
-	//ChangeWeapon(0);
 
 	Legs->setPosition(0, -14);
 	Head->setPosition(0, -1);
@@ -306,6 +308,7 @@ void Player::Dead(Node* who)
 	this->Head->setOpacity(0);
 	this->Legs->setOpacity(0);
 	this->Hand->setOpacity(0);
+	this->HPBar->removeFromParentAndCleanup(true);
 	if(weapon)
 	this->weapon->MyWeapon->setOpacity(0);
 	sp->setScaleX(-1);

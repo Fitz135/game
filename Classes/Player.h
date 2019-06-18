@@ -1,6 +1,7 @@
 #pragma once
 #include"cocos2d.h"
 #include"Entity.h"
+#include"HP.h"
 
 using namespace cocos2d;
 class Weapon;
@@ -13,6 +14,7 @@ public:
 	static Player* create(Entity*);
 	bool initWithPlayerType(int id);
 	bool IsAI=0;
+	Hp* HPBar;
 	void update(float dt);
 	void ChangeWeapon(int WeaponType);
 	//Player * getMychara(char* str);

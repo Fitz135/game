@@ -418,6 +418,7 @@ void Weapon::Lance(Point MousePosition)
 }
 void Weapon::Shield(Point MousePosition)
 {
+	MyWeapon->setOpacity(255);
 	auto player = (Player*)this->MyWeapon->getParent();
 	auto playerPosition = player->getPosition();
 	player->MoveSpeed = 24;

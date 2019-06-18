@@ -13,5 +13,4 @@ bool Hp::init() {
 void Hp::setHp(float hp) {
 
 		HpBar->setPercent( hp);
-
 }

@@ -33,6 +33,7 @@ void AiPlayer::AiMove(float dt)
 	srand(int(time(0)) + rand());
 	while (true)
 	{
+		auto weap = (Weapon*)ai->weapon;
 		if (ai->HP <= 0)
 		{
 		x = (bool)(playerPosition.x > aiPosition.x) * 2 - 1;
@@ -41,6 +42,7 @@ void AiPlayer::AiMove(float dt)
 		}
 		else if (!ai->weapon&&moveflag)
 		{
+			log("ys");
 			moveflag = 0;
 			auto mapitems = (Array*)scene->MapItems;
 			if (mapitems->count())
