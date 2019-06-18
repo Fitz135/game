@@ -6,12 +6,13 @@
 #include <time.h>
 #include "utils.h"
 
-#define GameStart '9'
+#define DisConnect '0'
 #define NewPlayer '1' 
 #define KeyPress '2'
 #define KeyRelease '3'
 #define Ready '4'
 #define Prop '8'
+#define GameStart '9'
 
 struct globalArgs_t {
     int port;
@@ -29,12 +30,13 @@ SOCKET servSock;
 SOCKET playerList[4];
 playerInfo infoList[4];
 
-char* msgList[1024]; 
+//char* msgList[1024]; 
 int msgs=0;
 int players=0; 
 int MSGSIZE=32;
 int isReady[4];
 int isAlive[4];
+int isConnect[4];
 int gaming=0;
 /*
  * Ip Utils
@@ -155,8 +157,15 @@ void sendMsg(char* buffer){
 		for(int j=0;j<players;j++){
 			if(&playerList[j]==NULL)break;
 			send(playerList[j],buffer,MSGSIZE,0);
-			printf("send:%s\n",buffer);
-		}	
+		}
+		printf("send:%s\n",buffer);	
+	}
+}
+void resetStatus(){
+	for(int i=0;i<4;i++){
+		isReady[i]=0;
+    	isAlive[i]=1;
+    	isConnect[i]=1;
 	}
 }
 void * getMsg1(void *ptr){
@@ -166,8 +175,7 @@ void * getMsg1(void *ptr){
 	while(1){
 		memset(msg, 0, sizeof(msg));
 		recv(*client,msg,MSGSIZE,0);
-		printf("getMsg1\n");
-		printf("Recv from %d:%s\n",*client,msg);
+		printf("Recv from %s(%sst):%s\n",infoList[0].username,infoList[0].id,msg);
 		if(msg[0]==Ready){
 			int id=(int)msg[2]-49;
 			if(id>=0&&id<=3){
@@ -183,7 +191,7 @@ void * getMsg1(void *ptr){
 				for(int i=0;i<players;i++){
 					res*=isReady[i];
 				}
-				if(res){
+				if(res&&players>1){
 					printf("gamstart!\n");
 					gaming=1;
 					sprintf(msg,"%c",GameStart);
@@ -204,13 +212,19 @@ void * getMsg1(void *ptr){
 			}
 			if(res==1){
 				gaming=0;
+				resetStatus();
 			}
+		}
+		else if(msg[0]==DisConnect){
+			int id=(int)msg[2]-49;
+			isConnect[id]=0;
+			printf("%dst is disconnected!\n",id+1);
+			break;
 		}
 		else{
 			sendMsg(msg);
 		}
 	}
-	printf("end\n");
 }
 void * getMsg2(void *ptr){
 	SOCKET* client=&playerList[1];
@@ -219,7 +233,7 @@ void * getMsg2(void *ptr){
 	while(1){
 		memset(msg, 0, sizeof(msg));
 		recv(*client,msg,MSGSIZE,0);
-		printf("Recv from %d:%s\n",*client,msg);
+		printf("Recv from %s(%sst):%s\n",infoList[0].username,infoList[0].id,msg);
 		if(msg[0]==Ready){
 			int id=(int)msg[2]-49;
 			if(id>=0&&id<=3){
@@ -235,7 +249,7 @@ void * getMsg2(void *ptr){
 				for(int i=0;i<players;i++){
 					res*=isReady[i];
 				}
-				if(res){
+				if(res&&players>1){
 					printf("gamstart!\n");
 					gaming=1;
 					sprintf(msg,"%c",GameStart);
@@ -255,24 +269,27 @@ void * getMsg2(void *ptr){
 			}
 			if(res==1){
 				gaming=0;
+				resetStatus();
 			}
+		}
+		else if(msg[0]==DisConnect){
+			int id=(int)msg[2]-49;
+			isConnect[id]=0;
+			printf("%dst is disconnected!\n",id+1);	
+			break;
 		}
 		else{
 			sendMsg(msg);
-			//printf("%s\n",msg);
 		}
-		//printf("%dst msg is %s\n",msgs,buffer);
 	}
-	printf("end\n");
 }
 void * getMsg3(void *ptr){
 	SOCKET* client=&playerList[2];
 	char msg[MSGSIZE];
-	//printf("getMsg2\n");
 	while(1){
 		memset(msg, 0, sizeof(msg));
 		recv(*client,msg,MSGSIZE,0);
-		printf("Recv from %d:%s\n",*client,msg);
+		printf("Recv from %s(%sst):%s\n",infoList[0].username,infoList[0].id,msg);
 		if(msg[0]==Ready){
 			int id=(int)msg[2]-49;
 			if(id>=0&&id<=3){
@@ -288,7 +305,7 @@ void * getMsg3(void *ptr){
 				for(int i=0;i<players;i++){
 					res*=isReady[i];
 				}
-				if(res){
+				if(res&&players>1){
 					printf("gamstart!\n");
 					gaming=1;
 					sprintf(msg,"%c",GameStart);
@@ -297,8 +314,7 @@ void * getMsg3(void *ptr){
 			}
 			else{
 				printf("%s$\n",msg);
-			}
-				
+			}	
 		}
 		else if(msg[0]=='d'){
 			int id=(int)msg[2]-49;
@@ -309,24 +325,28 @@ void * getMsg3(void *ptr){
 			}
 			if(res==1){
 				gaming=0;
+				resetStatus();
 			}
+		}
+		else if(msg[0]==DisConnect){
+			int id=(int)msg[2]-49;
+			isConnect[id]=0;
+			printf("%dst is disconnected!\n",id+1);	
+			break;
 		}
 		else{
 			sendMsg(msg);
-			//printf("%s\n",msg);
+
 		}
-		//printf("%dst msg is %s\n",msgs,buffer);
 	}
-	printf("end\n");
 }
 void * getMsg4(void *ptr){
 	SOCKET* client=&playerList[3];
 	char msg[MSGSIZE];
-	//printf("getMsg2\n");
 	while(1){
 		memset(msg, 0, sizeof(msg));
 		recv(*client,msg,MSGSIZE,0);
-		printf("Recv from %d:%s\n",*client,msg);
+		printf("Recv from %s(%sst):%s\n",infoList[0].username,infoList[0].id,msg);
 		if(msg[0]==Ready){
 			int id=(int)msg[2]-49;
 			if(id>=0&&id<=3){
@@ -342,7 +362,7 @@ void * getMsg4(void *ptr){
 				for(int i=0;i<players;i++){
 					res*=isReady[i];
 				}
-				if(res){
+				if(res&&players>1){
 					printf("gamstart!\n");
 					gaming=1;
 					sprintf(msg,"%c",GameStart);
@@ -363,15 +383,19 @@ void * getMsg4(void *ptr){
 			}
 			if(res==1){
 				gaming=0;
+				resetStatus();
 			}
+		}
+		else if(msg[0]==DisConnect){
+			int id=(int)msg[2]-49;
+			isConnect[id]=0;
+			printf("%dst is disconnected!\n",id+1);	
+			break;
 		}
 		else{
 			sendMsg(msg);
-			//printf("%s\n",msg);
 		}
-		//printf("%dst msg is %s\n",msgs,buffer);
 	}
-	printf("end\n");
 }
 void* (*funcList[4])(void *);
 
@@ -406,13 +430,8 @@ int main(int argc, char *argv[]){
    
     pthread_t id;
     pthread_create(&id,NULL,MakeProp,NULL);
-    
-    int res;
-    //res=pthread_create(&id,NULL,sendMsg,NULL);
-//    if(!res){
-//    	printf("thread send error\n");
-//    	exit(1);
-//	}
+
+
     char buffer[MSGSIZE];
     sprintf(buffer,"%d",0);
     funcList[0]=&getMsg1;
@@ -422,30 +441,27 @@ int main(int argc, char *argv[]){
     
     for(int i=0;i<4;i++){
     	isAlive[i]=1;
+    	isConnect[i]=1;
 	}
-    //strncpy(infoList[players].id,buffer,1);
+
     for(int i=0;i<4;i++){
     	pthread_t ids;
     	
     	int nSize;
     	SOCKADDR playerAddr;
     	
-    	printf("%d$\n",playerAddr.sa_family); 
     
     	nSize = sizeof(SOCKADDR);
     	SOCKET pClient = accept(servSock, (SOCKADDR*)&playerAddr, &nSize);
     	
-    	printf("%d@\n",pClient);
     	
     	playerList[players]=pClient;
     	
 		sprintf(buffer,"%d$",players+1);
 		strncpy(infoList[players].id,buffer,1);
-		//printf("%s",infoList[players].id);
-		//memset(buffer, 0, sizeof(buffer));
+
 		if(players>0){
 			for(int i=0;i<players;i++){
-			//	printf("imhere\n");
 				strcat(buffer,infoList[i].username);
 				strcat(buffer,"$");
 				strcat(buffer,infoList[i].id);
@@ -455,7 +471,7 @@ int main(int argc, char *argv[]){
 		sendTo(&pClient,buffer);
 		
     	recv(pClient,buffer,MSGSIZE,0);
-    	//printf("recv!\n");
+
 		for(int i=0;i<MSGSIZE;i++){
 			if(buffer[i]!='\0')continue;
 			strncpy(infoList[players].username,buffer,i);
@@ -464,25 +480,20 @@ int main(int argc, char *argv[]){
 		
 		if(players>0){
 			for(int j=0;j<players;j++){
-				//if(&playerList[j]==NULL)break;//Ã»ÂÑÓÃ? 
-					sprintf(buffer,"%c$%s$%s$",NewPlayer,infoList[players].username,infoList[players].id);
-					//printf("new player!%s\n",buffer);
-					send(playerList[j],buffer,MSGSIZE,0);
-					
+				sprintf(buffer,"%c$%s$%s$",NewPlayer,infoList[players].username,infoList[players].id);
+				send(playerList[j],buffer,MSGSIZE,0);
 			}
 		}
 		
-		printf("Player:%s,Connected\n",infoList[players].username);
+		printf("%s(%sst),Connected\n",infoList[players].username,infoList[players].id);
 		players++;
 		
 		
-		printf("thread_id:%d\n",ids); 
     	pthread_create(&ids,NULL,funcList[i],&pClient);
-    	//printf("%d players now!\n",players); 
+
 	}
     
     
-    //printf("%s",infoList[players].id);	
     closeSock();
     
     return 0;

@@ -8,6 +8,7 @@
 #include"AiPlayer.h"
 #include"AiTest.h"
 #include"Settings.h"
+#include"ResultScene.h"
 USING_NS_CC;
 
 Scene* GameScene::createScene()
@@ -355,6 +356,21 @@ void GameScene::Collision()
 			client->Send(buffer, MSGSIZE);
 		}
 		Players->removeObject(iplayer);
+	}
+	if (Players->count() == 1) {
+		if (dynamic_cast<Player*>(Players->getLastObject())->getName() != "Player") {
+			isWin = false;
+		}
+		
+		auto cl = LayerColor::create(Color4B::BLACK);
+		cl->setOpacity(150);
+		cl->setName("solid");
+		addChild(cl);
+
+		auto layer = ResultScene::create();
+		layer->setTag(1);
+		addChild(layer);
+		unscheduleUpdate();
 	}
 }
 void GameScene::exitCallback(Ref*ref) {

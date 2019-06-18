@@ -25,7 +25,7 @@ Player* Player::create(std::string name,int id)
 	{	
 		if(id==local_Id)
 		player->setName("Player");
-		else player->setName(name);
+
 		player->setTag(id);
 		player->autorelease();
 		return player;

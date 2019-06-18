@@ -16,6 +16,19 @@ Scene* Index::createScene() {
 }
 
 bool Index::init() {
+	if (!Layer::init()) {
+		return false;
+	}
+
+	auto center_x = Director::getInstance()->getWinSize().width / 2;
+	auto center_y = Director::getInstance()->getWinSize().height / 2;
+
+	auto bg = Sprite::create("UI/Index.png");
+	bg->setPosition(center_x, center_y);
+	bg->setScaleX(1.25);
+	bg->setScaleY(1.43);
+	addChild(bg);
+
 	auto labelStart = Label::create("Start", "fonts/Cordelia.ttf", 60);
 	auto labelExit = Label::create("Exit", "fonts/Cordelia.ttf", 60);
 	auto itemStart = MenuItemLabel::create(labelStart, CC_CALLBACK_1( Index::startCallback,this));
@@ -23,7 +36,8 @@ bool Index::init() {
 	auto menu = Menu::create();
 	menu->addChild(itemStart);
 	menu->addChild(itemExit);
-	menu->alignItemsVerticallyWithPadding(40);
+	menu->alignItemsVerticallyWithPadding(30);
+	menu->setColor(Color3B(143, 137, 137));
 	//menu->setScale(2);
 	this->addChild(menu);
 
@@ -45,7 +59,8 @@ bool Index::init() {
 		}
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyEventListener, this);*/
-
+	
+	
 
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->preloadBackgroundMusic("audio/bgm1.wav");
