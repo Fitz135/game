@@ -6,42 +6,29 @@
 
 #define PI 3.1415
 
-#define HEADMOVE 0
-#define BODYMOVE 1
-#define LEGSMOVE 2
-
-void(Weapon::*weaponmode[6])(Point MousePosition) = { &Weapon::Bow,&Weapon::Sword,&Weapon::BubbleGun,&Weapon::Boomerang,&Weapon::Lance,&Weapon::Shield};
-
-inline Player* getMyplayer(char* str) {
-	auto scene = GameScene::getCurrentMap();
-	return dynamic_cast<Player*>(scene->getChildByName(str));
-}
-
 Weapon* Weapon::create(int WeaponType)
 {
 	auto weapon = Weapon::create();
 	weapon->MyWeapon = Sprite::create(settings::weapon_paths[WeaponType]);
 	weapon->MyWeapon->retain();
-	weapon->textrue = TextureCache::sharedTextureCache()->addImage("arrow.png");
 	weapon->MyWeapon->setOpacity(0);
-	weapon->WeaponMode = weaponmode[WeaponType];
+	weapon->WeaponMode = weapon->weaponmode[WeaponType];
 	return weapon;
 }
-
-void Weapon::Bow(Point MousePosition)
+void Weapon::Bow(Point TouchPosition)
 {
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->playEffect("audio/bow.wav", false);
 
-	auto player = (Player*)this->MyWeapon->getParent();
-	auto map = (TMXTiledMap*)player->getParent();
-	auto scene = (GameScene*)map->getParent();
-	auto PlayerPosition = player->getPosition();
-	player->AttackMode1(MousePosition);
+	auto player = dynamic_cast<Player*>(MyWeapon->getParent());
+	auto scene = GameScene::getCurrentScene();
+
+	auto playerPosition = player->getPosition();
+	player->AttackMode1(TouchPosition);
 
 	Point BowPosition;
-	float dir1 = MousePosition.x - PlayerPosition.x - MousePosition.y + PlayerPosition.y;
-	float dir2 = MousePosition.x - PlayerPosition.x + MousePosition.y - PlayerPosition.y;
+	float dir1 = TouchPosition.x - playerPosition.x - TouchPosition.y + playerPosition.y;
+	float dir2 = TouchPosition.x - playerPosition.x + TouchPosition.y - playerPosition.y;
 	if (dir1 < 0 && dir2>0)
 		BowPosition = Vec2(5, 7);
 	else if (dir1*dir2 >= 0)
@@ -50,38 +37,38 @@ void Weapon::Bow(Point MousePosition)
 		BowPosition = Vec2(5, -11);
 
 	int K, J;
-	if (MousePosition.x > PlayerPosition.x)	K = 1;
+	if (TouchPosition.x > playerPosition.x)	K = 1;
 	else K = -1;
-	if ((MousePosition.x - (PlayerPosition.x + K * BowPosition.x)) < 0)J = 1;
+	if ((TouchPosition.x - (playerPosition.x + K * BowPosition.x)) < 0)J = 1;
 	else J = -1;
 
-	auto Theta = atanf((MousePosition.y - PlayerPosition.y - BowPosition.y) / (MousePosition.x - (PlayerPosition.x + K * BowPosition.x)));
+	auto Theta = atanf((TouchPosition.y - playerPosition.y - BowPosition.y) / (TouchPosition.x - (playerPosition.x + K * BowPosition.x)));
+	
 	MyWeapon->setRotation((-PI / 2 - J * K*PI / 2 - K * Theta) / PI * 180);;
 	MyWeapon->setAnchorPoint(Vec2(0.28125, 0.5));
 	MyWeapon->setPosition(BowPosition);
 	MyWeapon->setOpacity(255);
 
-	auto Arrow = Sprite::create("arrow.png");
-	auto ArrowPosition = Vec2(PlayerPosition.x + K * BowPosition.x, PlayerPosition.y + BowPosition.y);
+	auto arrow = Sprite::create("arrow.png");
+	auto arrowPosition = Vec2(playerPosition.x + K * BowPosition.x, playerPosition.y + BowPosition.y);
 
 	double range = 200;
-	float x = range * cos(PI / 2 + J * PI / 2 + Theta) + ArrowPosition.x;
-	float y = range * sin(PI / 2 + J * PI / 2 + Theta) + ArrowPosition.y;
+	float x = range * cos(PI / 2 + J * PI / 2 + Theta) + arrowPosition.x;
+	float y = range * sin(PI / 2 + J * PI / 2 + Theta) + arrowPosition.y;
 	auto move = MoveTo::create(1.0f/2, Vec2(x, y));
 	auto arrowend = CallFuncN::create(this, callfuncN_selector(Weapon::ArrowEnd));
 	auto attackmove = Sequence::create(move, arrowend, NULL);
 	attackmove->setTag(100);
 
-	Arrow->setPosition(ArrowPosition);
-	Arrow->setRotation((-Theta + J * PI / 2 + PI) / PI * 180);
-	Arrow->setAnchorPoint(Vec2(0.5, 0.31250));
-	Arrow->runAction(attackmove);
+	arrow->setPosition(arrowPosition);
+	arrow->setRotation((-Theta + J * PI / 2 + PI) / PI * 180);
+	arrow->setAnchorPoint(Vec2(0.5, 0.31250));
+	arrow->runAction(attackmove);
 
-	Arrow->setTag(player->getTag());
-	Arrow->setName("Arrow");
-	scene->Bulletset->addChild(Arrow);
-	scene->Bullets->addObject(Arrow);
-	Arrow->setZOrder(1);
+	arrow->setTag(player->getTag());
+	arrow->setName("Arrow");
+	scene->Bulletset->addChild(arrow,1);
+	scene->Bullets->addObject(arrow);
 }
 void Weapon::ArrowEnd(Node* who)
 {
@@ -94,16 +81,16 @@ void Weapon::ArrowEnd(Node* who)
 	auto seq = Sequence::create(boom, disappear, nullptr);
 	who->runAction(seq);
 }
-void Weapon::Sword(Point MousePosition)
+void Weapon::Sword(Point TouchPosition)
 {
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->playEffect("audio/sword.wav", false);
 
-	auto player = (Player*)this->MyWeapon->getParent();
-	auto map = (TMXTiledMap*)player->getParent();
-	auto scene = (GameScene*)map->getParent();
+	auto player = dynamic_cast<Player*>(MyWeapon->getParent());
+	auto scene = dynamic_cast<GameScene*>(player->getParent()->getParent());
+
 	auto playerPosition = player->getPosition();
-	player->AttackMode2(MousePosition);
+	player->AttackMode2(TouchPosition);
 
 	auto rotate = RotateBy::create(6.0*WeaponSpeed[1] / 10, 180);
 	auto delay = DelayTime::create(1.0*WeaponSpeed[1] / 10);
@@ -121,35 +108,37 @@ void Weapon::Sword(Point MousePosition)
 
 	auto visiblesize = Director::getInstance()->getOpenGLView()->getVisibleSize();
 	Point StarPosition;
-
-	if (MousePosition.x > playerPosition.x)
+	if (TouchPosition.x > playerPosition.x)
 		StarPosition.x = 1280 + 90;
 	else StarPosition.x = -90;
-	if (MousePosition.y > playerPosition.y)
+	if (TouchPosition.y > playerPosition.y)
 		StarPosition.y = 1280 + 90;
 	else
 		StarPosition.y = -90;
+
 	auto starlight = Sprite::create("Starlight.png");
 	auto star = Sprite::create("Star2.png");
+
 	star->setPosition(17, 18);
 	star->setRotation(180);
 	starlight->setAnchorPoint(Vec2(0.5, 0.2));
 	starlight->addChild(star);
 	starlight->setPosition(StarPosition);
-	auto l = sqrt((MousePosition.y - StarPosition.y)*(MousePosition.y - StarPosition.y) + (MousePosition.x - StarPosition.x)*(MousePosition.x - StarPosition.x));
-	auto Theta = atanf((MousePosition.y - StarPosition.y) / (MousePosition.x - StarPosition.x));
-	if (MousePosition.x - StarPosition.x > 0)Theta += PI;
 
+	auto l = sqrt((TouchPosition.y - StarPosition.y)*(TouchPosition.y - StarPosition.y) + (TouchPosition.x - StarPosition.x)*(TouchPosition.x - StarPosition.x));
+	auto Theta = atanf((TouchPosition.y - StarPosition.y) / (TouchPosition.x - StarPosition.x));
+	if (TouchPosition.x - StarPosition.x > 0)Theta += PI;
 	starlight->setRotation(-Theta / PI * 180 + 90);
-	auto move4 = MoveTo::create(1.0f / 600 * l, MousePosition);
+
+	auto move4 = MoveTo::create(1.0f / 600 * l, TouchPosition);
 	auto starend = CallFuncN::create(this, callfuncN_selector(Weapon::StarEnd));
 	auto attackmove = Sequence::create(move4, starend, nullptr);
+
 	attackmove->setTag(100);
 	starlight->setTag(player->getTag());
 	starlight->setName("Starlight");
-	scene->Bulletset->addChild(starlight);
+	scene->Bulletset->addChild(starlight,100);
 	scene->Bullets->addObject(starlight);
-	starlight->setZOrder(100);
 
 	auto light = ParticleExplosion::createWithTotalParticles(3);
 	light->setEmitterMode((cocos2d::ParticleSystem::Mode)1);
@@ -196,46 +185,45 @@ void Weapon::StarEnd(Node* who)
 	boom->setLife(1.0f / 2);
 	boom->setLifeVar(0);
 	boom->setPosition(who->getPosition());
-	boom->setZOrder(2);
 
 	auto map = who->getParent();
-	if (map)map->addChild(boom);
+	if (map)map->addChild(boom,2);
 	disappear(who);
 }
-void Weapon::BubbleGun(Point MousePosition)
+void Weapon::BubbleGun(Point TouchPosition)
 {
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->playEffect("audio/Bubblegun.wav", false);
 
-	auto player = (Player*)this->MyWeapon->getParent();
-	auto map = (TMXTiledMap*)player->getParent();
-	auto scene = (GameScene*)map->getParent();
-	auto PlayerPosition = player->getPosition();
-	player->AttackMode1(MousePosition);
+	auto player = dynamic_cast<Player*>(MyWeapon->getParent());
+	auto scene = dynamic_cast<GameScene*>(player->getParent()->getParent());
+
+	auto playerPosition = player->getPosition();
+	player->AttackMode1(TouchPosition);
+
 	Point BubbleGunPosition;
-	float dir1 = MousePosition.x - PlayerPosition.x - MousePosition.y + PlayerPosition.y;
-	float dir2 = MousePosition.x - PlayerPosition.x + MousePosition.y - PlayerPosition.y;
+	float dir1 = TouchPosition.x - playerPosition.x - TouchPosition.y + playerPosition.y;
+	float dir2 = TouchPosition.x - playerPosition.x + TouchPosition.y - playerPosition.y;
 	if (dir1 < 0 && dir2>0)
 		BubbleGunPosition = Vec2(5, 7);
 	else if (dir1*dir2 >= 0)
 		BubbleGunPosition = Vec2(7, -7);
 	else if (dir1 > 0 && dir2 < 0)
 		BubbleGunPosition = Vec2(5, -11);
-
 	int K, J;
-	if (MousePosition.x > PlayerPosition.x)K = 1;
+	if (TouchPosition.x > playerPosition.x)K = 1;
 	else K = -1;
-	if ((MousePosition.x - (PlayerPosition.x + K * BubbleGunPosition.x)) < 0)J = 1;
+	if ((TouchPosition.x - (playerPosition.x + K * BubbleGunPosition.x)) < 0)J = 1;
 	else J = -1;
-
-	auto Theta = atanf((MousePosition.y - PlayerPosition.y - BubbleGunPosition.y) / (MousePosition.x - (PlayerPosition.x + K * BubbleGunPosition.x)));
+	auto Theta = atanf((TouchPosition.y - playerPosition.y - BubbleGunPosition.y) / (TouchPosition.x - (playerPosition.x + K * BubbleGunPosition.x)));
+	
 	MyWeapon->setRotation((-PI / 2 - J * K*PI / 2 - K * Theta) / PI * 180);;
 	MyWeapon->setOpacity(255);
 	MyWeapon->setPosition(BubbleGunPosition);
 	MyWeapon->setAnchorPoint(Vec2(0.50000, 0.30000));//once
 
 	auto Bubble = Sprite::create("Bubble.png");
-	auto BubblePosition = Vec2(PlayerPosition.x + K * BubbleGunPosition.x, PlayerPosition.y + BubbleGunPosition.y) + Vec2(35.69* cos(PI / 2 + J * PI / 2 + Theta + K * 0.197), 35.69* sin(PI / 2 + J * PI / 2 + Theta + K * 0.197));
+	auto BubblePosition = Vec2(playerPosition.x + K * BubbleGunPosition.x, playerPosition.y + BubbleGunPosition.y) + Vec2(35.69* cos(PI / 2 + J * PI / 2 + Theta + K * 0.197), 35.69* sin(PI / 2 + J * PI / 2 + Theta + K * 0.197));
 
 	srand(int(time(0)) + rand());
 	float scale = (float)(rand() % 6) / 10 + 1.0;
@@ -251,14 +239,11 @@ void Weapon::BubbleGun(Point MousePosition)
 	Bubble->setPosition(BubblePosition);
 	Bubble->setScale(scale);
 	Bubble->runAction(attackmove);
-
-
 	Bubble->setName("Bubble");
 	attackmove->setTag(100);
 	Bubble->setTag(player->getTag());
-	scene->Bulletset->addChild(Bubble);
+	scene->Bulletset->addChild(Bubble,1);
 	scene->Bullets->addObject(Bubble);
-	Bubble->setZOrder(1);
 }
 void Weapon::BubbleEnd(Node* who)
 {
@@ -277,94 +262,93 @@ void Weapon::BubbleEnd(Node* who)
 	boom->setLife(1.0f / 4);
 	boom->setLifeVar(0);
 	boom->setPosition(who->getPosition());
-	boom->setZOrder(2);
-	auto map = who->getParent();
 
-	if (map)map->addChild(boom);
+	auto map = who->getParent();
+    if(map)map->addChild(boom,2);
 	disappear(who);
 }
-void Weapon::Boomerang(Point MousePosition)
+void Weapon::Boomerang(Point TouchPosition)
 {
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->playEffect("audio/Bubblegun.wav", false);
 
-	auto player = (Player*)this->MyWeapon->getParent();
-	auto map = (TMXTiledMap*)player->getParent();
-	auto scene = (GameScene*)map->getParent();
-	player->AttackMode1(MousePosition);
-	auto PlayerPosition = player->getPosition();
+	auto player = dynamic_cast<Player*>(MyWeapon->getParent());
+	auto scene =dynamic_cast <GameScene*>(player->getParent()->getParent());
+	
+	auto playerPosition = player->getPosition();
+	player->AttackMode1(TouchPosition);
 	player->IsHaveWeapon = 0;
-	this->boomerang = Sprite::create(AutoPolygon::generatePolygon("Boomerang.png"));
+	boomerang = Sprite::create(AutoPolygon::generatePolygon("Boomerang.png"));
 
 	int K;
-	if (MousePosition.x > PlayerPosition.x)K = 1;
+	if (TouchPosition.x > playerPosition.x)K = 1;
 	else K = -1;
 
 	Point BoomerangPosition;
-	float dir1 = MousePosition.x - PlayerPosition.x - MousePosition.y + PlayerPosition.y;
-	float dir2 = MousePosition.x - PlayerPosition.x + MousePosition.y - PlayerPosition.y;
+	float dir1 = TouchPosition.x - playerPosition.x - TouchPosition.y + playerPosition.y;
+	float dir2 = TouchPosition.x - playerPosition.x + TouchPosition.y - playerPosition.y;
 	if (dir1 < 0 && dir2>0)
-		BoomerangPosition = Vec2(PlayerPosition.x + K * 5, PlayerPosition.y + 7);
+		BoomerangPosition = Vec2(playerPosition.x + K * 5, playerPosition.y + 7);
 	else if (dir1*dir2 >= 0)
-		BoomerangPosition = Vec2(PlayerPosition.x + K * 7, PlayerPosition.y - 7);
+		BoomerangPosition = Vec2(playerPosition.x + K * 7, playerPosition.y - 7);
 	else if (dir1 > 0 && dir2 < 0)
-		BoomerangPosition = Vec2(PlayerPosition.x + K * 5, PlayerPosition.y - 11);
+		BoomerangPosition = Vec2(playerPosition.x + K * 5, playerPosition.y - 11);
 
 	auto rotate = RotateBy::create(30.0f / 60, 360);
 	auto move = RepeatForever::create(rotate);
 	double range = 200;
-	double l = sqrt((MousePosition.x - PlayerPosition.x)*(MousePosition.x - PlayerPosition.x) + (MousePosition.y - PlayerPosition.y)*(MousePosition.y - PlayerPosition.y));
-	double x = range * (MousePosition.x - PlayerPosition.x) / l + PlayerPosition.x;
-	double y = range * (MousePosition.y - PlayerPosition.y) / l + PlayerPosition.y;
+	double l = sqrt((TouchPosition.x - playerPosition.x)*(TouchPosition.x - playerPosition.x) + (TouchPosition.y - playerPosition.y)*(TouchPosition.y - playerPosition.y));
+	double x = range * (TouchPosition.x - playerPosition.x) / l + playerPosition.x;
+	double y = range * (TouchPosition.y - playerPosition.y) / l + playerPosition.y;
 	auto move2 = MoveTo::create(25.0f / 60, Vec2(x, y));
 
 	boomerang->setPosition(BoomerangPosition);
 	boomerang->runAction(move);
 	boomerang->runAction(move2);
-	player->schedule(schedule_selector(Weapon::BoomerangBack), 2.0f / 60);
-
 	boomerang->setName("Boomerang");
 	boomerang->setTag(player->getTag());
-	scene->Bulletset->addChild(boomerang);
+	scene->Bulletset->addChild(boomerang,100);
 	scene->Bullets->addObject(boomerang);
-	boomerang->setZOrder(100);
+
+	player->schedule(schedule_selector(Weapon::BoomerangBack), 2.0f / 60);
 }
 void Weapon::BoomerangBack(float dt)
 {
-	auto player = (Player*)(this);
+	auto player =(Player*)(this);
 	if (player->weapon->boomerang&&player->weapon->boomerang->numberOfRunningActions() == 1)
 	{
-		auto boomeran = player->weapon->boomerang;
-		auto PlayerPosition = player->getPosition();
-		auto BoomerangPosition = boomeran->getPosition();
-		double l = sqrt((PlayerPosition.x - BoomerangPosition.x)*(PlayerPosition.x - BoomerangPosition.x) + (PlayerPosition.y - BoomerangPosition.y)*(PlayerPosition.y - BoomerangPosition.y));
+		auto the_boomerang = player->weapon->boomerang;
+		auto playerPosition = player->getPosition();
+		auto boomerangPosition = the_boomerang->getPosition();
+		double l = sqrt((playerPosition.x - boomerangPosition.x)*(playerPosition.x - boomerangPosition.x) + (playerPosition.y - boomerangPosition.y)*(playerPosition.y - boomerangPosition.y));
 		if (l <= 30)
 		{
 			player->IsHaveWeapon = 1;
-			auto scene =(GameScene*) player->getParent()->getParent();
-			scene->Bullets->removeObject(boomeran);
-			disappear(boomeran);
+			auto scene =dynamic_cast<GameScene*>(player->getParent()->getParent());
+			scene->Bullets->removeObject(the_boomerang);
+			disappear(the_boomerang);
 			player->unschedule(schedule_selector(Weapon::BoomerangBack));
 		}
 		else
 		{
 			double range = 20;
-			double x = range * (PlayerPosition.x - BoomerangPosition.x) / l + BoomerangPosition.x;
-			double y = range * (PlayerPosition.y - BoomerangPosition.y) / l + BoomerangPosition.y;
+			double x = range * (playerPosition.x - boomerangPosition.x) / l + boomerangPosition.x;
+			double y = range * (playerPosition.y - boomerangPosition.y) / l + boomerangPosition.y;
 			auto move = MoveTo::create(2.0f / 60, Vec2(x, y));
-			boomeran->runAction(move);
+			the_boomerang->runAction(move);
 		}
 	}
 }
-void Weapon::Lance(Point MousePosition)
+void Weapon::Lance(Point TouchPosition)
 {
-	auto player = (Player*)this->MyWeapon->getParent();
-	auto map = (TMXTiledMap*)player->getParent();
-	auto scene = (GameScene*)map->getParent();
-	auto CharacterPosition = player->getPosition();
-	if (sqrt((CharacterPosition.x - MousePosition.x)*(CharacterPosition.x - MousePosition.x) + (CharacterPosition.y - MousePosition.y)*(CharacterPosition.y - MousePosition.y)) <= 84)
+	auto player = dynamic_cast<Player*>(MyWeapon->getParent());
+	auto scene = dynamic_cast <GameScene*>(player->getParent()->getParent());
+	auto playerPosition = player->getPosition();
+
+	if (sqrt((playerPosition.x - TouchPosition.x)*(playerPosition.x - TouchPosition.x) + (playerPosition.y - TouchPosition.y)*(playerPosition.y - TouchPosition.y)) <= 84)
 	{
-		player->AttackMode2(MousePosition);
+		player->AttackMode2(TouchPosition);
+
 		auto rotate = RotateBy::create(6.0*WeaponSpeed[4] / 10, 360);
 		auto delay = DelayTime::create(1.0*WeaponSpeed[4] / 10);
 		auto move = MoveBy::create(1.0*WeaponSpeed[4] / 10, Vec2(14, 0));
@@ -373,19 +357,21 @@ void Weapon::Lance(Point MousePosition)
 		auto seq = Sequence::create(delay, move, delay, move2, delay, move3, nullptr);
 		seq->setTag(10);
 		rotate->setTag(10);
+
 		MyWeapon->setOpacity(255);
 		MyWeapon->setPosition(-9, 7);
-		MyWeapon->setRotation(-90);//once
+		MyWeapon->setRotation(-90);
 		MyWeapon->runAction(rotate);
 		MyWeapon->runAction(seq);
 	}
 	else
 	{
-		player->AttackMode1(MousePosition);
+		player->AttackMode1(TouchPosition);
+
 		MyWeapon->stopAllActionsByTag(10);
 		Point BowPosition;
-		float dir1 = MousePosition.x - CharacterPosition.x - MousePosition.y + CharacterPosition.y;
-		float dir2 = MousePosition.x - CharacterPosition.x + MousePosition.y - CharacterPosition.y;
+		float dir1 = TouchPosition.x - playerPosition.x - TouchPosition.y + playerPosition.y;
+		float dir2 = TouchPosition.x - playerPosition.x + TouchPosition.y - playerPosition.y;
 		if (dir1 < 0 && dir2>0)
 			BowPosition = Vec2(5, 7);
 		else if (dir1*dir2 >= 0)
@@ -394,33 +380,32 @@ void Weapon::Lance(Point MousePosition)
 			BowPosition = Vec2(5, -11);
 
 		int K, J;
-		if (MousePosition.x > CharacterPosition.x)	K = 1;
+		if (TouchPosition.x > playerPosition.x)	K = 1;
 		else K = -1;
-		if ((MousePosition.x - (CharacterPosition.x + K * BowPosition.x)) < 0)J = 1;
+		if ((TouchPosition.x - (playerPosition.x + K * BowPosition.x)) < 0)J = 1;
 		else J = -1;
 
-		auto Theta = atanf((MousePosition.y - CharacterPosition.y - BowPosition.y) / (MousePosition.x - (CharacterPosition.x + K * BowPosition.x)));
+		auto Theta = atanf((TouchPosition.y - playerPosition.y - BowPosition.y) / (TouchPosition.x - (playerPosition.x + K * BowPosition.x)));
 		MyWeapon->setRotation((-PI / 4 - J * K*PI / 2 - K * Theta) / PI * 180);;
 		MyWeapon->setPosition(BowPosition);
 		MyWeapon->setOpacity(255);
 
-		auto ArrowPosition = Vec2(CharacterPosition.x + K * BowPosition.x, CharacterPosition.y + BowPosition.y);
 		double range = 84;
-		float x = range * cos(PI / 2 + J * PI / 2 + Theta);// +ArrowPosition.x;
-		float y = range * sin(PI / 2 + J * PI / 2 + Theta);// +ArrowPosition.y;
+		float x = range * cos(PI / 2 + J * PI / 2 + Theta);
+		float y = range * sin(PI / 2 + J * PI / 2 + Theta);
 		auto move = MoveBy::create(3.0*WeaponSpeed[4] / 10, Vec2(K*x, y));
 		auto back = CallFuncN::create(this, callfuncN_selector(Weapon::WeaponBack));
 		auto seq = Sequence::create(move, move->reverse(), back, nullptr);
 		MyWeapon->runAction(seq);
 	}
 }
-void Weapon::Shield(Point MousePosition)
+void Weapon::Shield(Point TouchPosition)
 {
 	MyWeapon->setOpacity(255);
-	auto player = (Player*)this->MyWeapon->getParent();
+	auto player = dynamic_cast<Player*>(MyWeapon->getParent());
 	auto playerPosition = player->getPosition();
 	player->MoveSpeed = 24;
-	player->AttackMode3(MousePosition);
+	player->AttackMode3(TouchPosition);
 }
 void Weapon::disappear(Node* who)
 {
@@ -428,6 +413,6 @@ void Weapon::disappear(Node* who)
 }
 void Weapon::WeaponBack(Node* who)
 {
-	auto player = (Player*)this->MyWeapon->getParent();
+	auto player = dynamic_cast<Player*>(MyWeapon->getParent());
 	player->IsHaveWeapon = 1;
 }

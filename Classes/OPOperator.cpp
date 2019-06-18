@@ -120,7 +120,7 @@ void OPOperator::MoveLEFT(float dt)
 {
 	auto scene = GameScene::getCurrentScene();
 	auto player = dynamic_cast<Player*>(getParent());
-	if (player->AttackEndFlag && !MouseDown)
+	if (player->AttackAbleFlag && !MouseDown)
 		player->setScaleX(-1);
 	if (!scene->isAccessable(player->getPosition() + Vec2(-player->MoveSpeed, 0), 2))
 	{
@@ -132,7 +132,7 @@ void OPOperator::MoveRIGHT(float dt)
 {
 	auto scene = GameScene::getCurrentScene();
 	auto player = dynamic_cast<Player*>(getParent());
-	if (player->AttackEndFlag && !MouseDown)
+	if (player->AttackAbleFlag && !MouseDown)
 		player->setScaleX(1);
 	if (!scene->isAccessable(player->getPosition() + Vec2(player->MoveSpeed, 0), 0))
 	{

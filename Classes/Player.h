@@ -9,53 +9,30 @@ class Player :public cocos2d::Sprite
 {
 public:
 	Player(std::string , int);
-	//CREATE_FUNC(Player);
+
 	static Player* create(std::string , int);
 	static Player* create(Entity*);
-	bool initWithPlayerType(int id);
-	bool IsAI=0;
 	Hp* HPBar;
-	void update(float dt);
-	void ChangeWeapon(int WeaponType);
-	Animate * createAnimate(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end, float delay);
-	//Player * getMychara(char* str);
-	int CharaType;
-	int MoveSpeed;
-	int WeaponType;
-	int HP;
-	Sprite *Body;
-	Sprite *Head;
-	Sprite *Legs;
-	Sprite *Hand;
 	Weapon* weapon;
 
-	bool IsHaveWeapon;
-	bool AttackAbleFlag;
-	bool AttackEndFlag;
+	int MoveSpeed;
+	int WeaponType;
+	int HP=100;
+	float AttackSpeed;
+	bool IsHaveWeapon=0;
+	bool AttackAbleFlag=1;
+	bool IsAI = 0;
 
-	//Vector<SpriteFrame*> MoveFrames[5];
-
-	//Vector<SpriteFrame*> AnimationFrames(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end);
-	//Animate * createAnimate(int FramesIndex, float delay);
-
+	void update(float dt);
 	void MoveBegin();
-
 	void MoveEnd();
-
-	void AttackAbleflag(float dt);
-
-	void AttackEndflag(float dt);
-
-	void AttackEnd(int pressnum);
-
 	void AttackBegan(Point MousePosition);
-
+	void AttackEnd(int pressnum);
 	void AttackMode1(Point TouchPosition);
 	void AttackMode2(Point TouchPosition);
 	void AttackMode3(Point TouchPosition);
 	void Dead(Node * who);
-	void(Player::*AttackMode)(Point MousePosition);
-	float AttackSpeed;
+
 	typedef struct 
 	{
 		uint8_t speed;//速度
@@ -67,14 +44,20 @@ public:
 		uint8_t exp;//经验
 	}Attr;//角色属性
 
-
-
 	int getId();
-	void Disappear(Node * who);
-	//std::string getName();
 private:
 	Entity info;
 	std::string m_name;
 	int m_id;
 	Attr attr;
+
+	bool initWithPlayerType(int id);
+	Animate * createAnimate(std::basic_string<char, std::char_traits<char>, std::allocator<char>> FrameName, int begin, int end, float delay);
+	void ChangeWeapon(int WeaponType);
+	void AttackAbleflag(float dt);
+	Sprite *Body;
+	Sprite *Head;
+	Sprite *Legs;
+	Sprite *Hand;
+	int CharaType;
 };
