@@ -109,12 +109,12 @@ void Operator::OnKeyReleased(EventKeyboard::KeyCode keyCode, Event * event)
 	int keycode = (int)keyCode - 26;
 	if (0 <= keycode && 3 >= keycode)
 	{
+		
 		if (!gameMode) {
 			char buffer[MSGSIZE];
 			sprintf(buffer, "%c$%d$%d", KeyRelease, local_Id, keycode);
 			client->Send(buffer, MSGSIZE);
 		}
-		
 		PressNum--;
 		this->unschedule(move[keycode]);
 		if (!PressNum)
@@ -131,6 +131,7 @@ void Operator::MoveUP(float dt)
 	auto Player = getMyplayer("Player");
 	if (!scene->isAccessable(Player->getPosition() + Vec2(0, Player->MoveSpeed), 3))
 	{
+		
 		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, Player->MoveSpeed));
 		Player->runAction(move);
 	}
@@ -142,6 +143,7 @@ void Operator::MoveDOWN(float dt)
 
 	if (!scene->isAccessable(Player->getPosition() + Vec2(0, -Player->MoveSpeed), 1))
 	{
+		
 		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, -Player->MoveSpeed));
 		Player->runAction(move);
 	}
@@ -155,6 +157,7 @@ void Operator::MoveLEFT(float dt)
 		Player->setScaleX(-1);
 	if (!scene->isAccessable(Player->getPosition() + Vec2(-Player->MoveSpeed, 0), 2))
 	{
+		
 		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(-Player->MoveSpeed, 0));
 		Player->runAction(move);
 	}
@@ -167,6 +170,7 @@ void Operator::MoveRIGHT(float dt)
 		Player->setScaleX(1);
 	if (!scene->isAccessable(Player->getPosition() + Vec2(Player->MoveSpeed, 0), 0))
 	{
+		
 		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(Player->MoveSpeed, 0));
 		Player->runAction(move);
 	}

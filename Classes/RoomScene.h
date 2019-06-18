@@ -12,7 +12,7 @@ public:
 	CREATE_FUNC(RoomScene);
 	//static void addPlayer(char*);
 
-	char * getIp();
+	static char * getIp();
 	void connectService(char*);
 	bool initPlayer(char *);
 

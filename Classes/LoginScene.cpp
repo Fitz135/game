@@ -15,7 +15,8 @@ bool LoginScene::init() {
 	bg->setScale(0.55);
 	bg->setPosition(center_x, center_y);
 
-	id = ui::TextField::create("12 character most ", "fonts/arial.ttf", 25);
+	id = ui::TextField::create("Player", "fonts/arial.ttf", 25);
+	id->setString("Player");
 	//auto idBG = Sprite::create("UI/TextFieldBG.png");
 	id->setPosition(Vec2(center_x, center_y*1.1));
 	id->setColor(Color3B(150,150,150));
@@ -48,6 +49,7 @@ void LoginScene::startCallback(Ref* ref) {
 	if (name == "Finish") {
 		local_username = id->getString();
 		if (local_username == "") {
+			//id->setString("Player");
 			return;
 		}
 		auto scene = GameMode::createScene();

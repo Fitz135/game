@@ -3,7 +3,7 @@
 #include"GameScene.h"
 #include"RoomScene.h"
 #include"Settings.h"
-
+#include"IPScene.h"
 USING_NS_CC;
 
 Scene* GameMode::createScene() {
@@ -19,15 +19,22 @@ bool GameMode::init() {
 	auto itemBack = MenuItemLabel::create(labelBack, CC_CALLBACK_1( GameMode::menubackCallback,this));
 	auto itemPvP = MenuItemLabel::create(labelPvP, CC_CALLBACK_1(GameMode::gamestartCallback,this));
 	auto itemPvE = MenuItemLabel::create(labelPvE, CC_CALLBACK_1(GameMode::gamestartCallback,this) );
+	auto itemIP = MenuItemLabel::create(Label::create("IP", "fonts/Cordelia.ttf", 60) , CC_CALLBACK_1(GameMode::gamestartCallback, this));
+	itemIP->setScale(0.8);
+
+	
 	itemPvP->setScale(1.3);
 	itemPvE->setScale(1.3);
 	auto menu = Menu::create();
 	menu->addChild(itemPvP);
+	
 	menu->addChild(itemPvE);
 
 	menu->alignItemsVerticallyWithPadding(30);
 	itemBack->setPosition(-visibleSize.width*0.4, visibleSize.height*0.15);
+	itemIP->setPosition(visibleSize.width*0.25, -visibleSize.height*0.33);
 	itemBack->setScale(0.8);
+	menu->addChild(itemIP);
 	menu->addChild(itemBack);
 	menu->setRotation(-9);
 	menu->setPosition(visibleSize.width/2-visibleSize.width*0.1 ,visibleSize.height / 2 +visibleSize.height*0.155);
@@ -56,7 +63,16 @@ void GameMode::gamestartCallback(Ref* ref) {
 		auto scene = GameScene::createScene();
 		Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
 	}
+	else if (item->getString() == "IP") {
+		auto cl = LayerColor::create(Color4B::BLACK);
+		cl->setOpacity(150);
+		cl->setName("solid");
+		addChild(cl,1);
 
+		auto ip = IPScene::create();
+		ip->setTag(1);
+		this->addChild(ip, 2);
+	}
 	
 };
 void GameMode::menubackCallback(Ref* ref) {
@@ -70,7 +86,7 @@ void GameMode::createBG() {
 		imgBG->setPosition(x, y);
 		imgBG->setScaleX(1.28);
 		imgBG->setScaleY(1.45);
-		imgBG->setTag(1);
+		imgBG->setName("bg");
 		this->addChild(imgBG, -1);
 		//log("BG succ");
 	}

@@ -30,4 +30,4 @@ bin/
 *.scc
 [Dd]ebug.win32/
 
-
+[Rr]elease.win32/

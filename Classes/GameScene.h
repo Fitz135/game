@@ -20,6 +20,9 @@ public:
 	virtual void onExit();
 	void update(float delta);
 	void SpawnItems(float dt);
+
+	void AiControl(float);
+
 	void MapMove();
 	bool isAccessable(Point Position, int Direction);
 	void PickMapItems();

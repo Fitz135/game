@@ -6,6 +6,7 @@
 #include"OPOperator.h"
 #include"thread"
 #include"AiPlayer.h"
+#include"AiTest.h"
 #include"Settings.h"
 USING_NS_CC;
 //static Player* player;
@@ -55,16 +56,17 @@ bool GameScene::init() {
 
 	auto operate = Operator::create();
 	addChild(operate);
-
-	auto x=Director::getInstance()->getWinSize().width;
+	/*
+	auto x = Director::getInstance()->getWinSize().width;
 	auto y = Director::getInstance()->getWinSize().height;
-
 	auto exitItem = MenuItemLabel::create(
 		Label::create("Exit", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
-	exitItem->setPosition(-x *0.45, y *0.45);
+	exitItem->setPosition(-x * 0.45, y *0.45);
 	auto menu = Menu::create();
 	menu->addChild(exitItem);
-	addChild(menu,5);
+	addChild(menu, 10);*/
+
+
 	return true;
 }
 
@@ -105,8 +107,7 @@ void GameScene::onEnter() {
 	}
 	else
 	{
-		//std::string name(playerList[0]->_name);
-		//int id = playerList[0]->_id;
+	
 		int ap = 1;
 		local_Id = ap;
 		auto player = Player::create(local_username, ap);
@@ -114,6 +115,19 @@ void GameScene::onEnter() {
 
 		tileMap->addChild(player);
 		Players->addObject(player);
+
+
+		auto aiplayer = AiTest::create("ai", 2);
+		aiplayer->setPosition(50, 50);
+		aiplayer->setName("ai");
+		auto aiop = OPOperator::create();
+		aiop->setName("op");
+		aiplayer->addChild(aiop);
+		tileMap->addChild(aiplayer);
+
+
+	
+		
 	}
 
 	/*auto player = Player::create("ai", 5);
@@ -138,6 +152,24 @@ void GameScene::update(float delta)
 	this->PickMapItems();
 	this->IsBulletIntoWall();
 	this->IsBulletIntoPlayer();
+
+
+	////////ai//////
+	/*Player* player = dynamic_cast<Player* >(Players[0]);
+	auto pos_x = player->getPosition().x;
+	auto pos_y = player->getPosition().y;
+	Player* ai = dynamic_cast<Player*>(Players[1]);
+	auto m_x = ai->getPosition().x;
+	auto m_y = ai->getPosition().y;
+	if (pos_x >= m_x) {
+		char buffer[MSGSIZE];
+		//sprinf(buffer, "%d$2$3");
+	}*/
+
+
+	
+		
+	
 }
 void GameScene::SpawnItems(float dt)
 {
@@ -338,7 +370,8 @@ void GameScene::IsBulletIntoWall()
 
 
 void GameScene::exitCallback(Ref*ref) {
-	Director::getInstance()->popScene();
+	//Director::getInstance()->popScene();
+	schedule(schedule_selector(GameScene::AiControl, this), 0.1f);
 }
 ////////AI need//////////
 /*bool GameScene::isInMap(const cocos2d::Vec2& pos) {
@@ -371,3 +404,15 @@ Vec2 GameScene::tileCoordToPosition(const cocos2d::Vec2 & coord)
 	//CCLOG("pos x: %f y: %f", x, y);
 	return Vec2(x, y);
 }*/
+void GameScene::AiControl(float at) {
+	char buffer[MSGSIZE];
+	sprintf(buffer, "%c$2$2", KeyPress);
+	auto ai =
+		static_cast<AiTest*>(
+			tileMap->getChildByName("ai"));
+	if (!ai->isUp) {
+		dynamic_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
+		ai->isUp = true;
+	}
+	//Director::getInstance()->popScene();
+}
