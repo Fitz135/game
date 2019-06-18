@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
-
+#include <time.h>
 #include "utils.h"
 
 #define GameStart '9'
@@ -11,6 +11,7 @@
 #define KeyPress '2'
 #define KeyRelease '3'
 #define Ready '4'
+#define Prop '8'
 
 struct globalArgs_t {
     int port;
@@ -33,6 +34,7 @@ int msgs=0;
 int players=0; 
 int MSGSIZE=32;
 int isReady[4];
+int gaming=0;
 /*
  * Ip Utils
  */
@@ -182,7 +184,7 @@ void * getMsg1(void *ptr){
 				}
 				if(res){
 					printf("gamstart!\n");
-					
+					gaming=1;
 					sprintf(msg,"%c",GameStart);
 					sendMsg(msg);
 				}	
@@ -225,7 +227,7 @@ void * getMsg2(void *ptr){
 				}
 				if(res){
 					printf("gamstart!\n");
-					
+					gaming=1;
 					sprintf(msg,"%c",GameStart);
 					sendMsg(msg);
 				}	
@@ -268,7 +270,7 @@ void * getMsg3(void *ptr){
 				}
 				if(res){
 					printf("gamstart!\n");
-					
+					gaming=1;
 					sprintf(msg,"%c",GameStart);
 					sendMsg(msg);
 				}	
@@ -311,7 +313,7 @@ void * getMsg4(void *ptr){
 				}
 				if(res){
 					printf("gamstart!\n");
-					
+					gaming=1;
 					sprintf(msg,"%c",GameStart);
 					sendMsg(msg);
 				}	
@@ -330,38 +332,28 @@ void * getMsg4(void *ptr){
 	printf("end\n");
 }
 void* (*funcList[4])(void *);
-/*void * sendMsg(void *ptr){
-	printf("start send msg\n");
+
+
+void* MakeProp(void *ptr){
 	while(1){
-		printf("msgs:%d players:%d\n",msgs,players);
-		if(msgs>0){
-			printf("msg:%c\n",msgList[0]);
-		}
-		if(players>0){
-			if(msgs>0){
-				for(int i=0;i<msgs;i++){
-					for(int j=0;j<players;j++){
-						if(&playerList[j]==NULL)break;
-						send(playerList[j],msgList[i],MSGSIZE,0);
-						//printf("send:%s\n",msgList[i]);
-					}
-				}
-			}
-			msgs=0;	
-		}
-		
-		sleep(2);//send per 1s
+		if(!gaming)continue;
+		int x=rand()%1280;
+		int y=rand()%1280;
+		int type=rand()%7;
+		char buffer[MSGSIZE];
+		sprintf(buffer,"%c$%d$%d$%d",Prop,x,y,type);
+		printf("Prop:%s\n",buffer);
+		sendMsg(buffer);
+		sleep(5);
 	}
-}*/
-
-
+}
 
 
 
 
 int main(int argc, char *argv[]){
 	
-	
+	srand((unsigned)time(0));
     
     startSock();
     
@@ -369,8 +361,10 @@ int main(int argc, char *argv[]){
     
     initSock(globalArgs.port);
     
-    pthread_t ids;
+   
     pthread_t id;
+    pthread_create(&id,NULL,MakeProp,NULL);
+    
     int res;
     //res=pthread_create(&id,NULL,sendMsg,NULL);
 //    if(!res){

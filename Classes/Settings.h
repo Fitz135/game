@@ -9,16 +9,16 @@
 
 #include"RoomScene.h"
 
-
+#define DisConnect '0'
 #define NewPlayer '1' 
 #define KeyPress '2'
 #define KeyRelease '3'
 #define Ready '4'
-#define GameStart '9'
 #define Dialog '5'
 #define MousePress '6'
 #define MouseRelease '7'
-#define DisConnect '8'
+#define Prop '8'
+#define GameStart '9'
 
 		extern int local_Id ;
 		extern std::string local_username ;
@@ -27,6 +27,7 @@
 		extern std::vector<Entity*> playerList;
 		extern std::vector<Vec2> posList;
 		extern std::list<std::string> cmdList;
+		extern Vec3 propPos;
 		const int MSGSIZE = 32;
 		extern int players;// num of players
 		extern ODSocket* client;
@@ -36,7 +37,7 @@
 		void addPlayer(char* buffer);
 		void gamestartCallback();
 		void updatePlayer(char* buffer);
-		void addMsg(std::string temp);
+		void addProp(char* buffer);
 
 		namespace settings
 		{
@@ -53,6 +54,7 @@
 		extern RoomScene* roomscene;
 		extern bool isNewPlayer;
 		extern bool isNewMsg;
+		extern bool isNewProp;
 		extern std::string newMsg;
 
 		extern bool isWin;

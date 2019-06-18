@@ -111,7 +111,7 @@ void GameScene::onEnter() {
 	posList.push_back(Vec2(100, 300));
 	posList.push_back(Vec2(300, 100));
 	posList.push_back(Vec2(300, 300));
-
+	
 	if (!gameMode) {
 		for (int i = 0; i < players; i++) {
 			std::string name(playerList[i]->_name);
@@ -126,6 +126,7 @@ void GameScene::onEnter() {
 				op->setName("op");
 				player->addChild(op);
 			}
+			tileMap->addChild(player->HPBar);
 			tileMap->addChild(player);
 			Players->addObject(player);
 		}
