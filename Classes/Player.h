@@ -49,6 +49,7 @@ public:
 
 	void AttackMode1(Point TouchPosition);
 	void AttackMode2(Point TouchPosition);
+	void AttackMode3(Point TouchPosition);
 	void Dead(Node * who);
 	void(Player::*AttackMode)(Point MousePosition);
 	float AttackSpeed;

@@ -421,6 +421,7 @@ void Weapon::Shield(Point MousePosition)
 	auto player = (Player*)this->MyWeapon->getParent();
 	auto playerPosition = player->getPosition();
 	player->MoveSpeed = 24;
+	player->AttackMode3(MousePosition);
 }
 void Weapon::disappear(Node* who)
 {

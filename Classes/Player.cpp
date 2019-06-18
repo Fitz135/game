@@ -135,9 +135,6 @@ void Player::MoveBegin()
 	Legs->runAction(LegsAni);
 	if (AttackEndFlag)
 	{
-		Head->stopAllActionsByTag(HEADMOVE);
-		Body->stopAllActionsByTag(BODYMOVE);
-
 		auto HeadAni = RepeatForever::create(createAnimate(HEADMOVE, 2.0f / (MoveSpeed * 8)));
 		HeadAni->setTag(HEADMOVE);
 		Head->runAction(HeadAni);
@@ -186,11 +183,19 @@ void Player::AttackEnd(int pressnum)
 		auto BodyAni = RepeatForever::create(createAnimate(BODYMOVE, 2.0f / (MoveSpeed * 8)));
 		BodyAni->setTag(BODYMOVE);
 		Body->runAction(BodyAni);
+
+		if (WeaponType == 5)
+		{
+			auto LegsAni = RepeatForever::create(createAnimate(LEGSMOVE, 2.0f / (MoveSpeed * 8)));
+			LegsAni->setTag(LEGSMOVE);
+			Legs->runAction(LegsAni);
+		}
 	}
 	else
 	{
 		Head->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Head/Head-0.png"));
 		Body->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Body/Body-0.png"));
+		Legs->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Legs/Legs-0.png"));
 	}
 }
 void Player::AttackBegan(Point TouchPosition)
@@ -207,10 +212,6 @@ void Player::AttackBegan(Point TouchPosition)
 		else
 			this->setScaleX(1);
 	}
-
-	this->unschedule(schedule_selector(Player::AttackAbleflag));
-	this->schedule(schedule_selector(Player::AttackAbleflag), AttackSpeed);
-	this->scheduleOnce(schedule_selector(Player::AttackEndflag), AttackSpeed);
 	(weapon->*(weapon->WeaponMode))(TouchPosition);
 	return;
 }
@@ -241,6 +242,8 @@ void Player::AttackMode1(Point TouchPosition)
 		Body->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Body/Body-4.png"));
 		Hand->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Arm/Arm-4.png"));
 	}
+	this->scheduleOnce(schedule_selector(Player::AttackAbleflag), AttackSpeed );
+	this->scheduleOnce(schedule_selector(Player::AttackEndflag), AttackSpeed );
 }
 
 void Player::AttackMode2(Point TouchPosition)
@@ -249,14 +252,37 @@ void Player::AttackMode2(Point TouchPosition)
 	Head->stopAllActionsByTag(HEADMOVE);
 	Head->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("Player" + std::to_string(CharaType) + "/Head/Head-0.png"));
 
-	auto BodyAni = createAnimate(BODYATTACK, 1.0f / 8);
+	auto BodyAni = createAnimate(BODYATTACK, AttackSpeed / 5);
 	BodyAni->setTag(BODYATTACK);
 	Body->stopAllActionsByTag(BODYMOVE);
 	Body->runAction(BodyAni);
 
-	auto HandAni = createAnimate(HANDATTACK, 1.0f / 8);
+	auto HandAni = createAnimate(HANDATTACK, AttackSpeed / 5);
 	HandAni->setTag(HANDATTACK);
 	Hand->runAction(HandAni);
+	this->scheduleOnce(schedule_selector(Player::AttackAbleflag), 6.0*AttackSpeed / 10);
+	this->scheduleOnce(schedule_selector(Player::AttackEndflag), 6.0*AttackSpeed / 10);
+}
+void Player::AttackMode3(Point TouchPosition)
+{
+	Head->stopAllActionsByTag(HEADMOVE);
+	Body->stopAllActionsByTag(BODYMOVE);
+	Legs->stopAllActionsByTag(LEGSMOVE);
+
+	auto HeadAni =createAnimate(HEADMOVE, 2.0f / (MoveSpeed * 8));
+	HeadAni->setTag(HEADMOVE);
+	Head->runAction(HeadAni);
+
+	auto BodyAni =createAnimate(BODYMOVE, 2.0f / (MoveSpeed * 8));
+	BodyAni->setTag(BODYMOVE);
+	Body->runAction(BodyAni);
+
+	auto LegsAni = createAnimate(LEGSMOVE, 2.0f / (MoveSpeed * 8));
+	LegsAni->setTag(LEGSMOVE);
+	Legs->runAction(LegsAni);
+
+	this->scheduleOnce(schedule_selector(Player::AttackAbleflag), 13*2.0f / (MoveSpeed * 8));
+	this->scheduleOnce(schedule_selector(Player::AttackEndflag), 13*2.0f / (MoveSpeed * 8));
 }
 void Player::Dead(Node* who)
 {

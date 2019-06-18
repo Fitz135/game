@@ -44,5 +44,6 @@ public:
 	CCArray* Players;
 	CCArray*Bullets;
 	Sprite* Bulletset;
+	Sprite* Itemset;
 };
 #endif // !_GAME_SCENE_H_

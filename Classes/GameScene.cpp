@@ -81,6 +81,8 @@ void GameScene::onEnter() {
 
 	Bulletset = Sprite::create();
 	tileMap->addChild(Bulletset,100);
+	Itemset = Sprite::create();
+	tileMap->addChild(Itemset, 100);
 
 	auto w = Director::getInstance()->getWinSize().width / (players + 1);
 	auto h = Director::getInstance()->getWinSize().height / (players + 1);
@@ -185,8 +187,8 @@ void GameScene::SpawnItems(float dt)
 		auto valueMap = value.asValueMap();
 		if (!valueMap.at("Collidable").asBool())break;
 	}
-	//int type = rand()%5;
-	int type = 5;
+	int type = rand()%5;
+	//int type = 0;
 	auto items = Sprite::create(settings::weapon_paths[type]);
 	items->setTag(type);
 	items->setPosition(x, y);
@@ -195,7 +197,7 @@ void GameScene::SpawnItems(float dt)
 	items->runAction(RepeatForever::create(seq));
 	auto map=this->getChildByName("Map");
 	MapItems->addObject(items);
-	map->addChild(items);
+	this->Itemset->addChild(items);
 }
 void GameScene::MapMove()
 {
