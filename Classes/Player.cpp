@@ -1,5 +1,6 @@
 #include"Player.h"
 #include"GameScene.h"
+#include"AiPlayer.h"
 #include"Weapon.h"
 #include"Settings.h"
 #define HEADMOVE 0
@@ -30,6 +31,7 @@ Player* Player::create(std::string name,int id)
 		if(id==local_Id)
 		player->setName("Player");
 		else player->setName(name);
+		//player->setTag(id);
 		player->autorelease();
 		return player;
 	}
@@ -61,10 +63,10 @@ bool Player::initWithPlayerType(int i)
 	CharaType = i;
 	MoveSpeed = 8;
 	HP = 100;
-	Legs = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Legs/Legs-0.png");
-	Body = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Body/Body-0.png");
-	Head = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Head/Head-0.png");
-	Hand = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Arm/Arm-0.png");
+	this->Legs = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Legs/Legs-0.png");
+	this->Body = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Body/Body-0.png");
+	this->Head = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Head/Head-0.png");
+	this->Hand = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Arm/Arm-0.png");
 	//ChangeWeapon(-1);
 	this->weapon = nullptr;
 
@@ -169,6 +171,7 @@ void Player::AttackEndflag(float dt)
 }
 void Player::AttackEnd(int pressnum)
 {
+	auto player = (Player*)this;
 	Hand->setOpacity(0);
 	weapon->MyWeapon->setOpacity(0);
 	Body->stopActionByTag(BODYATTACK);
@@ -253,14 +256,24 @@ void Player::AttackMode2(Point TouchPosition)
 }
 void Player::Dead(Node* who)
 {
-	who->unscheduleAllSelectors();
-	((Player*)who)->AttackAbleFlag = 0;
+	if(who->getTag()<0)who->getChildByName("aiop")->unschedule(schedule_selector(AiPlayer::AiAttack));
+	this->AttackAbleFlag = 0;
 	auto spritecache = SpriteFrameCache::getInstance();
 	Vector<SpriteFrame*> animFrames;
 	for (int i = 0; i <= 3; i++)
 		animFrames.pushBack(spritecache->getSpriteFrameByName("ghost/ghost-" + std::to_string(i) + ".png"));
-	auto dead =Animate::create(Animation::createWithSpriteFrames(animFrames, 1.0f / 10));
-	who->runAction(dead);
+	auto dead =Animate::create(Animation::createWithSpriteFrames(animFrames, 1.0f/8));
+	auto sp = Sprite::create();
+	this->addChild(sp);
+	this->Body->setOpacity(0);
+	this->Head->setOpacity(0);
+	this->Legs->setOpacity(0);
+	this->Hand->setOpacity(0);
+	if(weapon)
+	this->weapon->MyWeapon->setOpacity(0);
+	sp->setScaleX(-1);
+	sp->setZOrder(100);
+	sp->runAction(RepeatForever::create(dead));
 }
 int Player::getId() {
 	return info._id;

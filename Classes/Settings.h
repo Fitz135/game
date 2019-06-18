@@ -52,4 +52,7 @@
 		extern bool isNewPlayer;
 		extern bool isNewMsg;
 		extern std::string newMsg;
+
+		extern bool isWin;
+		extern bool gameMode;
 #endif

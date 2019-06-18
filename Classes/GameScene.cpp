@@ -33,7 +33,6 @@ Scene* GameScene::createScene()
 TMXTiledMap* GameScene::getCurrentMap() {
 	auto currentScene = Director::getInstance()->getRunningScene();
 	auto scene = currentScene->getChildByName("GameScene");
-	//auto tileMap = scene->getChildByName("Map");
 	return dynamic_cast<TMXTiledMap*>(scene->getChildByName("Map"));
 }
 
@@ -55,7 +54,16 @@ bool GameScene::init() {
 
 	auto operate = Operator::create();
 	addChild(operate);
-	
+
+	auto x=Director::getInstance()->getWinSize().width;
+	auto y = Director::getInstance()->getWinSize().height;
+
+	auto exitItem = MenuItemLabel::create(
+		Label::create("Exit", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
+	exitItem->setPosition(-x *0.45, y *0.45);
+	auto menu = Menu::create();
+	menu->addChild(exitItem);
+	addChild(menu,5);
 	return true;
 }
 
@@ -67,39 +75,66 @@ void GameScene::onEnter() {
 	twall = tileMap->getLayer("Wall");
 	Meta = tileMap->getLayer("Meta");
 	tileMap->setName("Map");
-
 	this->addChild(tileMap);
+
+	Bulletset = Sprite::create();
+	tileMap->addChild(Bulletset);
+
 	auto w = Director::getInstance()->getWinSize().width / (players + 1);
 	auto h = Director::getInstance()->getWinSize().height / (players + 1);
 
-	posList.push_back(Vec2(0, 0));
+	posList.push_back(Vec2(100, 100));
 	posList.push_back(Vec2(100, 300));
 	posList.push_back(Vec2(300, 100));
 	posList.push_back(Vec2(300, 300));
 
-	for (int i = 0; i < players; i++) {
-		std::string name(playerList[i]->_name);
-		int id = playerList[i]->_id;
+	if (!gameMode) {
+		for (int i = 0; i < players; i++) {
+			std::string name(playerList[i]->_name);
+			int id = playerList[i]->_id;
 
-		auto player = Player::create(name, id);
-		player->setPosition(posList[id]);
-		if (id != local_Id) {
-			player->setTag(player->getId());
-			auto op = OPOperator::create();
-			op->setName("op");
-			player->addChild(op);
+			auto player = Player::create(name, id);
+			player->setZOrder(100);
+			player->setPosition(posList[id]);
+			if (id != local_Id) {
+				player->setTag(player->getId());
+				auto op = OPOperator::create();
+				op->setName("op");
+				player->addChild(op);
+			}
+			tileMap->addChild(player);
+			Players->addObject(player);
 		}
+	}
+	else
+	{
+		int ap = 1;
+		local_Id = ap;
+		auto player = Player::create(local_username, ap);
+		player->setPosition(posList[0]);
+		player->setZOrder(100);
 		tileMap->addChild(player);
 		Players->addObject(player);
+
+		for (int i = 4; i <= 6; i++)
+		{
+			auto ai = Player::create("ai"+std::to_string(i), i);
+			ai->setPosition(posList[i-3]);
+			ai->MoveBegin();
+			//ai->setTag(-i);
+			tileMap->addChild(ai);
+
+			auto aiop = AiPlayer::create();
+			aiop->setName("aiop");
+			ai->setZOrder(100);
+			ai->addChild(aiop);
+			Players->addObject(ai);
+		}
 	}
-	/*auto player = Player::create("ai", 5);
-	player->setPosition(50,50);
-	player->setTag(2);
-	auto aiop = AiPlayer::create();
-	player->addChild(aiop);
-	tileMap->addChild(player);
+
+
 	this->scheduleUpdate();
-	this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);*/
+	this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
 }
 void GameScene::onExit() {
 	Layer::onExit();
@@ -107,23 +142,36 @@ void GameScene::onExit() {
 }
 void GameScene::update(float delta)
 {
-	Object* iplayer;
-	CCARRAY_FOREACH(Players, iplayer)
-	{
-		Player *player= (Player*)iplayer;
-		if (player->HP <= 0)
-			player->Dead(player);
-	}
-	this->SpawnItems();
+	this->IsDead();
 	this->MapMove();
 	this->IsWeaponIntoPlayer();
 	this->PickMapItems();
 	this->IsBulletIntoWall();
 	this->IsBulletIntoPlayer();
 }
+void GameScene::IsDead()
+{
+	auto players = CCArray::create();
+	players->retain();
+	Object* iplayer;
+	CCARRAY_FOREACH(Players, iplayer)
+	{
+		Player *player = (Player*)iplayer;
+		if (player->HP <= 0)
+		{
+			player->Dead(player);
+			players->addObject(player);
+		}
+
+	}
+	CCARRAY_FOREACH(players, iplayer)
+	{
+		Players->removeObject(iplayer);
+	}
+}
 void GameScene::SpawnItems(float dt)
 {
-	srand(0);
+	srand(int(time(0)) + rand());
 	float x, y;
 	while (true)
 	{
@@ -134,7 +182,7 @@ void GameScene::SpawnItems(float dt)
 		auto valueMap = value.asValueMap();
 		if (!valueMap.at("Collidable").asBool())break;
 	}
-	int type = rand() % 5;
+	int type = 0;
 	auto items = Sprite::create(settings::weapon_paths[type]);
 	items->setTag(type);
 	items->setPosition(x, y);
@@ -167,7 +215,7 @@ void GameScene::IsWeaponIntoPlayer()
 	CCARRAY_FOREACH(Players, iplayer)
 	{
 		Player* player = (Player*)iplayer;
-		if (player->weapon!=nullptr&&player->weapon->MyWeapon->getOpacity()!= 0 && (player->WeaponType == 1 || player->WeaponType== 4))
+		if (player->weapon&&(player->weapon->MyWeapon->getOpacity())&& (player->WeaponType == 1 || player->WeaponType== 4))
 		{
 			auto weaponZone = (player->weapon->MyWeapon)->boundingBox();
 			CCARRAY_FOREACH(Players, iplayer2)
@@ -178,7 +226,7 @@ void GameScene::IsWeaponIntoPlayer()
 					auto playerZone = CCRectMake(player2->getPositionX() - 9, player2->getPositionY() - 24, 18, 42);
 					if (weaponZone.intersectsRect(playerZone))
 					{
-						player2->HP -= 10;
+						player2->HP -= 50;
 					}
 				}
 			}
@@ -207,7 +255,7 @@ void GameScene::IsBulletIntoPlayer()
 			{
 				if (((Sprite*)ibullet)->getName() != ((Player*)iplayer)->getName())
 				{
-					((Player*)iplayer)->HP -= 10;
+					((Player*)iplayer)->HP -= 2;
 					bullets->addObject(ibullet);
 				}
 			}
@@ -228,9 +276,11 @@ void GameScene::IsBulletIntoPlayer()
 }
 bool GameScene::isAccessable(Point Position, int Direction)
 {
+	if (Direction == -1)return false;
 	if (Position.x - 9 <=0 || Position.y - 24 <=0 || Position.x + 9 >= 1280 || Position.y + 18 >= 1280)
 		return true;
 	int dir[8][2] = { {9,0},{0,-24},{-9,0},{0,18},{9,-24},{-9,-24},{-9,18},{9,18}};
+	log("%d,%d", (int)floor((Position.x + dir[Direction][0]) / 32), (int)(39 - floor((Position.y + dir[Direction][1]) / 32)));
 	auto git = Meta->getTileGIDAt(Vec2((int)floor((Position.x + dir[Direction][0]) / 32), (int)(39 - floor((Position.y + dir[Direction][1]) / 32))));
 	auto value = tileMap->getPropertiesForGID(git);
 	auto valueMap = value.asValueMap();
@@ -265,8 +315,13 @@ void GameScene::PickMapItems()
 
 			if (mapitemZone.intersectsRect(playerZone))
 			{
-				((Player*)iplayer)->WeaponType =((Sprite*)imapitem)->getTag();
-				((Player*)iplayer)->scheduleUpdate();
+				auto player = (Player*)iplayer;
+				auto weapontype = ((Sprite*)imapitem)->getTag();
+				player->WeaponType = weapontype;
+				player->scheduleUpdate();
+				if(player->getName()=="ai4"|| player->getName() == "ai5"|| player->getName() == "ai6")
+					(player->getChildByName("aiop"))->scheduleOnce(schedule_selector(AiPlayer::AiAttack),player->AttackSpeed);
+
 				mapitems->addObject(imapitem);
 			}
 		}
@@ -317,19 +372,23 @@ void GameScene::IsBulletIntoWall()
 }
 
 
-
+void GameScene::exitCallback(Ref*ref) {
+	Director::getInstance()->popScene();
+}
 ////////AI need//////////
-/*bool GameScene::isInMap(const cocos2d::Vec2& pos) {
-	auto mapSize = tileMap->getMapSize();
-	auto tileSize = tileMap->getTileSize();
+bool GameScene::isInMap(const cocos2d::Vec2& pos) {
+	auto map = dynamic_cast<TMXTiledMap*>(this->getChildByName("Map"));
+	auto mapSize = map->getMapSize();
+	auto tileSize = map->getTileSize();
 	return 0 <= pos.x && pos.x < mapSize.width * tileSize.width
 		&& 0 <= pos.y && pos.y < mapSize.height * tileSize.height;
 }
 
 Vec2 GameScene::positionToTileCoord(const cocos2d::Vec2 & pos)
 {
-	cocos2d::Size mapSize = tileMap->getMapSize();
-	cocos2d::Size tileSize = tileMap->getTileSize();
+	auto map = dynamic_cast<TMXTiledMap*>(this->getChildByName("Map"));
+	cocos2d::Size mapSize = map->getMapSize();
+	cocos2d::Size tileSize = map->getTileSize();
 
 	int x = pos.x / tileSize.width;
 	int y = (mapSize.height * tileSize.height - pos.y) / tileSize.height;
@@ -341,11 +400,12 @@ Vec2 GameScene::positionToTileCoord(const cocos2d::Vec2 & pos)
 }
 Vec2 GameScene::tileCoordToPosition(const cocos2d::Vec2 & coord)
 {
-	auto mapSize = tileMap->getMapSize();
-	auto tileSize = tileMap->getTileSize();
+	auto map = dynamic_cast<TMXTiledMap*>(this->getChildByName("Map"));
+	auto mapSize = map->getMapSize();
+	auto tileSize = map->getTileSize();
 
 	int x = coord.x * tileSize.width + tileSize.width / 2;
 	int y = (mapSize.height - coord.y) * tileSize.height - tileSize.height / 2;
 	//CCLOG("pos x: %f y: %f", x, y);
 	return Vec2(x, y);
-}*/
+}

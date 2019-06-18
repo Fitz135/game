@@ -108,3 +108,6 @@ RoomScene *roomscene;
 bool isNewPlayer = false;
 bool isNewMsg = false;
 std::string newMsg;
+
+bool isWin = true; 
+bool gameMode;

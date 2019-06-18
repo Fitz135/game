@@ -12,6 +12,7 @@ inline Player* getMyplayer(char* str) {
 	auto scene = GameScene::getCurrentMap();
 	return dynamic_cast<Player*>(scene->getChildByName(str));
 }
+
 Weapon* Weapon::create(int WeaponType)
 {
 	auto weapon = Weapon::create();
@@ -44,7 +45,7 @@ void Weapon::Bow(Point MousePosition)
 	else if (dir1 > 0 && dir2 < 0)
 		BowPosition = Vec2(5, -11);
 
-	int K,J;
+	int K, J;
 	if (MousePosition.x > PlayerPosition.x)	K = 1;
 	else K = -1;
 	if ((MousePosition.x - (PlayerPosition.x + K * BowPosition.x)) < 0)J = 1;
@@ -57,24 +58,25 @@ void Weapon::Bow(Point MousePosition)
 	MyWeapon->setOpacity(255);
 
 	auto Arrow = Sprite::create("arrow.png");
-	auto ArrowPosition=Vec2(PlayerPosition.x + K * BowPosition.x, PlayerPosition.y + BowPosition.y);
-	
+	auto ArrowPosition = Vec2(PlayerPosition.x + K * BowPosition.x, PlayerPosition.y + BowPosition.y);
+
 	double range = 200;
-	float x = range * cos(PI / 2 + J * PI / 2 + Theta) + ArrowPosition.x ;
-	float y = range * sin(PI / 2 + J * PI / 2 + Theta) + ArrowPosition.y ;
+	float x = range * cos(PI / 2 + J * PI / 2 + Theta) + ArrowPosition.x;
+	float y = range * sin(PI / 2 + J * PI / 2 + Theta) + ArrowPosition.y;
 	auto move = MoveTo::create(1, Vec2(x, y));
 	auto arrowend = CallFuncN::create(this, callfuncN_selector(Weapon::ArrowEnd));
 	auto attackmove = Sequence::create(move, arrowend, NULL);
 	attackmove->setTag(0);
 
 	Arrow->setPosition(ArrowPosition);
-	Arrow->setRotation((-Theta + J * PI / 2+PI) / PI * 180);
+	Arrow->setRotation((-Theta + J * PI / 2 + PI) / PI * 180);
 	Arrow->setAnchorPoint(Vec2(0.5, 0.31250));
 	Arrow->runAction(attackmove);
-	map->addChild(Arrow);
+	scene->Bulletset->addChild(Arrow);
 
 	Arrow->setTag(0);
 	Arrow->setName(player->getName());
+	//Arrow->setName("arrow");
 	scene->Bullets->addObject(Arrow);
 	Arrow->setZOrder(1);
 }
@@ -119,7 +121,7 @@ void Weapon::Sword(Point MousePosition)
 	float dir1 = MousePosition.x - playerPosition.x - MousePosition.y + playerPosition.y;
 	float dir2 = MousePosition.x - playerPosition.x + MousePosition.y - playerPosition.y;
 	if (dir1 < 0 && dir2>0)
-		StarPosition = Vec2(visiblesize.width / 2, visiblesize.height + 90);
+		StarPosition = Vec2(-90, 128 + 90);
 	else if (dir1*dir2 >= 0)
 	{
 		if (MousePosition.x > playerPosition.x)
@@ -201,8 +203,8 @@ void Weapon::StarEnd(Node* who)
 	/*auto player = (Player*)this->MyWeapon->getParent();
 	auto map = (TMXTiledMap*)player->getParent();*/
 	auto map = who->getParent();
-	if(map)
-	map->addChild(boom);
+	if (map)
+		map->addChild(boom);
 	disappear(who);
 }
 void Weapon::BubbleGun(Point MousePosition)
@@ -219,37 +221,37 @@ void Weapon::BubbleGun(Point MousePosition)
 	float dir1 = MousePosition.x - PlayerPosition.x - MousePosition.y + PlayerPosition.y;
 	float dir2 = MousePosition.x - PlayerPosition.x + MousePosition.y - PlayerPosition.y;
 	if (dir1 < 0 && dir2>0)
-		BubbleGunPosition = Vec2( 5, 7);
+		BubbleGunPosition = Vec2(5, 7);
 	else if (dir1*dir2 >= 0)
 		BubbleGunPosition = Vec2(7, -7);
 	else if (dir1 > 0 && dir2 < 0)
-		BubbleGunPosition = Vec2( 5,- 11);
-	
-	int K,J;
+		BubbleGunPosition = Vec2(5, -11);
+
+	int K, J;
 	if (MousePosition.x > PlayerPosition.x)K = 1;
 	else K = -1;
 	if ((MousePosition.x - (PlayerPosition.x + K * BubbleGunPosition.x)) < 0)J = 1;
 	else J = -1;
 
-	auto Theta =atanf((MousePosition.y - PlayerPosition.y-BubbleGunPosition.y) / (MousePosition.x - (PlayerPosition.x+K*BubbleGunPosition.x)));
-	MyWeapon->setRotation((-PI/2-J*K*PI/2-K*Theta)/ PI * 180);;
+	auto Theta = atanf((MousePosition.y - PlayerPosition.y - BubbleGunPosition.y) / (MousePosition.x - (PlayerPosition.x + K * BubbleGunPosition.x)));
+	MyWeapon->setRotation((-PI / 2 - J * K*PI / 2 - K * Theta) / PI * 180);;
 	MyWeapon->setOpacity(255);
 	MyWeapon->setPosition(BubbleGunPosition);
 	MyWeapon->setAnchorPoint(Vec2(0.50000, 0.30000));//once
 
 	auto Bubble = Sprite::create("Bubble.png");
-	auto BubblePosition = Vec2(PlayerPosition.x + K * BubbleGunPosition.x, PlayerPosition.y + BubbleGunPosition.y) + Vec2(35.69* cos(PI/2+J*PI/2 +Theta +K*0.197), 35.69* sin(PI / 2 + J * PI / 2 +Theta + K*0.197));
-	
+	auto BubblePosition = Vec2(PlayerPosition.x + K * BubbleGunPosition.x, PlayerPosition.y + BubbleGunPosition.y) + Vec2(35.69* cos(PI / 2 + J * PI / 2 + Theta + K * 0.197), 35.69* sin(PI / 2 + J * PI / 2 + Theta + K * 0.197));
+
 	srand(int(time(0)) + rand());
 	float scale = (float)(rand() % 6) / 10 + 1.0;
 	float range = (float)(rand() % 100) + 100;
 	float rdTheta = (float)(rand() % 314) / 300 - PI / 6;
-	float x = range * cos(PI / 2 + J * PI / 2 +Theta + rdTheta) + BubblePosition.x;
-    float y = range * sin(PI / 2 + J * PI / 2 +Theta + rdTheta) + BubblePosition.y;
-	auto move = MoveTo::create(1.5f, Vec2(x,y));
+	float x = range * cos(PI / 2 + J * PI / 2 + Theta + rdTheta) + BubblePosition.x;
+	float y = range * sin(PI / 2 + J * PI / 2 + Theta + rdTheta) + BubblePosition.y;
+	auto move = MoveTo::create(1.5f, Vec2(x, y));
 	auto bubbleend = CallFuncN::create(this, callfuncN_selector(Weapon::BubbleEnd));
 	auto attackmove = Sequence::create(move, bubbleend, NULL);
-	
+
 	Bubble->setOpacity(200);
 	Bubble->setPosition(BubblePosition);
 	Bubble->setScale(scale);
@@ -282,77 +284,79 @@ void Weapon::BubbleEnd(Node* who)
 	boom->setZOrder(2);
 	auto map = who->getParent();
 
-	if(map)map->addChild(boom);
+	if (map)map->addChild(boom);
 	disappear(who);
 }
-Sprite* boomerang;
 void Weapon::Boomerang(Point MousePosition)
 {
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->playEffect("audio/Bubblegun.wav", false);
-	
+
 	auto player = (Player*)this->MyWeapon->getParent();
 	auto map = (TMXTiledMap*)player->getParent();
 	auto scene = (GameScene*)map->getParent();
 	player->AttackMode1(MousePosition);
-		auto PlayerPosition = player->getPosition();
-		player->IsHaveWeapon = 0;
-		boomerang = Sprite::create(AutoPolygon::generatePolygon("Boomerang.png"));
+	auto PlayerPosition = player->getPosition();
+	player->IsHaveWeapon = 0;
+	this->boomerang = Sprite::create(AutoPolygon::generatePolygon("Boomerang.png"));
 
-		int K;
-		if (MousePosition.x > PlayerPosition.x)K = 1;
-		else K = -1;
+	int K;
+	if (MousePosition.x > PlayerPosition.x)K = 1;
+	else K = -1;
 
-		Point BoomerangPosition;
-		float dir1 = MousePosition.x - PlayerPosition.x - MousePosition.y + PlayerPosition.y;
-		float dir2 = MousePosition.x - PlayerPosition.x + MousePosition.y - PlayerPosition.y;
-		if (dir1 < 0 && dir2>0)
-			BoomerangPosition = Vec2(PlayerPosition.x + K * 5, PlayerPosition.y + 7);
-		else if (dir1*dir2 >= 0)
-			BoomerangPosition = Vec2(PlayerPosition.x + K * 7, PlayerPosition.y - 7);
-		else if (dir1 > 0 && dir2 < 0)
-			BoomerangPosition = Vec2(PlayerPosition.x + K * 5, PlayerPosition.y - 11);
+	Point BoomerangPosition;
+	float dir1 = MousePosition.x - PlayerPosition.x - MousePosition.y + PlayerPosition.y;
+	float dir2 = MousePosition.x - PlayerPosition.x + MousePosition.y - PlayerPosition.y;
+	if (dir1 < 0 && dir2>0)
+		BoomerangPosition = Vec2(PlayerPosition.x + K * 5, PlayerPosition.y + 7);
+	else if (dir1*dir2 >= 0)
+		BoomerangPosition = Vec2(PlayerPosition.x + K * 7, PlayerPosition.y - 7);
+	else if (dir1 > 0 && dir2 < 0)
+		BoomerangPosition = Vec2(PlayerPosition.x + K * 5, PlayerPosition.y - 11);
 
-		auto rotate = RotateBy::create(30.0f / 60, 360);
-		auto move = RepeatForever::create(rotate);
-		double range = 200;
-		double l = sqrt((MousePosition.x - PlayerPosition.x)*(MousePosition.x - PlayerPosition.x) + (MousePosition.y - PlayerPosition.y)*(MousePosition.y - PlayerPosition.y));
-		double x = range * (MousePosition.x - PlayerPosition.x) / l + PlayerPosition.x;
-		double y = range * (MousePosition.y - PlayerPosition.y) / l + PlayerPosition.y;
-		auto move2 = MoveTo::create(25.0f / 60, Vec2(x, y));
+	auto rotate = RotateBy::create(30.0f / 60, 360);
+	auto move = RepeatForever::create(rotate);
+	double range = 200;
+	double l = sqrt((MousePosition.x - PlayerPosition.x)*(MousePosition.x - PlayerPosition.x) + (MousePosition.y - PlayerPosition.y)*(MousePosition.y - PlayerPosition.y));
+	double x = range * (MousePosition.x - PlayerPosition.x) / l + PlayerPosition.x;
+	double y = range * (MousePosition.y - PlayerPosition.y) / l + PlayerPosition.y;
+	auto move2 = MoveTo::create(25.0f / 60, Vec2(x, y));
 
-		boomerang->setPosition(BoomerangPosition);
-		boomerang->runAction(move);
-		boomerang->runAction(move2);
-		map->addChild(boomerang);
-		player->schedule(schedule_selector(Weapon::BoomerangBack), 2.0f / 60);
+	boomerang->setPosition(BoomerangPosition);
+	boomerang->runAction(move);
+	boomerang->runAction(move2);
+	map->addChild(boomerang);
+	player->schedule(schedule_selector(Weapon::BoomerangBack), 2.0f / 60);
 
-		boomerang->setName(player->getName());
-		boomerang->setTag(3);
-		scene->Bullets->addObject(boomerang);
-		boomerang->setZOrder(1);
+	boomerang->setName(player->getName());
+	boomerang->setTag(3);
+	scene->Bullets->addObject(boomerang);
+	boomerang->setZOrder(100);
 }
 void Weapon::BoomerangBack(float dt)
 {
-	if (boomerang->numberOfRunningActions() == 1)
+	auto player = (Player*)(this);
+	if (player->weapon->boomerang&&player->weapon->boomerang->numberOfRunningActions() == 1)
 	{
-		auto player = getMyplayer("Player");
+		auto boomeran = player->weapon->boomerang;
 		auto PlayerPosition = player->getPosition();
-		auto BoomerangPosition = boomerang->getPosition();
+		auto BoomerangPosition = boomeran->getPosition();
 		double l = sqrt((PlayerPosition.x - BoomerangPosition.x)*(PlayerPosition.x - BoomerangPosition.x) + (PlayerPosition.y - BoomerangPosition.y)*(PlayerPosition.y - BoomerangPosition.y));
-		if (l<=30)
+		if (l <= 30)
 		{
 			player->IsHaveWeapon = 1;
-			disappear(boomerang);
+			auto scene =(GameScene*) player->getParent()->getParent();
+			scene->Bullets->removeObject(boomeran);
+			disappear(boomeran);
 			player->unschedule(schedule_selector(Weapon::BoomerangBack));
 		}
-		else 
+		else
 		{
 			double range = 20;
 			double x = range * (PlayerPosition.x - BoomerangPosition.x) / l + BoomerangPosition.x;
 			double y = range * (PlayerPosition.y - BoomerangPosition.y) / l + BoomerangPosition.y;
 			auto move = MoveTo::create(2.0f / 60, Vec2(x, y));
-			boomerang->runAction(move);
+			boomeran->runAction(move);
 		}
 	}
 }

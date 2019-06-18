@@ -44,15 +44,20 @@ bool GameMode::init() {
 }
 void GameMode::gamestartCallback(Ref* ref) {
 
-	/*auto bg = this->getChildByTag(1);
-	bg->setColor(Color3B(100, 100, 100));
-	auto createroom = CreateRoom::create();
-	this->addChild(createroom);*/
+	
+	MenuItemLabel* item = (MenuItemLabel*)ref;
+	if (item->getString() == "PvP") {
+		gameMode = false;
+		roomscene = RoomScene::create();
+		Director::getInstance()->pushScene(TransitionFade::create(0.5, roomscene));
+	}
+	else if (item->getString() == "PvE") {
+		gameMode = true;
+		auto scene = GameScene::createScene();
+		Director::getInstance()->pushScene(TransitionFade::create(0.5, scene));
+	}
 
-	//Director::getInstance()->setClearColor(Color4F::WHITE);
-
-	roomscene = RoomScene::create();
-	Director::getInstance()->pushScene(TransitionFade::create(0.5, roomscene));
+	
 };
 void GameMode::menubackCallback(Ref* ref) {
 	Director::getInstance()->popScene();

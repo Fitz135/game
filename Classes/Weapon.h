@@ -3,11 +3,12 @@
 
 using namespace cocos2d;
 
-class Weapon :public cocos2d::Sprite
+class Weapon :public cocos2d::Layer
 {
 public:
 	CREATE_FUNC(Weapon);
 	Sprite *MyWeapon;
+	Sprite* boomerang;
 	static Weapon * create(int WeaponType);
 	void(Weapon::*WeaponMode)(Point MousePosition);
 	void(Weapon::*BulletEnd[3])(Node* who) = { &Weapon::ArrowEnd,&Weapon::StarEnd,&Weapon::BubbleEnd};
