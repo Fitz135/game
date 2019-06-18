@@ -45,6 +45,20 @@ bool IPScene::init() {
 	//menu->setScale(1.5f);
 	this->addChild(menu);
 	//this->setTouchEnabled(true);
+
+	auto keyEventListener = EventListenerKeyboard::create();
+	keyEventListener->onKeyReleased = [this, finish, canel](EventKeyboard::KeyCode code, Event* event)
+	{
+		if (code == EventKeyboard::KeyCode::KEY_ESCAPE)
+		{
+			startCallback(canel);
+		}
+		else if (code == EventKeyboard::KeyCode::KEY_ENTER) {
+			startCallback(finish);
+		}
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyEventListener, this);
+
 	return true;
 }
 
@@ -75,7 +89,7 @@ void IPScene::startCallback(Ref* ref) {
 			return;
 		}
 		Director::getInstance()->getRunningScene()->removeChildByTag(1);
-		Director::getInstance()->getRunningScene()->setColor(Color3B::WHITE);
+		//Director::getInstance()->getRunningScene()->setColor(Color3B::WHITE);
 		Director::getInstance()->getRunningScene()->removeChildByName("solid");
 	}
 	else if (name == "Cancel") {

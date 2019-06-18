@@ -41,6 +41,20 @@ bool LoginScene::init() {
 	//menu->setScale(1.5f);
 	this->addChild(menu);
 	//this->setTouchEnabled(true);
+
+
+	auto keyEventListener = EventListenerKeyboard::create();
+	keyEventListener->onKeyReleased = [this,finish,canel](EventKeyboard::KeyCode code, Event* event)
+	{
+		if (code == EventKeyboard::KeyCode::KEY_ESCAPE)
+		{
+			startCallback(canel);
+		}
+		else if (code == EventKeyboard::KeyCode::KEY_ENTER) {
+			startCallback(finish);
+		}
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyEventListener, this);
 	return true;
 }
 void LoginScene::startCallback(Ref* ref) {
@@ -57,6 +71,7 @@ void LoginScene::startCallback(Ref* ref) {
 	}
 	else if (name == "Cancel") {
 		Director::getInstance()->getRunningScene()->getChildByTag(1)->removeChildByTag(1);
+		Director::getInstance()->getRunningScene()->getChildByTag(1)->removeChildByName("solid");
 	}
 }
 void LoginScene::onEnter() {

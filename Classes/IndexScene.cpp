@@ -33,6 +33,18 @@ bool Index::init() {
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("death.plist");
 
 
+	/*auto keyEventListener = EventListenerKeyboard::create();
+	keyEventListener->onKeyReleased = [this](EventKeyboard::KeyCode code, Event* event)
+	{
+		if (code == EventKeyboard::KeyCode::KEY_ESCAPE)
+		{
+			exitCallback(NULL);
+		}
+		else if (code == EventKeyboard::KeyCode::KEY_ENTER) {
+			startCallback(NULL);
+		}
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyEventListener, this);*/
 
 
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
@@ -42,6 +54,11 @@ bool Index::init() {
 	return true;
 }
 void Index::startCallback(Ref* ref) {
+	auto cl = LayerColor::create(Color4B::BLACK);
+	cl->setOpacity(150);
+	cl->setName("solid");
+	addChild(cl);
+
 	auto layer = LoginScene::create();
 	layer->setTag(1);
 	this->addChild(layer);
