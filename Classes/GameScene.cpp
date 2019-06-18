@@ -373,6 +373,14 @@ void GameScene::IsBulletIntoPlayer()
 	}
 	CCARRAY_FOREACH(players, iplayer)
 	{
+		
+		if (!gameMode) {
+			auto player = dynamic_cast<Player*>(iplayer);
+			char buffer[MSGSIZE];
+			int id = player->getId();
+			sprintf(buffer, "d$%d", id);
+			client->Send(buffer, MSGSIZE);
+		}
 		Players->removeObject(iplayer);
 	}
 
