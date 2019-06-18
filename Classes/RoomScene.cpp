@@ -125,7 +125,7 @@ bool RoomScene::initPlayer(char* buffer) {
 	auto w = Director::getInstance()->getWinSize().width;
 	auto h = Director::getInstance()->getWinSize().height;
 	for (int i = 0; i < players; i++) {
-		//auto label = Label::create(playerList[i]->getName(), "arial.ttf", 15);
+		auto label = Label::create(playerList[i]->getName(), "arial.ttf", 15);
 		auto player = Player::create(playerList[i]->getName(), playerList[i]->getId());
 		if (i == 0) {
 			player->setPosition(w*0.23, h*0.65);
@@ -135,9 +135,9 @@ bool RoomScene::initPlayer(char* buffer) {
 			player->setPosition(w*(4.5+i*3.5)/17, h*3/4);
 			player->setScale(2.0f);
 		}
-		//label->setPosition(0, 40);
-		//label->setColor(Color3B::BLACK);
-		//player->addChild(label);
+		label->setPosition(0, 40);
+		label->setColor(Color3B::BLACK);
+		player->addChild(label);
 		this->addChild(player);
 	}
 	

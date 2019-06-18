@@ -2,7 +2,7 @@
 #include"LoginScene.h"
 #include"SimpleAudioEngine.h"
 
-#include"ResultScene.h"
+//#include"ResultScene.h"
 
 USING_NS_CC;//using namespace cocos2d;
 
@@ -37,7 +37,9 @@ bool Index::init() {
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->preloadBackgroundMusic("audio/bgm1.wav");
 	
-
+	//auto center_x = Director::getInstance()->getWinSize().width / 2;
+	//auto center_y = Director::getInstance()->getWinSize().height / 2;
+	
 	return true;
 }
 void Index::startCallback(Ref* ref) {

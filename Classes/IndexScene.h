@@ -3,7 +3,7 @@
 #define _INDEX_SCENE_H_
 
 #include<cocos2d.h>
-
+#include"ui/CocosGUI.h"
 class Index :public cocos2d::Layer {
 public:
 	static cocos2d::Scene* createScene();
@@ -15,5 +15,6 @@ public:
 	virtual void onEnter();
 	CREATE_FUNC(Index); //宏展开为 create()函数；
 
+	
 };
 #endif // _INDEX_SCENE_H_
