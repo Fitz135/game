@@ -60,12 +60,15 @@ bool Player::initWithPlayerType(int i)
 {
 	CharaType = i;
 	MoveSpeed = 8;
+
 	HP = 100;
 	this->Legs = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Legs/Legs-0.png");
 	this->Body = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Body/Body-0.png");
 	this->Head = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Head/Head-0.png");
 	this->Hand = Sprite::createWithSpriteFrameName("Player" + std::to_string(CharaType) + "/Arm/Arm-0.png");
+
 	this->weapon = nullptr;
+	//ChangeWeapon(0);
 
 	Legs->setPosition(0, -14);
 	Head->setPosition(0, -1);
@@ -86,7 +89,10 @@ bool Player::initWithPlayerType(int i)
 
 	AttackAbleFlag = 1;
 	AttackEndFlag = 1;
-	IsHaveWeapon = 0;
+	IsHaveWeapon = 1;
+	WeaponType = 0;
+	ChangeWeapon(0);
+	///////////////////
 	return true;
 }
 void Player::update(float dt)

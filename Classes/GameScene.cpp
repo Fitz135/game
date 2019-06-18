@@ -55,15 +55,15 @@ bool GameScene::init() {
 
 	auto operate = Operator::create();
 	addChild(operate);
-	/*
-	auto x = Director::getInstance()->getWinSize().width;
+	
+	/*auto x = Director::getInstance()->getWinSize().width;
 	auto y = Director::getInstance()->getWinSize().height;
 	auto exitItem = MenuItemLabel::create(
 		Label::create("Exit", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
 	exitItem->setPosition(-x * 0.45, y *0.45);
 	auto menu = Menu::create();
 	menu->addChild(exitItem);
-	addChild(menu, 10);*/
+	addChild(menu, 5);*/
 
 
 	return true;
@@ -101,7 +101,7 @@ void GameScene::onEnter() {
 			player->setZOrder(100);
 			player->setPosition(posList[id]);
 			if (id != local_Id) {
-				player->setTag(player->getId());
+				player->setTag(player->getId()+6);
 				auto op = OPOperator::create();
 				op->setName("op");
 				player->addChild(op);

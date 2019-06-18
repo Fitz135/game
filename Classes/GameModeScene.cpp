@@ -4,6 +4,7 @@
 #include"RoomScene.h"
 #include"Settings.h"
 #include"IPScene.h"
+#include"HP.h"
 USING_NS_CC;
 
 Scene* GameMode::createScene() {
@@ -47,6 +48,13 @@ bool GameMode::init() {
 	labelId->setPosition(visibleSize.width*0.85 , visibleSize.height*0.715 );
 	labelId->setRotation(-10);
 	this->addChild(labelId);
+
+	/*auto hp = Hp::create();
+	hp->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	hp->setHp(88);
+	addChild(hp);*/
+
+	
 	return true;
 }
 void GameMode::gamestartCallback(Ref* ref) {

@@ -3,7 +3,7 @@
 #define __GAMEMODE_SCENE_H_
 
 #include<cocos2d.h>
-
+#include"ui/CocosGUI.h"
 
 class GameMode :public cocos2d::Scene {
 public:
@@ -15,5 +15,7 @@ public:
 	void menubackCallback(Ref* ref);
 
 	CREATE_FUNC(GameMode);
+
+	
 };
 #endif // !_GAMEMODE_SCENE_H_

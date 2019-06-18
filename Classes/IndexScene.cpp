@@ -2,7 +2,7 @@
 #include"LoginScene.h"
 #include"SimpleAudioEngine.h"
 
-#include"ResultScene.h"
+//#include"ResultScene.h"
 
 USING_NS_CC;//using namespace cocos2d;
 
@@ -29,7 +29,6 @@ bool Index::init() {
 
 	for (int i = 1; i <= 7; i++)
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Player/" + std::to_string(i) + ".plist");
-	//schedule(schedule_selector(Index::test), 0.1);
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Bullet.plist");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("death.plist");
 
@@ -39,16 +38,13 @@ bool Index::init() {
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->preloadBackgroundMusic("audio/bgm1.wav");
 	
-
+	
 	return true;
 }
 void Index::startCallback(Ref* ref) {
 	auto layer = LoginScene::create();
 	layer->setTag(1);
 	this->addChild(layer);
-	/*auto layer = ResultScene::create();
-	layer->setTag(1);
-	this->addChild(layer);*/
 }
 void Index::exitCallback(Ref* ref) {
 	Director::getInstance()->end();
