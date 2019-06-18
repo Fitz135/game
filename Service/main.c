@@ -34,6 +34,7 @@ int msgs=0;
 int players=0; 
 int MSGSIZE=32;
 int isReady[4];
+int isAlive[4];
 int gaming=0;
 /*
  * Ip Utils
@@ -194,11 +195,20 @@ void * getMsg1(void *ptr){
 			}
 				
 		}
+		else if(msg[0]=='d'){
+			int id=(int)msg[2]-49;
+			isAlive[id]=0;
+			int res=0;
+			for(int i=0;i<players;i++){
+				res+=isAlive[i];
+			}
+			if(res==1){
+				gaming=0;
+			}
+		}
 		else{
 			sendMsg(msg);
-			//printf("%s\n",msg);
 		}
-		//printf("%dst msg is %s\n",msgs,buffer);
 	}
 	printf("end\n");
 }
@@ -235,7 +245,17 @@ void * getMsg2(void *ptr){
 			else{
 				printf("%s$\n",msg);
 			}
-				
+		}
+		else if(msg[0]=='d'){
+			int id=(int)msg[2]-49;
+			isAlive[id]=0;
+			int res=0;
+			for(int i=0;i<players;i++){
+				res+=isAlive[i];
+			}
+			if(res==1){
+				gaming=0;
+			}
 		}
 		else{
 			sendMsg(msg);
@@ -280,6 +300,17 @@ void * getMsg3(void *ptr){
 			}
 				
 		}
+		else if(msg[0]=='d'){
+			int id=(int)msg[2]-49;
+			isAlive[id]=0;
+			int res=0;
+			for(int i=0;i<players;i++){
+				res+=isAlive[i];
+			}
+			if(res==1){
+				gaming=0;
+			}
+		}
 		else{
 			sendMsg(msg);
 			//printf("%s\n",msg);
@@ -322,6 +353,17 @@ void * getMsg4(void *ptr){
 				printf("%s$\n",msg);
 			}
 				
+		}
+		else if(msg[0]=='d'){
+			int id=(int)msg[2]-49;
+			isAlive[id]=0;
+			int res=0;
+			for(int i=0;i<players;i++){
+				res+=isAlive[i];
+			}
+			if(res==1){
+				gaming=0;
+			}
 		}
 		else{
 			sendMsg(msg);
@@ -377,6 +419,10 @@ int main(int argc, char *argv[]){
     funcList[1]=&getMsg2;
     funcList[2]=&getMsg3;
     funcList[3]=&getMsg4;
+    
+    for(int i=0;i<4;i++){
+    	isAlive[i]=1;
+	}
     //strncpy(infoList[players].id,buffer,1);
     for(int i=0;i<4;i++){
     	pthread_t ids;
