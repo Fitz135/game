@@ -17,8 +17,6 @@ Player::Player(std::string name, int id) :info(Entity(name, id)){
 	attr.exp = 0;
 	attr.weapon = 1;
 	attr.superPower = 0;
-
-	
 }
 /*Player* Player::getMychara(char* str) {
 	return dynamic_cast<Player*>(GameScene::getCurrentMap()->getChildByName(str));

@@ -111,12 +111,12 @@ void Operator::OnKeyReleased(EventKeyboard::KeyCode keyCode, Event * event)
 	int keycode = (int)keyCode - 26;
 	if (0 <= keycode && 3 >= keycode)
 	{
+		
 		if (!gameMode) {
 			char buffer[MSGSIZE];
 			sprintf(buffer, "%c$%d$%d", KeyRelease, local_Id, keycode);
 			client->Send(buffer, MSGSIZE);
 		}
-		
 		PressNum--;
 		this->unschedule(move[keycode]);
 		if (!PressNum)
@@ -144,6 +144,7 @@ void Operator::MoveDOWN(float dt)
 
 	if (player->HP <= 0 || !scene->isAccessable(player->getPosition() + Vec2(0, -player->MoveSpeed), 1))
 	{
+
 		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, -player->MoveSpeed));
 		player->runAction(move);
 	}

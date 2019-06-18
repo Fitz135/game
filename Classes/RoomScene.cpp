@@ -58,13 +58,15 @@ void RoomScene::connectService(char* buffer){
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-	char * ip =getIp();
+	if (ser_ip == "NULL") {
+		ser_ip=getIp();
+	}
 
 	client = new ODSocket();
 	client->Init();
 	bool res = client->Create(AF_INET, SOCK_STREAM, 0);
 	log("Create:");
-	res = client->Connect(ip, 2111);//
+	res = client->Connect(ser_ip.c_str(), 2111);//
 	log("Connect:");
 	if (res) {
 		
@@ -163,7 +165,7 @@ void RoomScene::sendCallback(Ref* ref) {
 	auto msg=dynamic_cast<ui::TextField*>(this->getChildByName("TextField"))->getString().c_str();
 	sprintf(buffer, "%c$%d$%s", Dialog, local_Id, msg);
 	client->Send(buffer, MSGSIZE);
-	//addMsg(dynamic_cast<ui::TextField*>(this->getChildByName("TextField"))->getString());
+	
 }
 
 void RoomScene::onEnter(){

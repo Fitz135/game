@@ -26,11 +26,11 @@ public:
 	void AiAttack(float dt);
 	int MapInfo[40][40];
 	int Dir[2];
-	void findMyWay(float dt);
-	int getManhattanDis(Vec2& from, Vec2& to);
-	std::vector<Vec2>::iterator getSmallestF_Gvalue(const std::map<Vec2, int>&, 
-						const std::map<Vec2, int>&, std::vector<Vec2> &myStack);
-	std::string sortWay( std::vector<Vec2>&, const Vec2& );
+	//void findMyWay(float dt);
+	//int getManhattanDis(Vec2& from, Vec2& to);
+//std::vector<Vec2>::iterator getSmallestF_Gvalue(const std::map<Vec2, int>&, 
+					//	const std::map<Vec2, int>&, std::vector<Vec2> &myStack);
+	//std::string sortWay( std::vector<Vec2>&, const Vec2& );
 
 };
 #endif //end AI_PLAYER

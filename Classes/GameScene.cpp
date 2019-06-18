@@ -6,6 +6,7 @@
 #include"OPOperator.h"
 #include"thread"
 #include"AiPlayer.h"
+#include"AiTest.h"
 #include"Settings.h"
 USING_NS_CC;
 //static Player* player;
@@ -54,16 +55,17 @@ bool GameScene::init() {
 
 	auto operate = Operator::create();
 	addChild(operate);
-
-	auto x=Director::getInstance()->getWinSize().width;
+	/*
+	auto x = Director::getInstance()->getWinSize().width;
 	auto y = Director::getInstance()->getWinSize().height;
-
 	auto exitItem = MenuItemLabel::create(
 		Label::create("Exit", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
-	exitItem->setPosition(-x *0.45, y *0.45);
+	exitItem->setPosition(-x * 0.45, y *0.45);
 	auto menu = Menu::create();
 	menu->addChild(exitItem);
-	addChild(menu,5);
+	addChild(menu, 10);*/
+
+
 	return true;
 }
 
@@ -148,6 +150,24 @@ void GameScene::update(float delta)
 	this->PickMapItems();
 	this->IsBulletIntoWall();
 	this->IsBulletIntoPlayer();
+
+
+	////////ai//////
+	/*Player* player = dynamic_cast<Player* >(Players[0]);
+	auto pos_x = player->getPosition().x;
+	auto pos_y = player->getPosition().y;
+	Player* ai = dynamic_cast<Player*>(Players[1]);
+	auto m_x = ai->getPosition().x;
+	auto m_y = ai->getPosition().y;
+	if (pos_x >= m_x) {
+		char buffer[MSGSIZE];
+		//sprinf(buffer, "%d$2$3");
+	}*/
+
+
+	
+		
+	
 }
 void GameScene::IsDead()
 {
@@ -374,38 +394,4 @@ void GameScene::IsBulletIntoWall()
 
 void GameScene::exitCallback(Ref*ref) {
 	Director::getInstance()->popScene();
-}
-////////AI need//////////
-bool GameScene::isInMap(const cocos2d::Vec2& pos) {
-	auto map = dynamic_cast<TMXTiledMap*>(this->getChildByName("Map"));
-	auto mapSize = map->getMapSize();
-	auto tileSize = map->getTileSize();
-	return 0 <= pos.x && pos.x < mapSize.width * tileSize.width
-		&& 0 <= pos.y && pos.y < mapSize.height * tileSize.height;
-}
-
-Vec2 GameScene::positionToTileCoord(const cocos2d::Vec2 & pos)
-{
-	auto map = dynamic_cast<TMXTiledMap*>(this->getChildByName("Map"));
-	cocos2d::Size mapSize = map->getMapSize();
-	cocos2d::Size tileSize = map->getTileSize();
-
-	int x = pos.x / tileSize.width;
-	int y = (mapSize.height * tileSize.height - pos.y) / tileSize.height;
-	// edge case
-	x = MIN(MAX(0, x), mapSize.width - 1);
-	y = MIN(MAX(0, y), mapSize.height - 1);
-	//CCLOG("coord x: %f y: %f", x, y);
-	return Vec2(x, y);
-}
-Vec2 GameScene::tileCoordToPosition(const cocos2d::Vec2 & coord)
-{
-	auto map = dynamic_cast<TMXTiledMap*>(this->getChildByName("Map"));
-	auto mapSize = map->getMapSize();
-	auto tileSize = map->getTileSize();
-
-	int x = coord.x * tileSize.width + tileSize.width / 2;
-	int y = (mapSize.height - coord.y) * tileSize.height - tileSize.height / 2;
-	//CCLOG("pos x: %f y: %f", x, y);
-	return Vec2(x, y);
 }

@@ -128,7 +128,7 @@ void AiPlayer::AiAttack(float dt)
 		}
 		this->scheduleOnce(schedule_selector(AiPlayer::AiAttack), ai->AttackSpeed);
 }
-int AiPlayer::getManhattanDis(Vec2& from, Vec2& to) {
+/*int AiPlayer::getManhattanDis(Vec2& from, Vec2& to) {
 	return abs(from.x - to.x) + abs(from.y + to.y);
 }
 
@@ -223,4 +223,4 @@ void AiPlayer::findMyWay(float dt) {
 	}
 	return;// const_cast<char*>("AiNumber:") + sortWay(closedStack, aiMeCoord);
 }
-
+*/

@@ -20,10 +20,10 @@ public:
 	virtual void onExit();
 	void update(float delta);
 	void SpawnItems(float dt);
+
+
 	bool isAccessable(Point Position, int Direction);
 	bool isInMap(const cocos2d::Vec2 & pos);
-	Vec2 positionToTileCoord(const cocos2d::Vec2 & pos);
-	Vec2 tileCoordToPosition(const cocos2d::Vec2 & coord);
 
 	void MapMove();
 	void PickMapItems();

@@ -111,3 +111,4 @@ std::string newMsg;
 
 bool isWin = true; 
 bool gameMode;
+std::string ser_ip="NULL";
