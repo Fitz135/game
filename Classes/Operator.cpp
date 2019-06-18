@@ -42,8 +42,10 @@ void Operator::MouseStart()
 }
 void Operator::PassOperatorInfo(float dt)
 {
-	auto Player = getMyplayer("Player");
-	if (MouseDown&&Player->AttackAbleFlag&&Player->IsHaveWeapon)
+	auto scene =(GameScene*) this->getParent();
+	auto map = (TMXTiledMap*)scene->getChildByName("Map");
+	auto player = (Player*)map->getChildByName("Player");
+	if (MouseDown&&player->AttackAbleFlag&&player->IsHaveWeapon)
 	{
 		if (!gameMode) {
 			char buffer[MSGSIZE];
@@ -51,9 +53,9 @@ void Operator::PassOperatorInfo(float dt)
 			client->Send(buffer, MSGSIZE);
 		}
 		
-		Player->AttackBegan(MousePosition);
+		player->AttackBegan(MousePosition);
 	}
-	if (!MouseDown&&Player->AttackEndFlag&&Player->IsHaveWeapon)
+	if (!MouseDown&&player->AttackEndFlag&&player->IsHaveWeapon)
 	{
 
 		if (!gameMode) {
@@ -61,9 +63,7 @@ void Operator::PassOperatorInfo(float dt)
 			sprintf(buffer, "%c$%d$%d", MouseRelease, local_Id, PressNum);
 			client->Send(buffer, MSGSIZE);
 		}
-		
-
-		Player->AttackEnd(PressNum);
+		player->AttackEnd(PressNum);
 		this->unschedule(schedule_selector(Operator::PassOperatorInfo));
 	}
 }
@@ -96,8 +96,8 @@ void Operator::OnKeyPressed(EventKeyboard::KeyCode keyCode, Event * event)
 		
 		if (!PressNum)
 		{
-			auto Player = getMyplayer("Player");
-			Player->MoveBegin();
+			auto player = getMyplayer("Player");
+			player->MoveBegin();
 		}
 		PressNum++;
 		this->schedule(move[keycode], 2.0f / 60);
@@ -119,8 +119,8 @@ void Operator::OnKeyReleased(EventKeyboard::KeyCode keyCode, Event * event)
 		this->unschedule(move[keycode]);
 		if (!PressNum)
 		{
-			auto Player = getMyplayer("Player");
-			Player->MoveEnd();
+			auto player = getMyplayer("Player");
+			player->MoveEnd();
 		}
 	}
 }
@@ -128,50 +128,47 @@ void Operator::OnKeyReleased(EventKeyboard::KeyCode keyCode, Event * event)
 void Operator::MoveUP(float dt)
 {
 	auto scene = (GameScene*)this->getParent();
-	auto Player = getMyplayer("Player");
-	if (!scene->isAccessable(Player->getPosition() + Vec2(0, Player->MoveSpeed), 3))
+	auto player = getMyplayer("Player");
+	if (player->HP <= 0 || !scene->isAccessable(player->getPosition() + Vec2(0, player->MoveSpeed), 3))
 	{
-		
-		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, Player->MoveSpeed));
-		Player->runAction(move);
+		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, player->MoveSpeed));
+		player->runAction(move);
 	}
 }
 void Operator::MoveDOWN(float dt)
 {
 	auto scene = (GameScene*)this->getParent();
-	auto Player = getMyplayer("Player");
+	auto player = getMyplayer("Player");
 
-	if (!scene->isAccessable(Player->getPosition() + Vec2(0, -Player->MoveSpeed), 1))
+	if (player->HP <= 0 || !scene->isAccessable(player->getPosition() + Vec2(0, -player->MoveSpeed), 1))
 	{
-		
-		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, -Player->MoveSpeed));
-		Player->runAction(move);
+
+		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, -player->MoveSpeed));
+		player->runAction(move);
 	}
 
 }
 void Operator::MoveLEFT(float dt)
 {
 	auto scene = (GameScene*)this->getParent();
-	auto Player = getMyplayer("Player");
-	if (Player->AttackEndFlag && !MouseDown)
-		Player->setScaleX(-1);
-	if (!scene->isAccessable(Player->getPosition() + Vec2(-Player->MoveSpeed, 0), 2))
+	auto player = getMyplayer("Player");
+	if (player->WeaponType==5||(player->AttackEndFlag && !MouseDown))
+		player->setScaleX(-1);
+	if (player->HP <= 0 || !scene->isAccessable(player->getPosition() + Vec2(-player->MoveSpeed, 0), 2))
 	{
-		
-		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(-Player->MoveSpeed, 0));
-		Player->runAction(move);
+		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(-player->MoveSpeed, 0));
+		player->runAction(move);
 	}
 }
 void Operator::MoveRIGHT(float dt)
 {
 	auto scene = (GameScene*)this->getParent();
-	auto Player = getMyplayer("Player");
-	if (Player->AttackEndFlag && !MouseDown)
-		Player->setScaleX(1);
-	if (!scene->isAccessable(Player->getPosition() + Vec2(Player->MoveSpeed, 0), 0))
+	auto player = getMyplayer("Player");
+	if (player->WeaponType == 5 || (player->AttackEndFlag && !MouseDown))
+		player->setScaleX(1);
+	if (player->HP<=0||!scene->isAccessable(player->getPosition() + Vec2(player->MoveSpeed, 0), 0))
 	{
-		
-		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(Player->MoveSpeed, 0));
-		Player->runAction(move);
+		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(player->MoveSpeed, 0));
+		player->runAction(move);
 	}
 }

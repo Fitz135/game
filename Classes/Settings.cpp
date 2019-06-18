@@ -93,14 +93,14 @@ void updatePlayer(char* buffer) {
 		if (id != local_Id)
 			dynamic_cast<OPOperator*>(
 				dynamic_cast<Player*>(
-					GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->KeyStart(buffer);
+					GameScene::getCurrentMap()->getChildByTag(id+6))->getChildByName("op"))->KeyStart(buffer);
 	}
 	else if (buffer[0] == MousePress || buffer[0] == MouseRelease) {
 		int id = static_cast<int>(buffer[2]) - 48;
 		if (id != local_Id)
 			dynamic_cast<OPOperator*>(
 				dynamic_cast<Player*>(
-					GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->MouseStart(buffer);
+					GameScene::getCurrentMap()->getChildByTag(id+6))->getChildByName("op"))->MouseStart(buffer);
 	}
 }
 RoomScene *roomscene;

@@ -62,7 +62,6 @@ void RoomScene::connectService(char* buffer){
 		ser_ip=getIp();
 	}
 
-
 	client = new ODSocket();
 	client->Init();
 	bool res = client->Create(AF_INET, SOCK_STREAM, 0);

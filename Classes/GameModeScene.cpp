@@ -49,10 +49,10 @@ bool GameMode::init() {
 	labelId->setRotation(-10);
 	this->addChild(labelId);
 
-	auto hp = Hp::create();
+	/*auto hp = Hp::create();
 	hp->setPosition(visibleSize.width / 2, visibleSize.height / 2);
 	hp->setHp(88);
-	addChild(hp);
+	addChild(hp);*/
 
 	
 	return true;

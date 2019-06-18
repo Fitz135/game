@@ -29,16 +29,15 @@ bool Index::init() {
 
 	for (int i = 1; i <= 7; i++)
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Player/" + std::to_string(i) + ".plist");
-	//schedule(schedule_selector(Index::test), 0.1);
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Bullet.plist");
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("death.plist");
+
 
 
 
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->preloadBackgroundMusic("audio/bgm1.wav");
 	
-	//auto center_x = Director::getInstance()->getWinSize().width / 2;
-	//auto center_y = Director::getInstance()->getWinSize().height / 2;
 	
 	return true;
 }
@@ -46,9 +45,6 @@ void Index::startCallback(Ref* ref) {
 	auto layer = LoginScene::create();
 	layer->setTag(1);
 	this->addChild(layer);
-	/*auto layer = ResultScene::create();
-	layer->setTag(1);
-	this->addChild(layer);*/
 }
 void Index::exitCallback(Ref* ref) {
 	Director::getInstance()->end();

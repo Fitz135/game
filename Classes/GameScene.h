@@ -21,14 +21,15 @@ public:
 	void update(float delta);
 	void SpawnItems(float dt);
 
-	void AiControl(float);
+
+	bool isAccessable(Point Position, int Direction);
+	bool isInMap(const cocos2d::Vec2 & pos);
 
 	void MapMove();
-	bool isAccessable(Point Position, int Direction);
 	void PickMapItems();
 	void IsBulletIntoWall();
 	void IsBulletIntoPlayer();
-
+	void IsDead();
 	void IsWeaponIntoPlayer();
 
 	void exitCallback(Ref*ref);
@@ -42,6 +43,6 @@ public:
 	CCArray* MapItems;
 	CCArray* Players;
 	CCArray*Bullets;
-	//CCArray*Weapons;
+	Sprite* Bulletset;
 };
 #endif // !_GAME_SCENE_H_

@@ -44,6 +44,7 @@
 					"Sword.png",
 					"BubbleGun.png",
 					"Boomerang.png",
+					"Lance.png",
 					"Lance.png"
 			};
 		}
