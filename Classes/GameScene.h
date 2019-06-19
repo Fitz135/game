@@ -33,6 +33,7 @@ private:
 	void PickMapItems();
 	void MoveMap();
 	void MovePlayer();
+	void exitCallback(Ref * ref);
 	void SpawnItems(float dt);
 	void SpawnItems(Vec3 pos);
 };

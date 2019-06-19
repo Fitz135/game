@@ -47,8 +47,17 @@ bool GameScene::init() {
 
 	auto operate = Operator::create();
 	addChild(operate);
+	if (gameMode) {
+		auto x = Director::getInstance()->getWinSize().width;
+		auto y = Director::getInstance()->getWinSize().height;
+		auto exitItem = MenuItemLabel::create(
+			Label::create("Exit", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
+		exitItem->setPosition(-x * 0.45, y *0.45);
+		auto menu = Menu::create();
+		menu->addChild(exitItem);
+		addChild(menu, 100);
+	}
 	
-
 	return true;
 }
 
@@ -396,4 +405,8 @@ void GameScene::MovePlayer() {
 		}
 		cmdList.pop_front();
 	}
+}
+void GameScene::exitCallback(Ref*ref)
+{
+	Director::getInstance()->popScene();
 }

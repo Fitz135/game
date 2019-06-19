@@ -50,9 +50,6 @@ bool ResultScene::init() {
 void ResultScene::reroomCallback(Ref* ref) {
 
 		Director::getInstance()->popScene();
-	
-	/*Director::getInstance()->getRunningScene()->getChildByTag(10)->removeChildByName("solid");
-	Director::getInstance()->getRunningScene()->getChildByTag(10)->removeChildByTag(1);*/
 }
 void ResultScene::exitCallback(Ref* ref) {
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
