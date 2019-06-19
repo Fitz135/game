@@ -25,7 +25,7 @@ Player* Player::create(std::string name,int id)
 	{	
 		if(id==local_Id)
 		player->setName("Player");
-		player->setTag(id);
+		player->setTag(id+6);
 		player->autorelease();
 		return player;
 	}
@@ -201,6 +201,7 @@ void Player::AttackBegan(Point TouchPosition)
 		else
 			this->setScaleX(1);
 	}
+	if(weapon)
 	(weapon->*(weapon->WeaponMode))(TouchPosition);
 	return;
 }

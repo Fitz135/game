@@ -79,7 +79,7 @@ void GameScene::onEnter() {
 			player->setZOrder(100);
 			player->setPosition(posList[id]);
 			if (id != local_Id) {
-				player->setTag(player->getId());
+				//player->setTag(player->getId());
 				auto op = OPOperator::create();
 				op->setName("op");
 				player->addChild(op);
@@ -237,11 +237,10 @@ void GameScene::PickMapItems()
 				}
 				else 
 				{
-				;
 					if (0< player->HP <= 80)player->HP += 20;
 					else if (player->HP > 80)player->HP = 100;
 				}
-				mapitems->addObject(imapitem);
+				mapitems->addObject(mapitem);
 			}
 		}
 	}
@@ -276,9 +275,9 @@ void GameScene::Collision()
 			auto bulletZone = bullet->boundingBox();
 			if (bulletZone.intersectsRect(playerZone))
 			{
-				if (dynamic_cast<Sprite*>(ibullet)->getTag() != dynamic_cast<Player*>(iplayer)->getTag())
+				if (dynamic_cast<Sprite*>(bullet)->getTag() != dynamic_cast<Player*>(player)->getTag())
 				{
-					dynamic_cast<Player*>(iplayer)->HP -= 10;
+					dynamic_cast<Player*>(player)->HP -= 10;
 					bullets->addObject(bullet);
 				}
 			}
@@ -375,61 +374,6 @@ void GameScene::Collision()
 		unscheduleUpdate();
 	}
 }
-void GameScene::exitCallback(Ref*ref) {
-
-	MenuItemLabel* item = (MenuItemLabel*)ref;
-	auto ai = static_cast<AiTest*>(tileMap->getChildByName("aitest"));
-	char buffer[MSGSIZE];
-	if (item->getString() == "up") {
-		if (!ai->isUp) {
-			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 2);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
-			ai->isUp = true;
-		}
-		else {
-			ai->isUp = false;
-			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 2);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
-		}
-	}
-	else if (item->getString() == "down") {
-		if (!ai->isDown) {
-			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 3);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
-			ai->isDown = true;
-		}
-		else {
-			ai->isDown = false;
-			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 3);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
-		}
-	}
-	else if (item->getString() == "right") {
-		if (!ai->isRight) {
-			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 1);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
-			ai->isRight = true;
-		}
-		else {
-			ai->isRight = false;
-			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 1);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
-		}
-	}
-	else if (item->getString() == "left") {
-		if (!ai->isLeft) {
-			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 0);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
-			ai->isLeft = true;
-		}
-		else {
-			ai->isLeft = false;
-			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 0);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
-		}
-	}
-	
-}
 void GameScene::MovePlayer() {
 	
 	if (!cmdList.empty()) {
@@ -440,16 +384,12 @@ void GameScene::MovePlayer() {
 		if (buffer[0] == KeyPress || buffer[0] == KeyRelease) {
 			int id = static_cast<int>(buffer[2]) - 48;
 			if (id != local_Id)
-				dynamic_cast<OPOperator*>(
-					dynamic_cast<Player*>(
-						GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->KeyStart(buffer);
+				dynamic_cast<OPOperator*>(GameScene::getCurrentMap()->getChildByTag(id+6)->getChildByName("op"))->KeyStart(buffer);
 		}
 		else if (buffer[0] == MousePress || buffer[0] == MouseRelease) {
 			int id = static_cast<int>(buffer[2]) - 48;
 			if (id != local_Id)
-				dynamic_cast<OPOperator*>(
-					dynamic_cast<Player*>(
-						GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->TouchStart(buffer);
+				dynamic_cast<OPOperator*>(GameScene::getCurrentMap()->getChildByTag(id+6)->getChildByName("op"))->TouchStart(buffer);
 		}
 		cmdList.pop_front();
 	}
