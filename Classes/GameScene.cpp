@@ -279,7 +279,7 @@ void GameScene::Collision()
 				if (dynamic_cast<Sprite*>(ibullet)->getTag() != dynamic_cast<Player*>(iplayer)->getTag())
 				{
 					dynamic_cast<Player*>(iplayer)->HP -= 10;
-					bullets->addObject(ibullet);
+					bullets->addObject(bullet);
 				}
 			}
 			else if(bullet->getName()== "Arrow" || bullet->getName() == "Bubble")
@@ -297,7 +297,7 @@ void GameScene::Collision()
 				}
 				if (flag)
 				{
-					bullets->addObject(ibullet);
+					bullets->addObject(bullet);
 				}
 			}
 		}
