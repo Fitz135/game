@@ -1,16 +1,8 @@
 #include "AiPlayer.h"
 #include"Settings.h"
-#include <string>
-#include <set>
-#include <map>
-#include <vector>
+#include"Weapon.h"
 
 using namespace cocos2d;
-
-inline Player* getMyplayer(char* str) {
-	auto map = GameScene::getCurrentMap();
-	return dynamic_cast<Player*>(map->getChildByName(str));
-}
 
 bool AiPlayer::init() {
 	return true;
@@ -21,11 +13,10 @@ void AiPlayer::onEnter() {
 }
 void AiPlayer::AiMove(float dt)
 {
-	auto ai = (Player*)this->getParent();
-	auto map = (TMXTiledMap*)ai->getParent();
-	auto player = (Player*)map->getChildByName("Player");
-	auto scene = (GameScene*)map->getParent();
-	auto Meta = map->getLayer("Meta");
+	auto ai =dynamic_cast<Player*>(this->getParent());
+	auto scene = dynamic_cast<GameScene*>(ai->getParent()->getParent());
+	auto player = dynamic_cast<Player*>(ai->getParent()->getChildByName("Player"));
+
 	auto aiPosition = ai->getPosition();
 	auto playerPosition = player->getPosition();
 	int x, y;
@@ -33,22 +24,22 @@ void AiPlayer::AiMove(float dt)
 	srand(int(time(0)) + rand());
 	while (true)
 	{
-		auto weap = (Weapon*)ai->weapon;
+		auto weap = dynamic_cast<Weapon*>(ai->weapon);
 		if (ai->HP <= 0)
 		{
-		x = (bool)(playerPosition.x > aiPosition.x) * 2 - 1;
-		y = (bool)(playerPosition.y > aiPosition.y) * 2 - 1;
+		x = static_cast<bool>(playerPosition.x > aiPosition.x) * 2 - 1;
+		y = static_cast<bool>(playerPosition.y > aiPosition.y) * 2 - 1;
 		break;
 		}
 		else if (!ai->weapon&&moveflag)
 		{
 			moveflag = 0;
-			auto mapitems = (Array*)scene->MapItems;
+			auto mapitems = dynamic_cast<Array*>(scene->MapItems);
 			if (mapitems->count())
 			{
-				auto weaponPosition = ((Sprite*)mapitems->getObjectAtIndex(0))->getPosition();
-				x = (bool)(weaponPosition.x > aiPosition.x) * 2 - 1;
-				y = (bool)(weaponPosition.y > aiPosition.y) * 2 - 1;
+				auto weaponPosition = dynamic_cast<Sprite*>(mapitems->getObjectAtIndex(0))->getPosition();
+				x = static_cast<bool>(weaponPosition.x > aiPosition.x) * 2 - 1;
+				y = static_cast<bool>(weaponPosition.y > aiPosition.y) * 2 - 1;
 				if (!scene->isAccessable(aiPosition + Vec2(x, y)*ai->MoveSpeed, dir[x + 1][y + 1]))
 				{
 					break;
@@ -63,8 +54,8 @@ void AiPlayer::AiMove(float dt)
 		}
 		else if(moveflag)
 		{
-			x = (bool)(playerPosition.x > aiPosition.x) * 2 - 1;
-			y = (bool)(playerPosition.y > aiPosition.y) * 2 - 1;
+			x = static_cast<bool>(playerPosition.x > aiPosition.x) * 2 - 1;
+			y = static_cast<bool>(playerPosition.y > aiPosition.y) * 2 - 1;
 			if(!scene->isAccessable(aiPosition + Vec2(x, y)*ai->MoveSpeed, dir[x + 1][y + 1]))
 			{
 				break;
@@ -115,13 +106,13 @@ void AiPlayer::AiMove(float dt)
 }
 void AiPlayer::AiAttack(float dt)
 {
-
-	    auto ai = (Player*)this->getParent();
+	    auto ai = dynamic_cast<Player*>(this->getParent());
 		if (ai->IsHaveWeapon)
 		{
-			auto map = (TMXTiledMap*)ai->getParent();
-			auto mapPosition = map->getPosition();
+			auto map = dynamic_cast<TMXTiledMap*>(ai->getParent());
 			auto player = map->getChildByName("Player");
+
+			auto mapPosition = map->getPosition();
 			auto aiPosition = ai->getPosition();
 			auto playerPosition = player->getPosition();
 			auto dir = playerPosition + mapPosition;

@@ -10,13 +10,6 @@
 #include"Settings.h"
 #include"ResultScene.h"
 USING_NS_CC;
-//static Player* player;
-
-//#include "SimpleAudioEngine.h"
-
-//#include <string>
-//#include <iostream>
-
 
 Scene* GameScene::createScene()
 {
@@ -25,11 +18,9 @@ Scene* GameScene::createScene()
 	auto game_layer = GameScene::create();
 
 	game_layer->setName("GameScene");
-	game_layer->setTag(10);
 	scene->addChild(game_layer);
 
 	return scene;
-
 }
 
 TMXTiledMap* GameScene::getCurrentMap() {
@@ -57,14 +48,6 @@ bool GameScene::init() {
 	auto operate = Operator::create();
 	addChild(operate);
 	
-	auto x = Director::getInstance()->getWinSize().width;
-	auto y = Director::getInstance()->getWinSize().height;
-
-	/*auto exitItem = MenuItemLabel::create(Label::create("Exit", "fonts/Cordelia.ttf", 30), CC_CALLBACK_1(GameScene::exitCallback, this));
-	exitItem->setPosition(-x * 0.45, y *0.45);
-	auto menu = Menu::create();
-	menu->addChild(exitItem);
-	addChild(menu, 100);*/
 
 	return true;
 }
@@ -73,19 +56,14 @@ void GameScene::onEnter() {
 	Layer::onEnter();
 	
 	tileMap = TMXTiledMap::create("Map/Map01.tmx");
-	BG = tileMap->getLayer("Ground");
-	twall = tileMap->getLayer("Wall");
 	Meta = tileMap->getLayer("Meta");
 	tileMap->setName("Map");
-	this->addChild(tileMap);
+	addChild(tileMap);
 
 	Bulletset = Sprite::create();
 	tileMap->addChild(Bulletset,100);
 	Itemset = Sprite::create();
 	tileMap->addChild(Itemset, 100);
-
-	auto w = Director::getInstance()->getWinSize().width / (players + 1);
-	auto h = Director::getInstance()->getWinSize().height / (players + 1);
 
 	posList.push_back(Vec2(100, 100));
 	posList.push_back(Vec2(100, 300));
@@ -106,7 +84,7 @@ void GameScene::onEnter() {
 				op->setName("op");
 				player->addChild(op);
 			}
-			tileMap->addChild(player->HPBar);
+			tileMap->addChild(player->HPBar,100);
 			tileMap->addChild(player);
 			Players->addObject(player);
 		}
@@ -118,29 +96,26 @@ void GameScene::onEnter() {
 		auto player = Player::create(local_username, ap);
 		player->setPosition(posList[0]);
 		player->setZOrder(100);
-		tileMap->addChild(player->HPBar);
+		tileMap->addChild(player->HPBar,100);
 		tileMap->addChild(player);
 		Players->addObject(player);
 
-		for (int i = 4; i <= 4; i++)
+		for (int i = 4; i <= 6; i++)
 		{
 			auto ai = Player::create("ai" + std::to_string(i), i);
 			ai->IsAI = 1;
 			ai->setPosition(posList[i - 3]);
 			ai->weapon = nullptr;
 			ai->MoveBegin();
-			tileMap->addChild(ai->HPBar);
-			tileMap->addChild(ai);
+			Players->addObject(ai);
+			tileMap->addChild(ai->HPBar,100);
+			tileMap->addChild(ai,100);
 
 			auto aiop = AiPlayer::create();
 			aiop->setName("aiop");
-			ai->setZOrder(100);
 			ai->addChild(aiop);
-			Players->addObject(ai);
 		}
 	}
-
-
 	this->scheduleUpdate();
 	if(gameMode)this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
 }
@@ -151,9 +126,9 @@ void GameScene::onExit() {
 void GameScene::update(float delta)
 {
 	if (!gameMode&&isNewProp)SpawnItems(propPos);
-	MapMove();
+	MoveMap();
 	PickMapItems();
-	IsBulletIntoPlayer();
+	Collision();
 	MovePlayer();
 }
 void GameScene::SpawnItems(float dt)
@@ -184,7 +159,7 @@ void GameScene::SpawnItems(Vec3 pos)
 	isNewProp = false;
 	float x = pos.x,y=pos.y;
 	int type = static_cast<int>(pos.z);
-		auto git = Meta->getTileGIDAt(Vec2((int)floor(x / 32), (int)(39 - floor(y / 32))));
+		auto git = Meta->getTileGIDAt(Vec2(static_cast<int>(floor(x / 32)), static_cast<int>(39 - floor(y / 32))));
 		auto value = tileMap->getPropertiesForGID(git);
 		auto valueMap = value.asValueMap();
 		if (!valueMap.at("Collidable").asBool())
@@ -199,10 +174,9 @@ void GameScene::SpawnItems(Vec3 pos)
 			this->Itemset->addChild(items);
 		}
 }
-void GameScene::MapMove()
+void GameScene::MoveMap()
 {
-	auto map = this->getChildByName("Map");
-	auto player = map->getChildByName("Player");
+	auto player = tileMap->getChildByName("Player");
 	auto playerPosition = player->getPosition();
 	auto visiblesize = Director::getInstance()->getOpenGLView()->getVisibleSize();
 
@@ -218,13 +192,13 @@ bool GameScene::isAccessable(Point Position, int Direction)
 	if (Position.x - 9 <=0 || Position.y - 24 <=0 || Position.x + 9 >= 1280 || Position.y + 18 >= 1280)
 		return true;
 	int dir[8][2] = { {9,0},{0,-24},{-9,0},{0,18},{9,-24},{-9,-24},{-9,18},{9,18}};
-	auto git = Meta->getTileGIDAt(Vec2((int)floor((Position.x + dir[Direction][0]) / 32), (int)(39 - floor((Position.y + dir[Direction][1]) / 32))));
+	auto git = Meta->getTileGIDAt(Vec2(static_cast<int>(floor((Position.x + dir[Direction][0]) / 32)), static_cast<int>(39 - floor((Position.y + dir[Direction][1]) / 32))));
 	auto value = tileMap->getPropertiesForGID(git);
 	auto valueMap = value.asValueMap();
 	if (valueMap.at("Collidable").asBool())return true;
 	for (int i=0; i < 8; i++)
 	{
-		auto git = Meta->getTileGIDAt(Vec2((int)floor((Position.x + dir[i][0]) / 32), (int)(39 - floor((Position.y + dir[i][1]) / 32))));
+		auto git = Meta->getTileGIDAt(Vec2(static_cast<int>(floor((Position.x + dir[i][0]) / 32)), static_cast<int>(39 - floor((Position.y + dir[i][1]) / 32))));
 		auto value = tileMap->getPropertiesForGID(git);
 		auto valueMap = value.asValueMap();
 		if (valueMap.at("Collidable").asBool())return true;
@@ -243,17 +217,16 @@ void GameScene::PickMapItems()
 
 	CCARRAY_FOREACH(Players, iplayer)
 	{
-		Sprite* player = (Sprite*)iplayer;
+		auto player =dynamic_cast<Player*>(iplayer);
 		auto playerZone = CCRectMake(player->getPositionX() - 9, player->getPositionY() - 24, 18, 42);
 		CCARRAY_FOREACH(MapItems, imapitem)
 		{
-			Sprite* mapitem = (Sprite*)imapitem;
+			Sprite* mapitem = dynamic_cast<Sprite*>(imapitem);
 			auto mapitemZone = CCRectMake(mapitem->getPositionX(), mapitem->getPositionY(), mapitem->getContentSize().width, mapitem->getContentSize().height);
 
 			if (mapitemZone.intersectsRect(playerZone))
 			{
-				auto player = (Player*)iplayer;
-				auto type = ((Sprite*)imapitem)->getTag();
+				auto type = dynamic_cast<Sprite*>(imapitem)->getTag();
 				if (type != 6)
 				{
 					player->WeaponType = type;
@@ -275,13 +248,13 @@ void GameScene::PickMapItems()
 	CCARRAY_FOREACH(mapitems, imapitem)
 	{
 		MapItems->removeObject(imapitem);
-		Sprite* mapitem = (Sprite*)imapitem;
+		auto mapitem = dynamic_cast<Sprite*>(imapitem);
 		mapitem->removeFromParentAndCleanup(TRUE);
 	}
 
 }
 
-void GameScene::IsBulletIntoPlayer()
+void GameScene::Collision()
 {
 	auto players = Array::create();
 	players->retain();
@@ -298,13 +271,13 @@ void GameScene::IsBulletIntoPlayer()
 		auto playerZone = CCRectMake(player->getPositionX() - 9, player->getPositionY() - 24, 18, 42);
 		CCARRAY_FOREACH(Bullets, ibullet)
 		{
-			Sprite* bullet = (Sprite*)ibullet;
+			auto bullet = dynamic_cast<Sprite*>(ibullet);
 			auto bulletZone = bullet->boundingBox();
 			if (bulletZone.intersectsRect(playerZone))
 			{
-				if (((Sprite*)ibullet)->getTag() != ((Player*)iplayer)->getTag())
+				if (dynamic_cast<Sprite*>(ibullet)->getTag() != dynamic_cast<Player*>(iplayer)->getTag())
 				{
-					((Player*)iplayer)->HP -= 10;
+					dynamic_cast<Player*>(iplayer)->HP -= 10;
 					bullets->addObject(ibullet);
 				}
 			}
@@ -316,7 +289,7 @@ void GameScene::IsBulletIntoPlayer()
 					flag = 1;
 				else
 				{
-					auto git = Meta->getTileGIDAt(Vec2((int)floor((bulletPosition.x) / 32), (int)(39 - floor((bulletPosition.y) / 32))));
+					auto git = Meta->getTileGIDAt(Vec2(static_cast<int>(floor((bulletPosition.x) / 32)), static_cast<int>(39 - floor((bulletPosition.y) / 32))));
 					auto value = tileMap->getPropertiesForGID(git);
 					auto valueMap = value.asValueMap();
 					flag = valueMap.at("Collidable").asBool();
@@ -334,7 +307,7 @@ void GameScene::IsBulletIntoPlayer()
 			auto weaponZone = CCRectMake(tmpZone.origin.x + player->getPositionX(), tmpZone.origin.y + player->getPositionY(), tmpZone.size.width, tmpZone.size.height);;
 			CCARRAY_FOREACH(Players, iplayer2)
 			{
-				Player* player2 = (Player*)iplayer2;
+				auto player2 =dynamic_cast<Player*>(iplayer2);
 				if (player != player2)
 				{
 					auto playerZone = CCRectMake(player2->getPositionX() - 9, player2->getPositionY() - 24, 18, 42);
@@ -349,7 +322,7 @@ void GameScene::IsBulletIntoPlayer()
 
 	CCARRAY_FOREACH(bullets, ibullet)
 	{
-		Sprite* bullet = (Sprite*)ibullet;
+		auto bullet = dynamic_cast<Sprite*>(ibullet);
 		auto bulletName=bullet->getName();
 		int i = 0;
 		if ((++i&&bulletName=="Arrow")|| (++i&&bulletName == "Starlight")||(++i&&bulletName=="Bubble"))
@@ -362,7 +335,7 @@ void GameScene::IsBulletIntoPlayer()
 	}
 	CCARRAY_FOREACH(Players, iplayer)
 	{
-		Player *player = (Player*)iplayer;
+		auto player = dynamic_cast<Player*>(iplayer);
 		player->HPBar->setHp(player->HP);
 		player->HPBar->setPosition(player->getPosition() + Vec2(0, 35));
 		if (player->HP <= 0)
@@ -385,22 +358,23 @@ void GameScene::IsBulletIntoPlayer()
 		Players->removeObject(iplayer);
 	}
 	if (Players->count() == 1) {
-		if (dynamic_cast<Player*>(Players->getLastObject())->getName() == "Player") {
-			auto cl = LayerColor::create(Color4B::BLACK);
-			cl->setOpacity(150);
-			cl->setName("solid");
-			addChild(cl);
-
-			auto layer = ResultScene::create();
-			layer->setTag(1);
-			addChild(layer);
-			unscheduleUpdate();
+		if (dynamic_cast<Player*>(Players->getLastObject())->getName() != "Player") {
+			isWin = false;
 		}
-	}
+		
+		auto cl = LayerColor::create(Color4B::BLACK);
+		cl->setOpacity(150);
+		cl->setName("solid");
+		addChild(cl);
 
+		auto layer = ResultScene::create();
+		layer->setTag(1);
+		addChild(layer);
+		unscheduleUpdate();
+	}
 }
 void GameScene::exitCallback(Ref*ref) {
-	//Director::getInstance()->popScene();
+
 	MenuItemLabel* item = (MenuItemLabel*)ref;
 	auto ai = static_cast<AiTest*>(tileMap->getChildByName("aitest"));
 	char buffer[MSGSIZE];

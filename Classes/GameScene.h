@@ -8,45 +8,33 @@
 class Weapon;
 class GameScene :public cocos2d::Layer {
 public:
-	static cocos2d::Scene* createScene();
-	virtual bool init();
 	CREATE_FUNC(GameScene);
-
-	//static Sprite* getCurrentMap();
+	static cocos2d::Scene* createScene();
 	static  TMXTiledMap *  getCurrentMap();
 	static GameScene * getCurrentScene();
 
-	virtual void onEnter();
-	virtual void onExit();
-	void update(float delta);
-	void SpawnItems(float dt);
-	void SpawnItems(Vec3 pos);
-
-
 	bool isAccessable(Point Position, int Direction);
-	bool isInMap(const cocos2d::Vec2 & pos);
 
-	void MapMove();
-	void PickMapItems();
-	//void IsBulletIntoWall();
-	void IsBulletIntoPlayer();
-	//void IsDead();
-	//void IsWeaponIntoPlayer();
-
-
-	void MovePlayer();
-	void exitCallback(Ref*ref);
-	//Sprite* tileMap;
     TMXTiledMap *tileMap;
-	TMXLayer *BG;
-	TMXLayer *twall;
 	TMXLayer *Meta;
-	TMXLayer *Foreground;
 
 	CCArray* MapItems;
-	CCArray* Players;
 	CCArray*Bullets;
 	Sprite* Bulletset;
 	Sprite* Itemset;
+private:
+	virtual bool init();
+	virtual void onEnter();
+	virtual void onExit();
+	void update(float delta);
+
+	CCArray* Players;
+	void Collision();
+	void PickMapItems();
+	void MoveMap();
+	void MovePlayer();
+	void SpawnItems(float dt);
+	void SpawnItems(Vec3 pos);
+	void exitCallback(Ref*ref);
 };
 #endif // !_GAME_SCENE_H_

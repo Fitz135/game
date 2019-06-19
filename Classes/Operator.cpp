@@ -46,7 +46,7 @@ void Operator::PassOperatorInfo(float dt)
 		
 		player->AttackBegan(MousePosition);
 	}
-	if (!MouseDown&&player->AttackEndFlag&&player->IsHaveWeapon)
+	if (!MouseDown&&player->AttackAbleFlag&&player->IsHaveWeapon)
 	{
 
 		if (!gameMode) {
@@ -133,7 +133,6 @@ void Operator::MoveDOWN(float dt)
 
 	if (player->HP <= 0 || !scene->isAccessable(player->getPosition() + Vec2(0, -player->MoveSpeed), 1))
 	{
-
 		MoveBy* move = MoveBy::create(2.0f / 60, Vec2(0, -player->MoveSpeed));
 		player->runAction(move);
 	}
@@ -143,7 +142,7 @@ void Operator::MoveLEFT(float dt)
 {
 	auto scene = GameScene::getCurrentScene();
 	auto player = getMyplayer("Player");
-	if (player->WeaponType==5||(player->AttackEndFlag && !MouseDown))
+	if (player->WeaponType==5||(player->AttackAbleFlag && !MouseDown))
 		player->setScaleX(-1);
 	if (player->HP <= 0 || !scene->isAccessable(player->getPosition() + Vec2(-player->MoveSpeed, 0), 2))
 	{
@@ -155,7 +154,7 @@ void Operator::MoveRIGHT(float dt)
 {
 	auto scene = GameScene::getCurrentScene();
 	auto player = getMyplayer("Player");
-	if (player->WeaponType == 5 || (player->AttackEndFlag && !MouseDown))
+	if (player->WeaponType == 5 || (player->AttackAbleFlag && !MouseDown))
 		player->setScaleX(1);
 	if (player->HP<=0||!scene->isAccessable(player->getPosition() + Vec2(player->MoveSpeed, 0), 0))
 	{

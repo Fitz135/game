@@ -15,8 +15,6 @@ public:
     int getId() const;
 	std::string getName();
 
-    // virtual void setStatus();
-    
 	std::string _name;
     int _id;
 };

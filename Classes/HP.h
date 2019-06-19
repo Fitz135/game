@@ -6,11 +6,10 @@
 class Hp :public cocos2d::Layer {
 public:
 	CREATE_FUNC(Hp);
-	virtual bool init();
 	void setHp(float );
 private:
 	cocos2d::ui::LoadingBar* HpBar;
 	cocos2d::Sprite* loadingbar;
-	
+	virtual bool init();
 };
 #endif // !_HP_H_
