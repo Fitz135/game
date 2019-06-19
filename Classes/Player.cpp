@@ -201,6 +201,7 @@ void Player::AttackBegan(Point TouchPosition)
 		else
 			this->setScaleX(1);
 	}
+	if(weapon)
 	(weapon->*(weapon->WeaponMode))(TouchPosition);
 	return;
 }

@@ -79,7 +79,7 @@ void GameScene::onEnter() {
 			player->setZOrder(100);
 			player->setPosition(posList[id]);
 			if (id != local_Id) {
-				player->setTag(player->getId());
+				player->setTag(player->getId()+10);
 				auto op = OPOperator::create();
 				op->setName("op");
 				player->addChild(op);
@@ -439,17 +439,23 @@ void GameScene::MovePlayer() {
 		
 		if (buffer[0] == KeyPress || buffer[0] == KeyRelease) {
 			int id = static_cast<int>(buffer[2]) - 48;
-			if (id != local_Id)
+			if (id != local_Id) {/*
+				auto vc = GameScene::getCurrentMap()->getChildren();
+				auto player = static_cast<Player*>(GameScene::getCurrentMap()->getChildByTag(id+10));
+				auto cv=player->getChildren();
+				auto op = static_cast<OPOperator*>(player->getChildByName("op"));
+				op->KeyStart(buffer);*/
 				dynamic_cast<OPOperator*>(
 					dynamic_cast<Player*>(
-						GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->KeyStart(buffer);
+						GameScene::getCurrentMap()->getChildByTag(id + 10))->getChildByName("op"))->KeyStart(buffer);
+			}	
 		}
 		else if (buffer[0] == MousePress || buffer[0] == MouseRelease) {
 			int id = static_cast<int>(buffer[2]) - 48;
 			if (id != local_Id)
 				dynamic_cast<OPOperator*>(
 					dynamic_cast<Player*>(
-						GameScene::getCurrentMap()->getChildByTag(id))->getChildByName("op"))->TouchStart(buffer);
+						GameScene::getCurrentMap()->getChildByTag(id+10))->getChildByName("op"))->TouchStart(buffer);
 		}
 		cmdList.pop_front();
 	}

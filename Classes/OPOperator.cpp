@@ -21,7 +21,7 @@ bool OPOperator::init() {
 void OPOperator::KeyStart(const char* buffer) {
 	if (buffer[0] == KeyPress) {
 		int keycode = static_cast<int>(buffer[4]) - 48;
-		auto player = dynamic_cast<Player*>(this->getParent());
+		auto player = static_cast<Player*>(this->getParent());
 			if (!PressNum)
 			{
 				player->MoveBegin();
@@ -35,7 +35,7 @@ void OPOperator::KeyStart(const char* buffer) {
 		if (0 <= keycode && 3 >= keycode)
 		{
 			PressNum--;
-			auto player = dynamic_cast<Player*>(getParent());
+			auto player =static_cast<Player*>(getParent());
 				this->unschedule(move[keycode]);
 	
 			if (!PressNum)
@@ -46,7 +46,7 @@ void OPOperator::KeyStart(const char* buffer) {
 	}
 }
 void OPOperator::TouchStart(const char* buffer) {
-	auto player = dynamic_cast<Player*>(getParent());
+	auto player =static_cast<Player*>(getParent());
 	if (buffer[0] == MousePress) {
 		int x=0, y=0;
 		char c_x[5];
