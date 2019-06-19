@@ -79,6 +79,8 @@ void Weapon::ArrowEnd(Node* who)
 	auto boom = Animate::create(Animation::createWithSpriteFrames(animFrames, 1.0f / 10));
 	auto disappear = CallFuncN::create(this, callfuncN_selector(Weapon::disappear));
 	auto seq = Sequence::create(boom, disappear, nullptr);
+	auto scene = GameScene::getCurrentScene();
+	scene->Bullets->removeObject(who);
 	who->runAction(seq);
 }
 void Weapon::Sword(Point TouchPosition)
@@ -188,7 +190,9 @@ void Weapon::StarEnd(Node* who)
 
 	auto map = who->getParent();
 	if (map)map->addChild(boom,2);
-	disappear(who);
+	auto scene = GameScene::getCurrentScene();
+	scene->Bullets->removeObject(who);
+	  disappear(who);
 }
 void Weapon::BubbleGun(Point TouchPosition)
 {
@@ -265,6 +269,8 @@ void Weapon::BubbleEnd(Node* who)
 
 	auto map = who->getParent();
     if(map)map->addChild(boom,2);
+	auto scene = GameScene::getCurrentScene();
+	scene->Bullets->removeObject(who);
 	disappear(who);
 }
 void Weapon::Boomerang(Point TouchPosition)

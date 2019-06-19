@@ -35,6 +35,5 @@ private:
 	void MovePlayer();
 	void SpawnItems(float dt);
 	void SpawnItems(Vec3 pos);
-	void exitCallback(Ref*ref);
 };
 #endif // !_GAME_SCENE_H_
