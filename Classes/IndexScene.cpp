@@ -64,6 +64,7 @@ bool Index::init() {
 
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->preloadBackgroundMusic("audio/bgm1.wav");
+	audio->setBackgroundMusicVolume(0.5f);
 	
 	
 	return true;

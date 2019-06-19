@@ -13,12 +13,16 @@ bool ResultScene::init() {
 
 	if (isWin) {
 		bg = Sprite::create("UI/Victory.png");
+		bg->setPosition(center_x, center_y*1.2);
 	}
 	else {
 		bg = Sprite::create("UI/Lose.png");
+		bg->setPosition(center_x, center_y*1.35);
+		bg->setScale(1.3);
+		bg->setScaleY(1.4);
 	}
 	if (bg == nullptr) { log("fail"); return false; }
-	bg->setPosition(center_x, center_y*1.2);
+	//bg->setPosition(center_x, center_y*1.2);
 	this->addChild(bg);
 
 	char* tmp;

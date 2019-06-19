@@ -405,12 +405,13 @@ void* MakeProp(void *ptr){
 		if(!gaming)continue;
 		int x=rand()%1280;
 		int y=rand()%1280;
-		int type=rand()%7;
+		int type=rand()%14;
+		if(type>6)type=6; 
 		char buffer[MSGSIZE];
 		sprintf(buffer,"%c$%d$%d$%d",Prop,x,y,type);
 		printf("Prop:%s\n",buffer);
 		sendMsg(buffer);
-		sleep(5);
+		sleep(3);
 	}
 }
 
