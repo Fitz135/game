@@ -35,8 +35,12 @@ void AiPlayer::AiMove(float dt)
 		{
 			moveflag = 0;
 			auto mapitems = dynamic_cast<Array*>(scene->MapItems);
-			if (mapitems->count())
+			int count = mapitems->count();
+			if (count)
 			{
+				for(int i=0;i<count;i++)
+				if (dynamic_cast<Sprite*>(mapitems->getObjectAtIndex(i))->getTag()!=6)
+					break;
 				auto weaponPosition = dynamic_cast<Sprite*>(mapitems->getObjectAtIndex(0))->getPosition();
 				x = static_cast<bool>(weaponPosition.x > aiPosition.x) * 2 - 1;
 				y = static_cast<bool>(weaponPosition.y > aiPosition.y) * 2 - 1;

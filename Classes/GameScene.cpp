@@ -117,7 +117,7 @@ void GameScene::onEnter() {
 		}
 	}
 	this->scheduleUpdate();
-	if(gameMode)this->schedule(schedule_selector(GameScene::SpawnItems), 5.0f);
+	if(gameMode)this->schedule(schedule_selector(GameScene::SpawnItems), 3.0f);
 }
 void GameScene::onExit() {
 	Layer::onExit();
@@ -144,7 +144,8 @@ void GameScene::SpawnItems(float dt)
 		auto valueMap = value.asValueMap();
 		if (!valueMap.at("Collidable").asBool())break;
 	}
-	int type = rand()%7;
+	int type = rand()%14;
+	if (type > 6)type = 6;
 	auto items = Sprite::create(settings::weapon_paths[type]);
 	items->setTag(type);
 	items->setPosition(x, y);
@@ -236,9 +237,9 @@ void GameScene::PickMapItems()
 				}
 				else 
 				{
-					auto hp = player->HP;
-					if (0<hp <= 80)hp += 20;
-					else if (hp > 80)hp = 100;
+				;
+					if (0< player->HP <= 80)player->HP += 20;
+					else if (player->HP > 80)player->HP = 100;
 				}
 				mapitems->addObject(imapitem);
 			}
@@ -313,7 +314,7 @@ void GameScene::Collision()
 					auto playerZone = CCRectMake(player2->getPositionX() - 9, player2->getPositionY() - 24, 18, 42);
 					if (weaponZone.intersectsRect(playerZone))
 					{
-						player2->HP -= 1;
+						player2->HP -=0.01;
 					}
 				}
 			}
@@ -327,11 +328,12 @@ void GameScene::Collision()
 		int i = 0;
 		if ((++i&&bulletName=="Arrow")|| (++i&&bulletName == "Starlight")||(++i&&bulletName=="Bubble"))
 		{
-			Bullets->removeObject(ibullet);
+			Bullets->removeObject(bullet);
 			bullet->stopActionByTag(100);
 			auto weapon = Weapon::create();
 			(weapon->*(weapon->BulletEnd[i-1]))(bullet);
 		}
+		else Bullets->removeObject(bullet);
 	}
 	CCARRAY_FOREACH(Players, iplayer)
 	{
@@ -361,7 +363,7 @@ void GameScene::Collision()
 		if (dynamic_cast<Player*>(Players->getLastObject())->getName() != "Player") {
 			isWin = false;
 		}
-		
+		dynamic_cast<Player*>(Players->getLastObject())->HPBar->removeFromParentAndCleanup(true);
 		auto cl = LayerColor::create(Color4B::BLACK);
 		cl->setOpacity(150);
 		cl->setName("solid");
@@ -381,49 +383,49 @@ void GameScene::exitCallback(Ref*ref) {
 	if (item->getString() == "up") {
 		if (!ai->isUp) {
 			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 2);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
 			ai->isUp = true;
 		}
 		else {
 			ai->isUp = false;
 			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 2);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
 		}
 	}
 	else if (item->getString() == "down") {
 		if (!ai->isDown) {
 			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 3);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
 			ai->isDown = true;
 		}
 		else {
 			ai->isDown = false;
 			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 3);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
 		}
 	}
 	else if (item->getString() == "right") {
 		if (!ai->isRight) {
 			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 1);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
 			ai->isRight = true;
 		}
 		else {
 			ai->isRight = false;
 			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 1);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
 		}
 	}
 	else if (item->getString() == "left") {
 		if (!ai->isLeft) {
 			sprintf(buffer, "%c$%d$%d", KeyPress, 2, 0);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
 			ai->isLeft = true;
 		}
 		else {
 			ai->isLeft = false;
 			sprintf(buffer, "%c$%d$%d", KeyRelease, 2, 0);
-			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);//updatePlayer(buffer);
+			static_cast<OPOperator*>(ai->getChildByName("op"))->KeyStart(buffer);
 		}
 	}
 	

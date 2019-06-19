@@ -25,7 +25,6 @@ Player* Player::create(std::string name,int id)
 	{	
 		if(id==local_Id)
 		player->setName("Player");
-
 		player->setTag(id);
 		player->autorelease();
 		return player;
@@ -60,6 +59,7 @@ bool Player::initWithPlayerType(int i)
 	weapon = static_cast<Weapon*>(nullptr);
 
 	HPBar = Hp::create();
+	HPBar->setName("HPBar");
 	HPBar->setScale(0.5);
 	HPBar->retain();
 
