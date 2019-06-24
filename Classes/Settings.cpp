@@ -47,7 +47,7 @@ void updateDialog(char* buffer) {
 	}
 	char msg[MSGSIZE];
 	strcpy(msg, &buffer[4]);
-	char finaltext[sizeof(name) + sizeof(msg) + 1];
+	char finaltext[sizeof(name) + sizeof(msg) + 3];
 	sprintf(finaltext, "%s:%s", name.c_str(), msg);
 	
 	

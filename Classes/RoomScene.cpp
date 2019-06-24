@@ -149,10 +149,14 @@ void RoomScene::readyCallback(Ref* ref) {
 		item->setString("UnReady");
 		sprintf(buffer, "%c$%d$r", Ready,playerList[0]->_id);
 		client->Send(buffer, MSGSIZE);
+		sprintf(buffer, "%c$%d$%s", Dialog, local_Id, "Ready ");
+		client->Send(buffer, MSGSIZE);
 	}
 	else if(item->getString() == "UnReady"){
 		item->setString("Ready");
 		sprintf(buffer, "%c$%d$u", Ready,playerList[0]->_id);
+		client->Send(buffer, MSGSIZE);
+		sprintf(buffer, "%c$%d$%s", Dialog, local_Id, "UnReady ");
 		client->Send(buffer, MSGSIZE);
 	}
 }
@@ -168,7 +172,7 @@ void RoomScene::backCallback(Ref* ref) {
 void RoomScene::sendCallback(Ref* ref) {
 	char buffer[MSGSIZE];
 	auto msg=dynamic_cast<ui::TextField*>(this->getChildByName("TextField"))->getString().c_str();
-	sprintf(buffer, "%c$%d$%s", Dialog, local_Id, msg);
+	sprintf(buffer, "%c$%d$%s%s", Dialog, local_Id, msg,"\ ");
 	if (strlen(buffer) > MSGSIZE) {
 		isNewMsg = true;
 		newMsg = std::string("Too long to send it!");
@@ -229,9 +233,9 @@ void RoomScene::initChat() {
 }
 void RoomScene::update(float dt) {
 	if (isNewMsg) {
-		auto hello = ui::Text::create(newMsg, "fonts/arial.ttf", 30);
+		auto hello = ui::Text::create(newMsg, "fonts/Cordelia.ttf", 30);
 		hello->ignoreContentAdaptWithSize(false);
-		hello->setColor(cocos2d::Color3B::BLUE);
+		hello->setColor(cocos2d::Color3B(147,133,133));
 		dialog->addChild(hello, 1);
 		isNewMsg = false;
 		if (dialog->getChildrenCount() >= 30)dialog->removeItem(0);
