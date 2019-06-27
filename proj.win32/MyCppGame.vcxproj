@@ -14,6 +14,7 @@
     <ProjectGuid>{76A39BB2-9B84-4C65-98A5-654D86B86F2A}</ProjectGuid>
     <RootNamespace>test_win32</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -100,7 +101,8 @@
       </Command>
     </PostBuildEvent>
     <PreLinkEvent>
-      <Command></Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup>
@@ -112,7 +114,6 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
       <Inputs>$(TargetFileName)</Inputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
-
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
@@ -143,17 +144,50 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
       </Command>
     </PostBuildEvent>
     <PreLinkEvent>
-      <Command></Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Classes\AiPlayer.cpp" />
+    <ClCompile Include="..\Classes\AiTest.cpp" />
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
-    <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
+    <ClCompile Include="..\Classes\Entity.cpp" />
+    <ClCompile Include="..\Classes\GameModeScene.cpp" />
+    <ClCompile Include="..\Classes\GameScene.cpp" />
+    <ClCompile Include="..\Classes\HP.cpp" />
+    <ClCompile Include="..\Classes\IndexScene.cpp" />
+    <ClCompile Include="..\Classes\IPScene.cpp" />
+    <ClCompile Include="..\Classes\LoginScene.cpp" />
+    <ClCompile Include="..\Classes\ODSocket.cpp" />
+    <ClCompile Include="..\Classes\Operator.cpp" />
+    <ClCompile Include="..\Classes\OPOperator.cpp" />
+    <ClCompile Include="..\Classes\Player.cpp" />
+    <ClCompile Include="..\Classes\ResultScene.cpp" />
+    <ClCompile Include="..\Classes\RoomScene.cpp" />
+    <ClCompile Include="..\Classes\Settings.cpp" />
+    <ClCompile Include="..\Classes\Weapon.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Classes\AiPlayer.h" />
+    <ClInclude Include="..\Classes\AiTest.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
-    <ClInclude Include="..\Classes\HelloWorldScene.h" />
+    <ClInclude Include="..\Classes\Entity.h" />
+    <ClInclude Include="..\Classes\GameModeScene.h" />
+    <ClInclude Include="..\Classes\GameScene.h" />
+    <ClInclude Include="..\Classes\HP.h" />
+    <ClInclude Include="..\Classes\IndexScene.h" />
+    <ClInclude Include="..\Classes\IPScene.h" />
+    <ClInclude Include="..\Classes\LoginScene.h" />
+    <ClInclude Include="..\Classes\ODSocket.h" />
+    <ClInclude Include="..\Classes\Operator.h" />
+    <ClInclude Include="..\Classes\OPOperator.h" />
+    <ClInclude Include="..\Classes\Player.h" />
+    <ClInclude Include="..\Classes\ResultScene.h" />
+    <ClInclude Include="..\Classes\RoomScene.h" />
+    <ClInclude Include="..\Classes\Settings.h" />
+    <ClInclude Include="..\Classes\Weapon.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
